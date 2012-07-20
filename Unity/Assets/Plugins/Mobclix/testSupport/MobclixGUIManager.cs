@@ -7,9 +7,10 @@ public class MobclixGUIManager : MonoBehaviour
 	void OnStart()
 	{
 		Screen.orientation = ScreenOrientation.LandscapeLeft;
-	}
-	
-	
+    }
+
+#if UNITY_IPHONE
+
 	void OnGUI()
 	{
 		float yPos = 5.0f;
@@ -103,5 +104,6 @@ public class MobclixGUIManager : MonoBehaviour
 		}
 	}
 
+#endif
 
 }
