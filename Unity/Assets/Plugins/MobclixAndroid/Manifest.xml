@@ -1,0 +1,22 @@
+<!-- ACTIVITIES -->
+	    <activity android:name="com.mobclix.android.sdk.MobclixBrowserActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+	    <activity android:name="com.google.ads.AdActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
+		<activity android:name="com.millennialmedia.android.MMAdViewOverlayActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+		<activity android:name="com.millennialmedia.android.VideoPlayer" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:configChanges="keyboard|keyboardHidden|orientation"/>
+
+<!-- META-DATA -->
+		<meta-data android:name="ADMOB_PUBLISHER_ID" android:value="a150091cb87adc1"/>
+	    <meta-data android:name="com.mobclix.APPLICATION_ID" android:value="318816FA-2635-409C-8E09-96E20EFF07B8"/>
+	    <meta-data android:name="com.mobclix.LOG_LEVEL" android:value="DEBUG"/>
+
+
+<!-- PERMISSIONS -->
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.GET_TASKS"></uses-permission>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+
+ 
+<!-- FIND-REPLACE -->
+	<fr><find><![CDATA[ForwardNativeEventsToDalvik" android:value="false" />]]></find><replace><![CDATA[ForwardNativeEventsToDalvik" android:value="true" />]]></replace></fr>
