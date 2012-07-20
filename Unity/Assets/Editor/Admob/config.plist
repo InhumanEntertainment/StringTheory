@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>dynamicLibraries</key>
+	<array/>
+	<key>weakLinkFrameworks</key>
+	<array>
+		<string>EventKit</string>
+		<string>CoreMotion</string>
+	</array>
+	<key>requiredFrameworks</key>
+	<array>
+		<string>MessageUI.framework</string>
+		<string>AddressBook.framework</string>
+		<string>AddressBookUI.framework</string>
+		<string>EventKit.framework</string>
+		<string>CoreMotion.framework</string>
+	</array>
+	<key>pListAdditions</key>
+	<array>
+		<dict>
+			<key>pListKey</key>
+			<string>AMPublisherId</string>
+			<key>filename</key>
+			<string>AdmobPublisherId.txt</string>
+			<key>errorText</key>
+			<string>Please fill in the AdmobPublisherId.txt file with your Publisher ID</string>
+			<key>required</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>pListKey</key>
+			<string>AMiPadPublisherId</string>
+			<key>filename</key>
+			<string>AdmobiPadPublisherId.txt</string>
+			<key>errorText</key>
+			<string>Please fill in the AdmobiPadPublisherId file with your Publisher ID</string>
+			<key>required</key>
+			<false/>
+		</dict>
+	</array>
+	<key>neverShowCompletedMessage</key>
+	<false/>
+</dict>
+</plist>
