@@ -21,7 +21,7 @@ public class MobclixGUIManager : MonoBehaviour
 		
 		if( GUI.Button( new Rect( xPos, yPos, width, height ), "Initialize Mobclix" ) )
 		{
-			MobclixBinding.start( "insert-your-application-key" );
+			MobclixBinding.start( "318816FA-2635-409C-8E09-96E20EFF07B8" );
 		}
 		
 		
