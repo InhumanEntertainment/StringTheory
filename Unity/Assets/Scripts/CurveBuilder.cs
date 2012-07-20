@@ -3,19 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class CurveBuilder : MonoBehaviour {
+
+	//logic//
+	public bool ShouldStartDrawing = false;
+	bool IsCurvedBeingDrawn = false;
 	
-	
-	//logic
-	public bool shouldStartDrawing = false;
-	
-	//drawing
+	//drawing//
 	public List<Vector3> Tail = new List<Vector3>();
 	public float TailWidthStart = 1f;
 	public float TailWidthEnd = 1f;
 	public bool DrawWireframe = true;
 	
-	//need to start drawing only if we are in drawing mode
-
     Vector3 SmoothPosition;
     public float SmoothAmount = 0.9f;
 
@@ -31,37 +29,125 @@ public class CurveBuilder : MonoBehaviour {
 	 //============================================================================================================================================//
 	void Update () 
     {
-		if (Input.GetMouseButton(0)) 
-        {
-		 	Debug.Log("Touch Position: " + Input.mousePosition + " " + Input.mousePosition);
-			if (hasTouchedMe(Input.mousePosition))
-            {
-				shouldStartDrawing = true;
-                SmoothPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			}
-		}
-        else
-        {
-			
-			if (shouldStartDrawing) 
-            {
-				shouldStartDrawing = false;	
-				GameObject cloneNode = (GameObject) Instantiate(Resources.Load("StringNode"));
-			}
-		}
+		bool hasTouchStarted = (Input.GetMouseButtonDown(0));
+		bool isTouchUpdated = Input.GetMouseButton(0);
 		
-		if (shouldStartDrawing) 
-        {
-			var worldTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            SmoothPosition =  Vector3.Lerp(worldTouchPosition, SmoothPosition, SmoothAmount);
-            addPointToTail(new Vector3(SmoothPosition.x, SmoothPosition.y, 0));
+		if (hasTouchStarted) {
+			
+			if (! IsCurvedBeingDrawn) 
+			{
+				if (HasTouchedMe(Input.mousePosition)) 
+				{
+					IsCurvedBeingDrawn = true;
+					SmoothPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+					Tail =  new List<Vector3> ();
+					AddPointToTail(Input.mousePosition);	
+				}else {
+					
+					if (HasCurveBeenHitAtPosition(Input.mousePosition))
+					{
+						Debug.Log("Curve has been Hit");
+						
+						CutStringIfLastPointDoesNotMatchPosition(Input.mousePosition);
+						SmoothPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+						IsCurvedBeingDrawn = true;
+					}
+				}
+			}
+			else
+			{
+				//should not be possible unless multi touch//
+				Debug.LogError("Start a touch while being drawn. IsCurvedBeingDrawn is probably not being handle correctly");	
+			}
 		}
-
+		else if (isTouchUpdated) 
+		{
+			if (IsCurvedBeingDrawn) {
+				AddPointToTail(Input.mousePosition);
+			}
+		}
+		else 
+		{
+			if (IsCurvedBeingDrawn) {
+				Debug.Log("Cancel touched");
+				IsCurvedBeingDrawn = false;
+			}
+			else
+			{
+				Debug.Log("No touch");	
+			}
+			
+		}
 		BuildMesh();					
 	}
+	
+	//============================================================================================================================================//
+	void CutStringIfLastPointDoesNotMatchPosition(Vector3 position)
+	{
+		Vector3 worldTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		Vector3 curvePointTouched = GetPointTouchedOnCurvedIfExistAtPosition(worldTouchPosition);
+		
+		bool hasTouchedCurve = (curvePointTouched.z == 0);
 
+		if (hasTouchedCurve) 
+		{	
+			Vector3 lastPointInTail = Tail[Tail.Count-1];
+			bool lastPointHasBeenTouched = Vector3.Equals(curvePointTouched,lastPointInTail);
+			
+			if (! lastPointHasBeenTouched) 
+			{
+				RemoveAllItemsFromTailAfterPoint(curvePointTouched);
+			}
+		}
+	}
+	
+	//============================================================================================================================================//
+	void RemoveAllItemsFromTailAfterPoint(Vector3 position) 
+	{
+		int indexPosition = Tail.IndexOf(position);
+		Tail.RemoveRange (indexPosition,Tail.Count - indexPosition);	
+	}
+	
+	
+	//============================================================================================================================================//
+	bool HasCurveBeenHitAtPosition(Vector3 touchPosition) 
+	{
+		Vector3 worldTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		Vector3 curvePointTouched = GetPointTouchedOnCurvedIfExistAtPosition(worldTouchPosition);
+		bool hasTouchedCurve = (curvePointTouched.z == 0);
+		return hasTouchedCurve;
+	}
+	
+	
+	//============================================================================================================================================//
+	Vector3 GetPointTouchedOnCurvedIfExistAtPosition(Vector3 touchPosition) 
+	{	
+		Vector3 pointTouched = new Vector3(0,0,-100);
+		
+		if (Tail.Count > 0)
+		{	
+			Vector3 touchPosition2D = new Vector3(touchPosition.x,touchPosition.y,0);
+			
+			Vector3 closestCurvePoint = GetClosestPoint(touchPosition2D);
+			
+			Debug.Log("Closest point found is point with X: " + closestCurvePoint.x + " Y: " + closestCurvePoint.y + " Z: " + closestCurvePoint.z);
+			Debug.Log("World touch position has X " + touchPosition2D.x + "Y: " + touchPosition2D.y + " Z: " + touchPosition2D.z);
+			
+			float distance = Vector3.Distance(touchPosition2D,closestCurvePoint);
+			Debug.Log("Distance between closest and touch is: " + distance + " and width of curve is: " + Width);
+			
+			bool hasCurveBeenTouched = (distance < Width * 2) ;
+			if (hasCurveBeenTouched) {
+				pointTouched = closestCurvePoint;
+			}	
+		}
+		return pointTouched;
+	}
+	
+	
+	
     //============================================================================================================================================//
-    bool hasTouchedMe(Vector3 touchPosition)
+    bool HasTouchedMe(Vector3 touchPosition)
     {
 		Ray ray = Camera.main.ScreenPointToRay(touchPosition);
 		RaycastHit hit;
@@ -76,11 +162,40 @@ public class CurveBuilder : MonoBehaviour {
 			return false;
 		}
 	}
+	
+	
+	//============================================================================================================================================//
+	Vector3 GetClosestPoint(Vector3 position)
+    {
+        int closest = 0;
+        float closestdistance = Vector3.Distance(position, Tail[0]);
+
+        for (int i = 1; i < Tail.Count; i++)
+        {
+            float distance = Vector3.Distance(position, Tail[i]);
+            if (distance < closestdistance)
+            {
+                closestdistance = distance;
+                closest = i;
+            }
+        }
+        return Tail[closest];
+    }
 
     //============================================================================================================================================//
-    void addPointToTail(Vector3 touchPosition)
+    void AddPointToTail(Vector3 touchPosition)
     {
-		Tail.Add(touchPosition);
+		
+		
+		//smoothing the touch Position//
+		
+		var worldTouchPosition = Camera.main.ScreenToWorldPoint(touchPosition);
+        SmoothPosition =  Vector3.Lerp(worldTouchPosition, SmoothPosition, SmoothAmount);
+		Vector3 smoothedVector = new Vector3(SmoothPosition.x, SmoothPosition.y, 0);
+		
+		Tail.Add(smoothedVector);
+		
+		//Tail.Add(touchPosition);
 
         // Varying Line Width //
         float acceleration = (WidthChange * Random.value - WidthChange * 0.5f);
