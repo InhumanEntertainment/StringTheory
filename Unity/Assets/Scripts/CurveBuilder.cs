@@ -15,48 +15,91 @@ public class CurveBuilder : MonoBehaviour {
 	public bool DrawWireframe = true;
 	
 	//need to start drawing only if we are in drawing mode
-	
-	
+
+    Vector3 SmoothPosition;
+    public float SmoothAmount = 0.9f;
+
+    public List<float> TailWidth = new List<float>();
+    public float Width;
+    public float WidthVelocity = 0;
+    public float WidthVelocityMax = 0.1f;
+    
+    public float WidthMin = 0.3f;
+    public float WidthMax = 0.1f;
+    public float WidthChange = 0.1f;
+    
 	 //============================================================================================================================================//
-	void Update () {
-		if (Input.GetMouseButton(0)) {
+	void Update () 
+    {
+		if (Input.GetMouseButton(0)) 
+        {
 		 	Debug.Log("Touch Position: " + Input.mousePosition + " " + Input.mousePosition);
-			if (hasTouchedMe(Input.mousePosition)) {
-				shouldStartDrawing = true;	
+			if (hasTouchedMe(Input.mousePosition))
+            {
+				shouldStartDrawing = true;
+                SmoothPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			}
-		}else{
+		}
+        else
+        {
 			
-			if (shouldStartDrawing) {
+			if (shouldStartDrawing) 
+            {
 				shouldStartDrawing = false;	
 				GameObject cloneNode = (GameObject) Instantiate(Resources.Load("StringNode"));
 			}
 		}
 		
-		if (shouldStartDrawing) {
-			var worldTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);	
-			addPointToTail(new Vector3(worldTouchPosition.x, worldTouchPosition.y, 0));
+		if (shouldStartDrawing) 
+        {
+			var worldTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            SmoothPosition =  Vector3.Lerp(worldTouchPosition, SmoothPosition, SmoothAmount);
+            addPointToTail(new Vector3(SmoothPosition.x, SmoothPosition.y, 0));
 		}
-		BuildMesh();	
-		
-		
-		
+
+		BuildMesh();					
 	}
-	
-	
-	bool hasTouchedMe(Vector3 touchPosition) {
+
+    //============================================================================================================================================//
+    bool hasTouchedMe(Vector3 touchPosition)
+    {
 		Ray ray = Camera.main.ScreenPointToRay(touchPosition);
 		RaycastHit hit;
-		if (gameObject.collider.Raycast(ray,out hit,50.0f)) {
+		if (gameObject.collider.Raycast(ray,out hit,50.0f)) 
+        {
 			Debug.Log("Hit");
 			 Debug.DrawLine (ray.origin, hit.point);
 			return true;
-		}else{
+		}
+        else
+        {
 			return false;
 		}
 	}
-	
-	void addPointToTail(Vector3 touchPosition) {
+
+    //============================================================================================================================================//
+    void addPointToTail(Vector3 touchPosition)
+    {
 		Tail.Add(touchPosition);
+
+        // Varying Line Width //
+        float acceleration = (WidthChange * Random.value - WidthChange * 0.5f);
+        WidthVelocity += acceleration;
+        WidthVelocity = Mathf.Clamp(WidthVelocity, -WidthVelocityMax, WidthVelocityMax);
+        Width += WidthVelocity;
+
+        if (Width > WidthMax)
+        {
+            Width = WidthMax;
+            WidthVelocity = 0;
+        } 
+        if (Width < WidthMin)
+        {
+            Width = WidthMin;
+            WidthVelocity = 0;
+        }
+
+        TailWidth.Add(Width);
 	}
 	
 	//============================================================================================================================================//
@@ -96,13 +139,15 @@ public class CurveBuilder : MonoBehaviour {
                 // from 0 to 1 along the length of the tail //
                 float v = 1 - ((float)i / (Tail.Count - 1));
                 float tailwidth = Mathf.Lerp(TailWidthStart, TailWidthEnd, v);
+                //vertices[i * 2] = Tail[i] + left * tailwidth;
+                //vertices[i * 2 + 1] = Tail[i] + right * tailwidth;
 
-                vertices[i * 2] = Tail[i] + left * tailwidth;
-                vertices[i * 2 + 1] = Tail[i] + right * tailwidth;
+                vertices[i * 2] = Tail[i] + left * TailWidth[i];
+                vertices[i * 2 + 1] = Tail[i] + right * TailWidth[i];
 
-                UVScroll += Time.deltaTime * 0.02f;
-                uv[i * 2] = new Vector2(0, v * 16 + UVScroll);
-                uv[i * 2 + 1] = new Vector2(1, v * 16 + UVScroll);
+                UVScroll += Time.deltaTime * 0.0f;
+                uv[i * 2] = new Vector2(0, v * 1 + UVScroll);
+                uv[i * 2 + 1] = new Vector2(1, v * 1 + UVScroll);
 
                 //Debug.DrawLine(Tail[i] + left, Tail[i] + right, Color.blue);
             }
