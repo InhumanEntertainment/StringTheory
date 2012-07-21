@@ -2,11 +2,10 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class CurveBuilder : MonoBehaviour {
-
+public class ColorString : MonoBehaviour {
+	
 	//logic//
-	public bool ShouldStartDrawing = false;
-	bool IsCurvedBeingDrawn = false;
+	public bool IsCurveBeingDrawn = false;
 	
 	//drawing//
 	public List<Vector3> Tail = new List<Vector3>();
@@ -25,33 +24,23 @@ public class CurveBuilder : MonoBehaviour {
     public float WidthMin = 0.3f;
     public float WidthMax = 0.1f;
     public float WidthChange = 0.1f;
-    
-	 //============================================================================================================================================//
+	
+	
+	//============================================================================================================================================//
 	void Update () 
-    {
+	{
 		bool hasTouchStarted = (Input.GetMouseButtonDown(0));
 		bool isTouchUpdated = Input.GetMouseButton(0);
 		
 		if (hasTouchStarted) {
 			
-			if (! IsCurvedBeingDrawn) 
+			if (! IsCurveBeingDrawn) 
 			{
-				if (HasTouchedMe(Input.mousePosition)) 
+				if (HasCurveBeenHitAtPosition(Input.mousePosition))
 				{
-					IsCurvedBeingDrawn = true;
-					SmoothPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-					Tail =  new List<Vector3> ();
-					AddPointToTail(Input.mousePosition);	
-				}else {
-					
-					if (HasCurveBeenHitAtPosition(Input.mousePosition))
-					{
-						Debug.Log("Curve has been Hit");
-						
-						CutStringIfLastPointDoesNotMatchPosition(Input.mousePosition);
-						SmoothPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-						IsCurvedBeingDrawn = true;
-					}
+					Debug.Log("Curve has been Hit");
+					CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
+					InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
 				}
 			}
 			else
@@ -62,27 +51,40 @@ public class CurveBuilder : MonoBehaviour {
 		}
 		else if (isTouchUpdated) 
 		{
-			if (IsCurvedBeingDrawn) {
+			if (Tail.Count == 0) {
+				InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
+			}
+			
+			if (IsCurveBeingDrawn) 
+			{
 				AddPointToTail(Input.mousePosition);
 			}
 		}
 		else 
 		{
-			if (IsCurvedBeingDrawn) {
-				Debug.Log("Cancel touched");
-				IsCurvedBeingDrawn = false;
+			//touch has been cancelled//
+			if (IsCurveBeingDrawn) {
+				IsCurveBeingDrawn = false;
 			}
 			else
 			{
 				Debug.Log("No touch");	
 			}
-			
 		}
-		BuildMesh();					
+		BuildMesh();
 	}
 	
+	
 	//============================================================================================================================================//
-	void CutStringIfLastPointDoesNotMatchPosition(Vector3 position)
+	void InitializeCurveToResumeDrawingAtPosition(Vector3 position)
+	{
+		SmoothPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		IsCurveBeingDrawn = true;
+	}
+	
+	
+	//============================================================================================================================================//
+	void CutCurveIfLastPointDoesNotMatchPosition(Vector3 position)
 	{
 		Vector3 worldTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		Vector3 curvePointTouched = GetPointTouchedOnCurvedIfExistAtPosition(worldTouchPosition);
@@ -144,26 +146,6 @@ public class CurveBuilder : MonoBehaviour {
 		return pointTouched;
 	}
 	
-	
-	
-    //============================================================================================================================================//
-    bool HasTouchedMe(Vector3 touchPosition)
-    {
-		Ray ray = Camera.main.ScreenPointToRay(touchPosition);
-		RaycastHit hit;
-		if (gameObject.collider.Raycast(ray,out hit,50.0f)) 
-        {
-			Debug.Log("Hit");
-			 Debug.DrawLine (ray.origin, hit.point);
-			return true;
-		}
-        else
-        {
-			return false;
-		}
-	}
-	
-	
 	//============================================================================================================================================//
 	Vector3 GetClosestPoint(Vector3 position)
     {
@@ -181,8 +163,8 @@ public class CurveBuilder : MonoBehaviour {
         }
         return Tail[closest];
     }
-
-    //============================================================================================================================================//
+	
+	//============================================================================================================================================//
     void AddPointToTail(Vector3 touchPosition)
     {
 		
