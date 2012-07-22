@@ -6,6 +6,11 @@ public class ColorString : MonoBehaviour {
 	
 	//logic//
 	public bool IsCurveBeingDrawn = false;
+	public bool HasCurveReachHisBases = false;
+	
+	public List<ColorBase> BasesExpected = new List<ColorBase>();
+	public List<ColorBase> BasesToAvoid = new List<ColorBase>();
+	List<ColorBase> BasesReached = new List<ColorBase>();
 	
 	//drawing//
 	public List<Vector3> Tail = new List<Vector3>();
@@ -57,7 +62,10 @@ public class ColorString : MonoBehaviour {
 			
 			if (IsCurveBeingDrawn) 
 			{
-				AddPointToTail(Input.mousePosition);
+				AddScreenPointToTail(Input.mousePosition);
+				if (Tail.Count > 2) {
+					StopDrawingIfLastScreenPointEncouterBaseOrSelf(Input.mousePosition);
+				}
 			}
 		}
 		else 
@@ -72,6 +80,58 @@ public class ColorString : MonoBehaviour {
 			}
 		}
 		BuildMesh();
+	}
+	
+	
+	//============================================================================================================================================//
+	void curveDidConnectWithMatchingBase(ColorBase colorBase) 
+	{
+		//put here reactions to this event//
+	}
+	
+	//============================================================================================================================================//
+	void curveDidConnectWithWrongBase(ColorBase colorBase) 
+	{
+		Tail = new List<Vector3>();
+		//TODO inform original base that the curve has been destroyed somehow//
+	}
+	
+	//============================================================================================================================================//
+	void StopDrawingIfLastScreenPointEncouterBaseOrSelf(Vector3 mousePosition) 
+	{
+		
+		
+		//code to manage colorBase encounter//
+		foreach (ColorBase colorBase in BasesExpected)
+		{
+			Debug.Log("Check if collide with base named: " + colorBase.baseName);
+			if (isLastPointCollidingWithBase(colorBase))
+			{
+				curveDidConnectWithMatchingBase(colorBase);
+			}
+		}
+		
+		foreach (ColorBase colorBase in BasesToAvoid) 
+		{
+			if (isLastPointCollidingWithBase(colorBase))
+			{
+				curveDidConnectWithWrongBase(colorBase);
+			}	
+		}
+		
+		//TODO code to manage self encounter//
+		//TODO need to implement the meeting with original base to avoid circular matching//
+	}
+	
+	//============================================================================================================================================//
+	bool isLastPointCollidingWithBase(ColorBase colorBase)
+	{
+		bool res = false;
+		if (Tail.Count > 1) {
+			Vector3 lastPoint = Tail[Tail.Count-1];
+			res =  colorBase.IsCollidingWithPoint(lastPoint);
+		}
+		return res;
 	}
 	
 	
@@ -165,7 +225,7 @@ public class ColorString : MonoBehaviour {
     }
 	
 	//============================================================================================================================================//
-    void AddPointToTail(Vector3 touchPosition)
+    void AddScreenPointToTail(Vector3 touchPosition)
     {
 		
 		
