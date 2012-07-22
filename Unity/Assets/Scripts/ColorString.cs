@@ -68,7 +68,7 @@ public class ColorString : MonoBehaviour {
 			}
 			else
 			{
-				Debug.Log("No touch");	
+				//Debug.Log("No touch");	
 			}
 		}
 		BuildMesh();
@@ -78,7 +78,11 @@ public class ColorString : MonoBehaviour {
 	//============================================================================================================================================//
 	void InitializeCurveToResumeDrawingAtPosition(Vector3 position)
 	{
-		SmoothPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if (Tail.Count == 0)
+            SmoothPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        else
+            SmoothPosition = Tail[Tail.Count - 1];
+       
 		IsCurveBeingDrawn = true;
 	}
 	
