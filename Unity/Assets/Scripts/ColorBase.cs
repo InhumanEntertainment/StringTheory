@@ -51,7 +51,7 @@ public class ColorBase : MonoBehaviour {
 	}
 	
 	//============================================================================================================================================//
-    Dictionary<int, int> CurveColorIndexes = new Dictionary<int, int>() {{1, 0}, {2, 1}, {4, 2} };
+    Dictionary<int, int> CurveColorIndexes = new Dictionary<int, int>() { { 1, 0 }, { 2, 1 }, { 4, 2 }, { 11, 3 }, { 8, 4 }, { 7, 5 } };
     public void SetCurveColor(ColorString curve)
     {
         tk2dSprite sprite = GetComponent<tk2dSprite>();

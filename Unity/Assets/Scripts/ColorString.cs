@@ -187,9 +187,9 @@ public class ColorString : MonoBehaviour {
 	void RemoveAllItemsFromTailAfterPoint(Vector3 position) 
 	{
 		int indexPosition = Tail.IndexOf(position);
-		Tail.RemoveRange (indexPosition,Tail.Count - indexPosition);	
-	}
-	
+		Tail.RemoveRange (indexPosition,Tail.Count - indexPosition);
+        TailWidth.RemoveRange(indexPosition, Tail.Count - indexPosition);
+	}	
 	
 	//============================================================================================================================================//
 	bool HasCurveBeenHitAtPosition(Vector3 touchPosition) 
