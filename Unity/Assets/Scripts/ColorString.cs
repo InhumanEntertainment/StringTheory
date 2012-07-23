@@ -5,12 +5,14 @@ using System.Collections.Generic;
 public class ColorString : MonoBehaviour {
 	
 	//logic//
-	public bool IsCurveBeingDrawn = false;
-	public bool HasCurveReachHisBases = false;
+	public bool IsCurveBeingDrawn = false;	
+	bool HasCurveReachedTarget = false;
 	
+	public ColorBase BaseStart;
 	public List<ColorBase> BasesExpected = new List<ColorBase>();
 	public List<ColorBase> BasesToAvoid = new List<ColorBase>();
-	List<ColorBase> BasesReached = new List<ColorBase>();
+	//List<ColorBase> BasesReached = new List<ColorBase>();
+	
 	
 	//drawing//
 	public List<Vector3> Tail = new List<Vector3>();
@@ -62,7 +64,7 @@ public class ColorString : MonoBehaviour {
 				InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
 			}
 			
-			if (IsCurveBeingDrawn) 
+			if (IsCurveBeingDrawn && ! HasCurveReachedTarget) 
 			{
 				AddScreenPointToTail(Input.mousePosition);
 				if (Tail.Count > 2) {
@@ -89,13 +91,19 @@ public class ColorString : MonoBehaviour {
 	void curveDidConnectWithMatchingBase(ColorBase colorBase) 
 	{
 		//put here reactions to this event//
+		HasCurveReachedTarget = true;
 	}
 	
 	//============================================================================================================================================//
 	void curveDidConnectWithWrongBase(ColorBase colorBase) 
 	{
+		Debug.Log("Did connect with wrong base");
 		Tail = new List<Vector3>();
-		//TODO inform original base that the curve has been destroyed somehow//
+		
+		if (colorBase != BaseStart) {
+			Destroy(gameObject);
+		}
+		//TODO inform original base that the curve has been destroyed somehow ??//
 	}
 
     //============================================================================================================================================//
@@ -108,8 +116,6 @@ public class ColorString : MonoBehaviour {
 	//============================================================================================================================================//
 	void StopDrawingIfLastScreenPointEncouterBaseOrSelf(Vector3 mousePosition) 
 	{
-		
-		
 		//code to manage colorBase encounter//
 		foreach (ColorBase colorBase in BasesExpected)
 		{
@@ -153,6 +159,7 @@ public class ColorString : MonoBehaviour {
             SmoothPosition = Tail[Tail.Count - 1];
        
 		IsCurveBeingDrawn = true;
+		HasCurveReachedTarget = false;
 	}
 	
 	
