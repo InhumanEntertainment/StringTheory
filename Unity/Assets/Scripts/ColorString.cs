@@ -29,8 +29,10 @@ public class ColorString : MonoBehaviour {
     public float WidthMin = 0.3f;
     public float WidthMax = 0.1f;
     public float WidthChange = 0.1f;
-	
-	
+
+    int ColorIndex;
+    public Material[] ColorMaterials;	
+
 	//============================================================================================================================================//
 	void Update () 
 	{
@@ -95,6 +97,13 @@ public class ColorString : MonoBehaviour {
 		Tail = new List<Vector3>();
 		//TODO inform original base that the curve has been destroyed somehow//
 	}
+
+    //============================================================================================================================================//
+    public void SetColor(int color)
+    {
+        ColorIndex = color;
+        renderer.material = ColorMaterials[ColorIndex];
+    }
 	
 	//============================================================================================================================================//
 	void StopDrawingIfLastScreenPointEncouterBaseOrSelf(Vector3 mousePosition) 
