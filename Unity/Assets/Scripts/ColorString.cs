@@ -35,6 +35,10 @@ public class ColorString : MonoBehaviour {
     int ColorIndex;
     public Material[] ColorMaterials;	
 
+    // Effects //
+    public ParticleSystem FXComplete;
+    public ParticleSystem FXDraw;
+
 	//============================================================================================================================================//
 	void Update () 
 	{
@@ -59,8 +63,9 @@ public class ColorString : MonoBehaviour {
 			}
 		}
 		else if (isTouchUpdated) 
-		{
-			if (Tail.Count == 0) {
+		{         
+			if (Tail.Count == 0) 
+            {
 				InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
 			}
 			
@@ -70,10 +75,20 @@ public class ColorString : MonoBehaviour {
 				if (Tail.Count > 2) {
 					StopDrawingIfLastScreenPointEncouterBaseOrSelf(Input.mousePosition);
 				}
+
+                // Move Draw FX //
+                GameObject fx = GameObject.Find("FXDraw");
+                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                mousePos.z = -1;
+                fx.transform.position = mousePos;
 			}
 		}
 		else 
 		{
+            // Move Draw FX Behind Camera //
+            GameObject fx = GameObject.Find("FXDraw");
+            fx.transform.position = new Vector3(0, 0, -100);
+
 			//touch has been cancelled//
 			if (IsCurveBeingDrawn) {
 				IsCurveBeingDrawn = false;
@@ -92,6 +107,17 @@ public class ColorString : MonoBehaviour {
 	{
 		//put here reactions to this event//
 		HasCurveReachedTarget = true;
+
+        // Play FX //
+        Vector3 pos = colorBase.transform.position;
+        pos.z = -1;
+        
+        Instantiate(FXComplete, pos, Quaternion.identity);
+
+        Vector3 posStart = BaseStart.transform.position;
+        posStart.z = -1;
+
+        Instantiate(FXComplete, posStart, Quaternion.identity);        
 	}
 	
 	//============================================================================================================================================//
