@@ -51,10 +51,22 @@ public class ColorBase : MonoBehaviour {
 	}
 	
 	//============================================================================================================================================//
+    Dictionary<int, int> CurveColorIndexes = new Dictionary<int, int>() { { 1, 0 }, { 2, 1 }, { 4, 2 }, { 11, 3 }, { 8, 4 }, { 7, 5 } };
+    public void SetCurveColor(ColorString curve)
+    {
+        tk2dSprite sprite = GetComponent<tk2dSprite>();
+        int index = sprite.spriteId;
+        print(index + " : " + CurveColorIndexes[index]);
+
+        curve.SetColor(CurveColorIndexes[index]);
+    }
+    
+    //============================================================================================================================================//
 	void InstantiateBaseAwareCurve()
 	{
 		Curve = (GameObject) Instantiate(Resources.Load("ColorCurve"));
 		ColorString stringScript = Curve.GetComponent<ColorString> ();
+        SetCurveColor(stringScript);
 		
 		//set up original base and peeers base//
 		ColorBase currentBase = GetComponent<ColorBase> ();

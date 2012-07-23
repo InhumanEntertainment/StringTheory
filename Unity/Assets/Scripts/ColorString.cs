@@ -33,8 +33,10 @@ public class ColorString : MonoBehaviour {
     public float WidthMin = 0.3f;
     public float WidthMax = 0.1f;
     public float WidthChange = 0.1f;
-	
-	
+
+    int ColorIndex;
+    public Material[] ColorMaterials;	
+
 	//============================================================================================================================================//
 	void Update () 
 	{
@@ -84,7 +86,7 @@ public class ColorString : MonoBehaviour {
 			}
 			else
 			{
-				Debug.Log("No touch");	
+				//Debug.Log("No touch");	
 			}
 		}
 		BuildMesh();
@@ -151,6 +153,13 @@ public class ColorString : MonoBehaviour {
 		}
 		//TODO inform original base that the curve has been destroyed somehow ??//
 	}
+
+    //============================================================================================================================================//
+    public void SetColor(int color)
+    {
+        ColorIndex = color;
+        renderer.material = ColorMaterials[ColorIndex];
+    }
 	
 	//============================================================================================================================================//
 	void StopDrawingIfLastScreenPointEncouterBaseOrSelf(Vector3 mousePosition) 
@@ -192,7 +201,11 @@ public class ColorString : MonoBehaviour {
 	//============================================================================================================================================//
 	void InitializeCurveToResumeDrawingAtPosition(Vector3 position)
 	{
-		SmoothPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if (Tail.Count == 0)
+            SmoothPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        else
+            SmoothPosition = Tail[Tail.Count - 1];
+       
 		IsCurveBeingDrawn = true;
 		HasCurveReachedTarget = false;
 	}
@@ -222,9 +235,9 @@ public class ColorString : MonoBehaviour {
 	void RemoveAllItemsFromTailAfterPoint(Vector3 position) 
 	{
 		int indexPosition = Tail.IndexOf(position);
-		Tail.RemoveRange (indexPosition,Tail.Count - indexPosition);	
-	}
-	
+		Tail.RemoveRange (indexPosition,Tail.Count - indexPosition);
+        TailWidth.RemoveRange(indexPosition, Tail.Count - indexPosition);
+	}	
 	
 	//============================================================================================================================================//
 	bool HasCurveBeenHitAtPosition(Vector3 touchPosition) 
