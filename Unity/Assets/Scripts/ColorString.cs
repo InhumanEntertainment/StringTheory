@@ -15,6 +15,8 @@ public class ColorString : MonoBehaviour {
 	
 	
 	//drawing//
+	public Mesh mesh;
+	
 	public List<Vector3> Tail = new List<Vector3>();
 	public float TailWidthStart = 1f;
 	public float TailWidthEnd = 1f;
@@ -64,7 +66,11 @@ public class ColorString : MonoBehaviour {
 			
 			if (IsCurveBeingDrawn && ! HasCurveReachedTarget) 
 			{
-				AddScreenPointToTail(Input.mousePosition);
+				if (IsNewPointMatchMinDistance(Input.mousePosition))
+				{
+					AddScreenPointToTail(Input.mousePosition);	
+				}
+				
 				if (Tail.Count > 2) {
 					StopDrawingIfLastScreenPointEncouterBaseOrSelf(Input.mousePosition);
 				}
@@ -84,6 +90,48 @@ public class ColorString : MonoBehaviour {
 		BuildMesh();
 	}
 	
+	
+	//============================================================================================================================================//
+	public bool IsNewPointMatchMinDistance(Vector3 touchPosition) 
+	{
+		
+		//calculate distance between the two vector points
+		//the last Point
+		
+		//temporary code to smooth the vector to have same vector that was store in the Tail
+		
+		bool res = true;
+		if (Tail.Count > 1) {
+		
+			
+			var worldTouchPosition = Camera.main.ScreenToWorldPoint(touchPosition);
+	        SmoothPosition =  Vector3.Lerp(worldTouchPosition, SmoothPosition, SmoothAmount);
+			Vector3 smoothedVector = new Vector3(SmoothPosition.x, SmoothPosition.y, 0);
+		
+			//Debug.Log("MAgnitude of smoothed vector is:" + smoothedVector.sqrMagnitude);
+			
+			Vector3 lastPoint = Tail[Tail.Count - 1];
+			
+			float distance = Vector3.Distance(touchPosition,lastPoint);
+			//Debug.Log("MAgnitude of smoothed vector is:" + smoothedVector.sqrMagnitude);
+			if (distance > 0.8) {
+				
+				//we need to add intermediate points.
+				//find magnitude of vecteur
+				
+				
+				
+				
+				res = true;
+			}
+			else
+			{
+				res = false;
+			}
+		}
+		
+		return res;
+	}
 	
 	//============================================================================================================================================//
 	void curveDidConnectWithMatchingBase(ColorBase colorBase) 
@@ -235,16 +283,16 @@ public class ColorString : MonoBehaviour {
     void AddScreenPointToTail(Vector3 touchPosition)
     {
 		
-		
-		//smoothing the touch Position//
-		
 		var worldTouchPosition = Camera.main.ScreenToWorldPoint(touchPosition);
+		//smoothing the touch Position//		
+		
+		
         SmoothPosition =  Vector3.Lerp(worldTouchPosition, SmoothPosition, SmoothAmount);
 		Vector3 smoothedVector = new Vector3(SmoothPosition.x, SmoothPosition.y, 0);
 		
 		Tail.Add(smoothedVector);
 		
-		//Tail.Add(touchPosition);
+		//Tail.Add(worldTouchPosition);
 
         // Varying Line Width //
         float acceleration = (WidthChange * Random.value - WidthChange * 0.5f);
@@ -343,15 +391,22 @@ public class ColorString : MonoBehaviour {
             }
 
             // Draw Tail Mesh //
-            Mesh mesh = new Mesh();
-            mesh.Clear();
-            mesh.vertices = vertices;
-            mesh.uv = uv;
-            mesh.triangles = triangles;
+            
+			MeshFilter m = GetComponent<MeshFilter>();
+			
+            m.mesh.Clear();
+            m.mesh.vertices = vertices;
+            m.mesh.uv = uv;
+            m.mesh.triangles = triangles;
 
-            MeshFilter m = GetComponent<MeshFilter>();
+            
 			//m.mesh = mesh;
-            Graphics.DrawMesh(mesh, Matrix4x4.identity, renderer.material, 0);
+            //Graphics.DrawMesh(m, Matrix4x4.identity, renderer.material, 0);
         }
     }
+	
+	void OnGUI()
+	{
+		GUI.Label(new Rect(0, 0,100,100), (1f  / Time.deltaTime).ToString ("N0"));
+	}
 }
