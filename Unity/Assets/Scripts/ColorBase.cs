@@ -15,23 +15,25 @@ public class ColorBase : MonoBehaviour {
 	{
 		bool hasTouchStarted = (Input.GetMouseButtonDown(0));
 		
-		if (hasTouchStarted) {
-
+		if (hasTouchStarted) 
+		{
 			if (HasTouchedMe(Input.mousePosition)) 
 			{
-				if (!Curve)
+				if (! ExpectedCurve) 
 				{
-					InstantiateBaseAwareCurve();
-					//InformPeersToExpectCurve(Curve);
-				}
-				else
-				{
-					Destroy(Curve);
-					//InformPeersToRemoveExpectedCurve();
-				}
+					if (Curve)
+					{
+						KillCurve(Curve);
+						//Destroy(Curve);	
+					}
+				}else {
+					Debug.Log("Touch peer base that was expecting a curve");
+					KillCurve(ExpectedCurve);
+				}	
+				InstantiateBaseAwareCurve();
+				InformPeersToExpectCurve(Curve);
 			}
 		}
-	
 	}
 	
 	//============================================================================================================================================//
@@ -56,7 +58,8 @@ public class ColorBase : MonoBehaviour {
 		
 		//set up original base and peeers base//
 		ColorBase currentBase = GetComponent<ColorBase> ();
-		stringScript.BasesExpected.Add (currentBase); 
+		stringScript.BaseStart = currentBase;
+		//stringScript.BasesExpected.Add (currentBase); 
 		foreach (ColorBase colorBase in colorBasePeers) 
 		{
 			stringScript.BasesExpected.Add(colorBase);
@@ -67,12 +70,12 @@ public class ColorBase : MonoBehaviour {
 		for (int i = 0;i<bases.Length;i++) 
 		{
 			ColorBase gameBase = bases[i];
-			if (! stringScript.BasesExpected.Contains(gameBase)) {
+			if (! stringScript.BasesExpected.Contains(gameBase)) 
+			{
 				stringScript.BasesToAvoid.Add(gameBase);
 			}
 			
 		}
-		
 		Debug.Log ("Attention curve with " + stringScript.BasesExpected.Count + " bases to detect");
 		Debug.Log ("Attention curve with " + stringScript.BasesToAvoid.Count + " bases to avoid");
 	}
@@ -80,26 +83,12 @@ public class ColorBase : MonoBehaviour {
 	//============================================================================================================================================//
 	void InformPeersToExpectCurve(GameObject curve)
 	{
-		
 		Debug.Log("Dispatch Peers Expect Curve Information");
 		foreach (ColorBase colorBase in colorBasePeers)
 		{
 			colorBase.ExpectCurve(curve);
 		}
 	}
-	
-	//============================================================================================================================================//
-	void InformPeersToRemoveExpectedCurve()
-	{
-		Debug.Log("Dispatch Inform Peers to Remove");
-		foreach (ColorBase colorBase in colorBasePeers)
-		{
-			//ColorBase colorBaseScript = colorBase.GetComponent<ColorBase>();
-			//colorBaseScript.RemoveCurve(Curve);
-			
-		}
-	}
-	
 	
 	//============================================================================================================================================//
 	void ExpectCurve(GameObject curveToSet) 
@@ -109,36 +98,19 @@ public class ColorBase : MonoBehaviour {
 	}
 	
 	//============================================================================================================================================//
-	void RemoveCurve(GameObject curveToSet)
+	void KillCurve(GameObject curveToKill)
 	{
-		//object should been destroyed already. nothing to do yet
+		Destroy(curveToKill);
 	}
 	
 	//============================================================================================================================================//
 	bool HasTouchedMe(Vector3 touchPosition)
     {
-		
-		Debug.Log("Has touched me debug touchPosition X: " + touchPosition.x + " Y: " + touchPosition.y + " Z: " + touchPosition.z);
-		
-		if (Curve) 
-		{
-			ColorString stringScript = Curve.GetComponent<ColorString> ();
-			if (stringScript.Tail.Count > 1) 
-			{
-				Vector3 lastPoint = stringScript.Tail[stringScript.Tail.Count-1];
-				Debug.Log("Has touched me debug lastPoint X: " + lastPoint.x + " Y: " + lastPoint.y + " Z: " + lastPoint.z);	
-			}
-		}
-		
-		
-		Ray ray = Camera.main.ScreenPointToRay(new Vector3(touchPosition.x,touchPosition.y,0));
-		
-		
+		Ray ray = Camera.main.ScreenPointToRay(new Vector3(touchPosition.x,touchPosition.y,0));	
 		
 		RaycastHit hit;
 		
 		bool res = false;
-			 
 		if (gameObject.collider.Raycast(ray,out hit,50.0f)) 
         {
 			res =  true;
