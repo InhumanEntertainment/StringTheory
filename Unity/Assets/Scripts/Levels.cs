@@ -14,6 +14,7 @@ public class Levels : MonoBehaviour
     //=====================================================================================================================================//
     void Start()
     {
+		Application.targetFrameRate = 60;
         LoadLevel(0);
     }
     
@@ -28,8 +29,9 @@ public class Levels : MonoBehaviour
         // Previous Level //
         float aspect = (float)Screen.width / Screen.height;
         float top = (Screen.height - Screen.width) / 2f + Screen.width;
+		float height = Screen.height * 0.05f;
 
-        if (GUI.Button(new Rect(Screen.width * 0.0f, top, Screen.width * 0.33f, 50), "Previous"))
+        if (GUI.Button(new Rect(Screen.width * 0.0f, top, Screen.width * 0.33f, height), "Previous"))
         {
             if (CurrentLevel > 0)
 	        {
@@ -38,7 +40,7 @@ public class Levels : MonoBehaviour
         }
 
         // Retry Level //
-        if (GUI.Button(new Rect(Screen.width * 0.33f, top, Screen.width * 0.34f, 50), "Retry"))
+        if (GUI.Button(new Rect(Screen.width * 0.33f, top, Screen.width * 0.34f, height), "Retry"))
         {
             var curves = GameObject.FindObjectsOfType(typeof(ColorString));
             for (int i = 0; i < curves.Length; i++)
@@ -48,7 +50,7 @@ public class Levels : MonoBehaviour
         }
 
         // Next Level //
-        if (GUI.Button(new Rect(Screen.width * 0.67f, top, Screen.width * 0.33f, 50), "Next"))
+        if (GUI.Button(new Rect(Screen.width * 0.67f, top, Screen.width * 0.33f, height), "Next"))
         {
             if (CurrentLevel + 1 < LevelList.Count)
             {
@@ -94,9 +96,10 @@ public class Levels : MonoBehaviour
     //=====================================================================================================================================//
     void CreateButton(int index, float x)
     {
-        float top = (Screen.height - Screen.width) / 2f -50;
+        float height = Screen.height * 0.05f;
+		float top = (Screen.height - Screen.width) / 2f - height;	
 
-        if (GUI.Button(new Rect(x, top, 1f / LevelList.Count * Screen.width, 50), index.ToString()))
+        if (GUI.Button(new Rect(x, top, 1f / LevelList.Count * Screen.width, height), index.ToString()))
         {
             LoadLevel(index);
         }
