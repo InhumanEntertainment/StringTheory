@@ -15,6 +15,9 @@ public class ColorString : MonoBehaviour {
 	
 	
 	//drawing//
+	
+	public float stepper = 0.13f;
+	
 	public Mesh mesh;
 	
 	public List<Vector3> Tail = new List<Vector3>();
@@ -68,9 +71,16 @@ public class ColorString : MonoBehaviour {
 			
 			if (IsCurveBeingDrawn && ! HasCurveReachedTarget) 
 			{
+				/*
 				if (IsNewPointMatchMinDistance(Input.mousePosition))
 				{
 					AddScreenPointToTail(Input.mousePosition);	
+				}*/
+				
+				List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(Input.mousePosition);
+				foreach (Vector3 point in pointsToAdd) 
+				{
+					AddScreenPointToTail(point);
 				}
 				
 				if (Tail.Count > 2) {
@@ -94,7 +104,7 @@ public class ColorString : MonoBehaviour {
 	
 	
 	//============================================================================================================================================//
-	public bool IsNewPointMatchMinDistance(Vector3 touchPosition) 
+	public List<Vector3> GetPointsToAddIfTouchPositionMatchDistanceRequirement(Vector3 touchPosition) 
 	{
 		
 		//calculate distance between the two vector points
@@ -102,34 +112,70 @@ public class ColorString : MonoBehaviour {
 		
 		//temporary code to smooth the vector to have same vector that was store in the Tail
 		
-		bool res = true;
-		if (Tail.Count > 1) {
 		
-			
-			var worldTouchPosition = Camera.main.ScreenToWorldPoint(touchPosition);
+		
+		
+		List<Vector3> res = new List<Vector3> ();
+		
+		var worldTouchPosition = Camera.main.ScreenToWorldPoint(touchPosition);
+		
+		
+		Vector3 worldTouchPosition2D = new Vector3(worldTouchPosition.x,worldTouchPosition.y,0);
+		
+		Debug.Log("World touch position 2D" + worldTouchPosition2D);
+		
+		
+		//bool res = true;
+		if (Tail.Count > 1) 
+		{	
+			/*
 	        SmoothPosition =  Vector3.Lerp(worldTouchPosition, SmoothPosition, SmoothAmount);
-			Vector3 smoothedVector = new Vector3(SmoothPosition.x, SmoothPosition.y, 0);
+			Vector3 smoothedVector = new Vector3(SmoothPosition.x, SmoothPosition.y, 0);*/
 		
 			//Debug.Log("MAgnitude of smoothed vector is:" + smoothedVector.sqrMagnitude);
 			
 			Vector3 lastPoint = Tail[Tail.Count - 1];
+			//print (lastPoint);
+			Debug.Log("Last point" + lastPoint);
 			
-			float distance = Vector3.Distance(touchPosition,lastPoint);
-			//Debug.Log("MAgnitude of smoothed vector is:" + smoothedVector.sqrMagnitude);
-			if (distance > 0.8) {
+			float distance = Vector3.Distance(worldTouchPosition2D,lastPoint);
+			
+			int intermediatePointsToAdd = (int) (distance / stepper );
+			Debug.Log ("Number of intermediate points found" + intermediatePointsToAdd);
+			
+			
+			Debug.Log("Distance found between vectors:" + distance);
+			
+			//Debug.Log("Intermediate Points to add are: " + intermediatePointsToAdd);
+			
+			if (distance > stepper) 
+			{
+				Vector3 differenceVector = worldTouchPosition2D - lastPoint;
+				differenceVector = differenceVector;
+				print(differenceVector);
 				
-				//we need to add intermediate points.
-				//find magnitude of vecteur
+				differenceVector.Normalize();
 				
+				if (intermediatePointsToAdd < 30000) {
 				
-				
-				
-				res = true;
+					for (int i=1;i<=intermediatePointsToAdd;i++)
+					{
+							Vector3 intermediateVector = differenceVector * stepper * i + lastPoint;;
+							//Debug.Log ("Intermediate Vector:" + intermediateVector);
+							//print (intermediateVector);
+							res.Add(intermediateVector);
+							
+					}
+				}
+				//res = true;
 			}
 			else
 			{
-				res = false;
+				//res = false;
 			}
+			//res.Add(worldTouchPosition2D);
+		}else{
+			res.Add(worldTouchPosition2D);
 		}
 		
 		return res;
@@ -296,16 +342,18 @@ public class ColorString : MonoBehaviour {
     void AddScreenPointToTail(Vector3 touchPosition)
     {
 		
-		var worldTouchPosition = Camera.main.ScreenToWorldPoint(touchPosition);
-		//smoothing the touch Position//		
+		//temporary disabled it to handle intermediate points
+		//var worldTouchPosition = Camera.main.ScreenToWorldPoint(touchPosition);
 		
 		
+		//smoothing the touch Position//	
+		/*
         SmoothPosition =  Vector3.Lerp(worldTouchPosition, SmoothPosition, SmoothAmount);
 		Vector3 smoothedVector = new Vector3(SmoothPosition.x, SmoothPosition.y, 0);
+		Tail.Add(smoothedVector);*/
 		
-		Tail.Add(smoothedVector);
-		
-		//Tail.Add(worldTouchPosition);
+		//Tail.Add(new Vector3(worldTouchPosition.x,worldTouchPosition.y,0));
+		Tail.Add (new Vector3(touchPosition.x,touchPosition.y,0));
 
         // Varying Line Width //
         float acceleration = (WidthChange * Random.value - WidthChange * 0.5f);
