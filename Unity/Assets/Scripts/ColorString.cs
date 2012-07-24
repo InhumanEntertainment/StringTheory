@@ -40,7 +40,18 @@ public class ColorString : MonoBehaviour {
     int ColorIndex;
     public Material[] ColorMaterials;	
 
+    // Effects //
+    public ParticleSystem FXComplete;
+    public ParticleSystem FXDraw;
+
 	//============================================================================================================================================//
+    void Awake()
+    {
+        MeshFilter m = GetComponent<MeshFilter>();
+        m.mesh = new Mesh();			
+    }
+    
+    //============================================================================================================================================//
 	void Update () 
 	{
 		bool hasTouchStarted = (Input.GetMouseButtonDown(0));
@@ -64,8 +75,9 @@ public class ColorString : MonoBehaviour {
 			}
 		}
 		else if (isTouchUpdated) 
-		{
-			if (Tail.Count == 0) {
+		{         
+			if (Tail.Count == 0) 
+            {
 				InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
 			}
 			
@@ -86,10 +98,22 @@ public class ColorString : MonoBehaviour {
 				if (Tail.Count > 2) {
 					StopDrawingIfLastScreenPointEncouterBaseOrSelf(Input.mousePosition);
 				}
+
+                // Move Draw FX //
+                GameObject fx = GameObject.Find("FXDraw");
+                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                mousePos.z = -1;
+                if(fx != null)
+                    fx.transform.position = mousePos;
 			}
 		}
 		else 
 		{
+            // Move Draw FX Behind Camera //
+            GameObject fx = GameObject.Find("FXDraw");
+            if (fx != null)
+                fx.transform.position = new Vector3(0, 0, -100);
+
 			//touch has been cancelled//
 			if (IsCurveBeingDrawn) {
 				IsCurveBeingDrawn = false;
@@ -186,6 +210,17 @@ public class ColorString : MonoBehaviour {
 	{
 		//put here reactions to this event//
 		HasCurveReachedTarget = true;
+
+        // Play FX //
+        Vector3 pos = colorBase.transform.position;
+        pos.z = -1;
+        
+        Instantiate(FXComplete, pos, Quaternion.identity);
+
+        Vector3 posStart = BaseStart.transform.position;
+        posStart.z = -1;
+
+        Instantiate(FXComplete, posStart, Quaternion.identity);        
 	}
 	
 	//============================================================================================================================================//
@@ -451,23 +486,13 @@ public class ColorString : MonoBehaviour {
                 }
             }
 
-            // Draw Tail Mesh //
-            
+            // Draw Tail Mesh //            
 			MeshFilter m = GetComponent<MeshFilter>();
 			
             m.mesh.Clear();
             m.mesh.vertices = vertices;
             m.mesh.uv = uv;
             m.mesh.triangles = triangles;
-
-            
-			//m.mesh = mesh;
-            //Graphics.DrawMesh(m, Matrix4x4.identity, renderer.material, 0);
         }
     }
-	
-	void OnGUI()
-	{
-		GUI.Label(new Rect(0, 0,100,100), (1f  / Time.deltaTime).ToString ("N0"));
-	}
 }

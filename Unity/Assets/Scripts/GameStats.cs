@@ -15,12 +15,12 @@ public class GameStats : MonoBehaviour
         GUI.Label(new Rect(0, Screen.height - 20, 100, 20), "FPS: " + (int)SmoothFPS);
 
         // Strings //
-        var strings = GameObject.FindObjectsOfType(typeof(ColorString));
+        /*var strings = GameObject.FindObjectsOfType(typeof(ColorString));
         var index = 0;
         for (int i = 0; i < strings.Length; i++)
         {
             index = strings.Length - i;
             GUI.Label(new Rect(0, 20 * (index - 1), 200, 100), "String " + index + ": " + ((ColorString)strings[i]).Tail.Count);
-        }       
+        }   */    
 	}
 }
