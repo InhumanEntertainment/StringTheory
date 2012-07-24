@@ -118,16 +118,17 @@ public class ColorBase : MonoBehaviour {
 	//============================================================================================================================================//
 	bool HasTouchedMe(Vector3 touchPosition)
     {
-		Ray ray = Camera.main.ScreenPointToRay(new Vector3(touchPosition.x,touchPosition.y,0));	
-		
-		RaycastHit hit;
-		
-		bool res = false;
-		if (gameObject.collider.Raycast(ray,out hit,50.0f)) 
+        bool res = false;
+
+        Ray ray = Camera.main.ScreenPointToRay(new Vector3(touchPosition.x, touchPosition.y, 0));
+        RaycastHit hit;
+
+        if (gameObject.collider.Raycast(ray, out hit, 50.0f))
         {
-			res =  true;
-		}
-		Debug.DrawLine (ray.origin, hit.point);
+            res = true;
+        }
+        Debug.DrawLine(ray.origin, hit.point);
+		
         return res;
 		
 	}

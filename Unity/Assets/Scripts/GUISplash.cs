@@ -6,11 +6,13 @@ public class GUISplash : MonoBehaviour
     AsyncOperation async;
     public float MinLoadTime = 2;
     public float progress = 0;
+    public string[] LevelsToLoad = {"Menu", "Game"};
+    int LoadIndex = 0;
+    bool FinishedLoading = false;
 
-    //============================================================================================================================================//
     void Start()
     {
-        StartTime = Time.realtimeSinceStartup;
+        StartTime = Time.timeSinceLevelLoad;
     }
 
     //============================================================================================================================================//  
@@ -18,15 +20,20 @@ public class GUISplash : MonoBehaviour
     {
         UISlider slider = GetComponent<UISlider>();
 
-        if (!Application.isLoadingLevel && Time.timeSinceLevelLoad > MinLoadTime)
+        if (!Application.isLoadingLevel)
         {
-            StartLevel();
+            if (LoadIndex < LevelsToLoad.Length)
+            {
+                async = Application.LoadLevelAdditiveAsync(LevelsToLoad[LoadIndex]);
+                print("Loading Level:" + LevelsToLoad[LoadIndex]);
+                LoadIndex++; 
+            }                   
         }
 
         if (async != null)
         {
-            //progress = Mathf.Min(1, Time.timeSinceLevelLoad / MinLoadTime) * 0.5f + async.progress * 0.5f;
-            progress = async.progress;
+            progress = ((float)LoadIndex / LevelsToLoad.Length) + async.progress * (1 / LevelsToLoad.Length);
+            print("Progress: " + progress);          
         }
         else
         {
@@ -34,14 +41,18 @@ public class GUISplash : MonoBehaviour
             progress = 0;
         }
 
+        if (!FinishedLoading && progress == 1)
+        {
+            FinishedLoading = true;
+        }
+
+        if (Time.timeSinceLevelLoad - StartTime > MinLoadTime)
+        {
+            // Destroy Splash Objects //
+            Destroy(GameObject.Find("Splash").gameObject);
+        }        
+
         slider.sliderValue = progress;
-
-    }
-
-    //============================================================================================================================================//  
-    void StartLevel()
-    {
-        async = Application.LoadLevelAsync("Menu");
     }
 
     //============================================================================================================================================//

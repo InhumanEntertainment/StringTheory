@@ -42,6 +42,13 @@ public class ColorString : MonoBehaviour {
     public ParticleSystem FXDraw;
 
 	//============================================================================================================================================//
+    void Awake()
+    {
+        MeshFilter m = GetComponent<MeshFilter>();
+        m.mesh = new Mesh();			
+    }
+    
+    //============================================================================================================================================//
 	void Update () 
 	{
 		bool hasTouchStarted = (Input.GetMouseButtonDown(0));
@@ -86,14 +93,16 @@ public class ColorString : MonoBehaviour {
                 GameObject fx = GameObject.Find("FXDraw");
                 Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 mousePos.z = -1;
-                fx.transform.position = mousePos;
+                if(fx != null)
+                    fx.transform.position = mousePos;
 			}
 		}
 		else 
 		{
             // Move Draw FX Behind Camera //
             GameObject fx = GameObject.Find("FXDraw");
-            fx.transform.position = new Vector3(0, 0, -100);
+            if (fx != null)
+                fx.transform.position = new Vector3(0, 0, -100);
 
 			//touch has been cancelled//
 			if (IsCurveBeingDrawn) {
@@ -429,23 +438,13 @@ public class ColorString : MonoBehaviour {
                 }
             }
 
-            // Draw Tail Mesh //
-            
+            // Draw Tail Mesh //            
 			MeshFilter m = GetComponent<MeshFilter>();
 			
             m.mesh.Clear();
             m.mesh.vertices = vertices;
             m.mesh.uv = uv;
             m.mesh.triangles = triangles;
-
-            
-			//m.mesh = mesh;
-            //Graphics.DrawMesh(m, Matrix4x4.identity, renderer.material, 0);
         }
     }
-	
-	void OnGUI()
-	{
-		GUI.Label(new Rect(0, 0,100,100), (1f  / Time.deltaTime).ToString ("N0"));
-	}
 }
