@@ -106,7 +106,7 @@ public class Levels : MonoBehaviour
     }
 
     //=====================================================================================================================================//
-    void LoadLevel(int index)
+    public void LoadLevel(int index)
     {
         LastLevel = CurrentLevel;
         CurrentLevel = index;
@@ -114,6 +114,21 @@ public class Levels : MonoBehaviour
         {
             Async = Application.LoadLevelAdditiveAsync(IndexList[index]);
         }
+    }
+
+    //=====================================================================================================================================//
+    public void LoadLevel(string level)
+    {
+        // Find index //
+        if (LevelList.Contains(level))
+	    {
+		    int index = LevelList.IndexOf(level);
+            LoadLevel(index);
+	    }
+        else
+	    {
+              print("Level '" + level + "' Not Found");  
+	    }
     }
  
 #if UNITY_EDITOR
