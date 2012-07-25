@@ -11,12 +11,10 @@ public class ColorString : MonoBehaviour {
 	public ColorBase BaseStart;
 	public List<ColorBase> BasesExpected = new List<ColorBase>();
 	public List<ColorBase> BasesToAvoid = new List<ColorBase>();
-	//List<ColorBase> BasesReached = new List<ColorBase>();
-	
 	
 	//drawing//
 	
-	public float stepper = 0.13f;
+	public float stepper = 0.15f;
 	
 	public Mesh mesh;
 	
@@ -83,11 +81,6 @@ public class ColorString : MonoBehaviour {
 			
 			if (IsCurveBeingDrawn && ! HasCurveReachedTarget) 
 			{
-				/*
-				if (IsNewPointMatchMinDistance(Input.mousePosition))
-				{
-					AddScreenPointToTail(Input.mousePosition);	
-				}*/
 				
 				List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(Input.mousePosition);
 				foreach (Vector3 point in pointsToAdd) 
@@ -131,74 +124,36 @@ public class ColorString : MonoBehaviour {
 	public List<Vector3> GetPointsToAddIfTouchPositionMatchDistanceRequirement(Vector3 touchPosition) 
 	{
 		
-		//calculate distance between the two vector points
-		//the last Point
-		
-		//temporary code to smooth the vector to have same vector that was store in the Tail
-		
-		
-		
-		
 		List<Vector3> res = new List<Vector3> ();
 		
 		var worldTouchPosition = Camera.main.ScreenToWorldPoint(touchPosition);
-		
-		
 		Vector3 worldTouchPosition2D = new Vector3(worldTouchPosition.x,worldTouchPosition.y,0);
 		
-		Debug.Log("World touch position 2D" + worldTouchPosition2D);
-		
-		
-		//bool res = true;
 		if (Tail.Count > 1) 
 		{	
 			/*
 	        SmoothPosition =  Vector3.Lerp(worldTouchPosition, SmoothPosition, SmoothAmount);
 			Vector3 smoothedVector = new Vector3(SmoothPosition.x, SmoothPosition.y, 0);*/
-		
-			//Debug.Log("MAgnitude of smoothed vector is:" + smoothedVector.sqrMagnitude);
 			
 			Vector3 lastPoint = Tail[Tail.Count - 1];
-			//print (lastPoint);
 			Debug.Log("Last point" + lastPoint);
 			
 			float distance = Vector3.Distance(worldTouchPosition2D,lastPoint);
-			
 			int intermediatePointsToAdd = (int) (distance / stepper );
-			Debug.Log ("Number of intermediate points found" + intermediatePointsToAdd);
-			
-			
-			Debug.Log("Distance found between vectors:" + distance);
-			
-			//Debug.Log("Intermediate Points to add are: " + intermediatePointsToAdd);
 			
 			if (distance > stepper) 
 			{
 				Vector3 differenceVector = worldTouchPosition2D - lastPoint;
-				differenceVector = differenceVector;
-				print(differenceVector);
-				
 				differenceVector.Normalize();
 				
-				if (intermediatePointsToAdd < 30000) {
-				
-					for (int i=1;i<=intermediatePointsToAdd;i++)
-					{
-							Vector3 intermediateVector = differenceVector * stepper * i + lastPoint;;
-							//Debug.Log ("Intermediate Vector:" + intermediateVector);
-							//print (intermediateVector);
-							res.Add(intermediateVector);
-							
-					}
+				for (int i=1;i<=intermediatePointsToAdd;i++)
+				{
+						Vector3 intermediateVector = differenceVector * stepper * i + lastPoint;;
+						res.Add(intermediateVector);
 				}
-				//res = true;
 			}
-			else
-			{
-				//res = false;
-			}
-			//res.Add(worldTouchPosition2D);
-		}else{
+		}else
+		{
 			res.Add(worldTouchPosition2D);
 		}
 		
