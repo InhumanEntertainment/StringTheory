@@ -7,8 +7,8 @@ public class ColorBase : MonoBehaviour {
 	public List<ColorBase> colorBasePeers;
 	public string baseName;
 		
-	GameObject Curve;	
-	GameObject ExpectedCurve;
+	public GameObject Curve;	
+	public GameObject ExpectedCurve;
 	
 	//============================================================================================================================================//
 	void Update () 
