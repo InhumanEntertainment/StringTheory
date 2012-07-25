@@ -88,6 +88,10 @@ public class ColorBase : MonoBehaviour {
 			}
 			
 		}
+		
+		GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
+		curveManager.SendMessage ("AddCurveToControl", stringScript);
+		
 		Debug.Log ("Attention curve with " + stringScript.BasesExpected.Count + " bases to detect");
 		Debug.Log ("Attention curve with " + stringScript.BasesToAvoid.Count + " bases to avoid");
 	}
@@ -112,6 +116,12 @@ public class ColorBase : MonoBehaviour {
 	//============================================================================================================================================//
 	void KillCurve(GameObject curveToKill)
 	{
+		GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
+		
+		
+		ColorString colorString = curveToKill.GetComponent<ColorString>();
+		
+		curveManager.SendMessage ("RemoveCurveFromMonitoring", colorString);
 		Destroy(curveToKill);
 	}
 	
