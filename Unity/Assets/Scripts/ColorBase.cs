@@ -30,7 +30,7 @@ public class ColorBase : MonoBehaviour {
 					Debug.Log("Touch peer base that was expecting a curve");
 					KillCurve(ExpectedCurve);
 				}	
-				InstantiateBaseAwareCurve();
+				InstantiateBaseAwareCurve(Input.mousePosition);
 				InformPeersToExpectCurve(Curve);
 			}
 		}
@@ -62,11 +62,16 @@ public class ColorBase : MonoBehaviour {
     }
     
     //============================================================================================================================================//
-	void InstantiateBaseAwareCurve()
+	void InstantiateBaseAwareCurve(Vector3 mousePosition)
 	{
 		Curve = (GameObject) Instantiate(Resources.Load("ColorCurve"));
 		ColorString stringScript = Curve.GetComponent<ColorString> ();
         SetCurveColor(stringScript);
+		
+		
+		//initialize curve with vector that match the one detected in position
+		//Vector3 touchWorldPoint = Camera.main.ScreenToWorldPoint(mousePosition);
+		//stringScript.InitializeCurveToResumeDrawingAtPosition(mousePosition);
 		
 		//set up original base and peeers base//
 		ColorBase currentBase = GetComponent<ColorBase> ();

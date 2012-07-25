@@ -192,34 +192,34 @@ public class ColorString : MonoBehaviour {
 		var worldTouchPosition = Camera.main.ScreenToWorldPoint(touchPosition);
 		Vector3 worldTouchPosition2D = new Vector3(worldTouchPosition.x,worldTouchPosition.y,0);
 		
+		Vector3 lastPoint;
 		if (Tail.Count > 1) 
-		{	
-			/*
-	        SmoothPosition =  Vector3.Lerp(worldTouchPosition, SmoothPosition, SmoothAmount);
-			Vector3 smoothedVector = new Vector3(SmoothPosition.x, SmoothPosition.y, 0);*/
-			
-			Vector3 lastPoint = Tail[Tail.Count - 1];
-			//Debug.Log("Last point" + lastPoint);
-			
-			float distance = Vector3.Distance(worldTouchPosition2D,lastPoint);
-			int intermediatePointsToAdd = (int) (distance / Stepper );
-			
-			if (distance > Stepper) 
-			{
-				Vector3 differenceVector = worldTouchPosition2D - lastPoint;
-				differenceVector.Normalize();
-				
-				for (int i=1;i<=intermediatePointsToAdd;i++)
-				{
-						Vector3 intermediateVector = differenceVector * Stepper * i + lastPoint;;
-						res.Add(intermediateVector);
-				}
-			}
-		}else
 		{
-			res.Add(worldTouchPosition2D);
+			lastPoint = Tail[Tail.Count - 1];	
+		}
+		else
+		{
+			lastPoint = new Vector3(BaseStart.transform.position.x,BaseStart.transform.position.y,0);
 		}
 		
+		/*
+        SmoothPosition =  Vector3.Lerp(worldTouchPosition, SmoothPosition, SmoothAmount);
+		Vector3 smoothedVector = new Vector3(SmoothPosition.x, SmoothPosition.y, 0);*/
+		
+		float distance = Vector3.Distance(worldTouchPosition2D,lastPoint);
+		int intermediatePointsToAdd = (int) (distance / Stepper );
+		
+		if (distance > Stepper) 
+		{
+			Vector3 differenceVector = worldTouchPosition2D - lastPoint;
+			differenceVector.Normalize();
+			
+			for (int i=1;i<=intermediatePointsToAdd;i++)
+			{
+					Vector3 intermediateVector = differenceVector * Stepper * i + lastPoint;;
+					res.Add(intermediateVector);
+			}
+		}
 		return res;
 	}
 	
@@ -318,7 +318,7 @@ public class ColorString : MonoBehaviour {
 	
 	
 	//============================================================================================================================================//
-	void InitializeCurveToResumeDrawingAtPosition(Vector3 position)
+	public void InitializeCurveToResumeDrawingAtPosition(Vector3 position)
 	{
         if (Tail.Count == 0)
             SmoothPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -413,7 +413,7 @@ public class ColorString : MonoBehaviour {
     }
 	
 	//============================================================================================================================================//
-    void AddScreenPointToTail(Vector3 touchPosition)
+    public void AddScreenPointToTail(Vector3 touchPosition)
     {
 		
 		//temporary disabled it to handle intermediate points
