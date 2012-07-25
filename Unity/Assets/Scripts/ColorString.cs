@@ -11,12 +11,12 @@ public class ColorString : MonoBehaviour {
 	public ColorBase BaseStart;
 	public List<ColorBase> BasesExpected = new List<ColorBase>();
 	public List<ColorBase> BasesToAvoid = new List<ColorBase>();
-	//List<ColorBase> BasesReached = new List<ColorBase>();
-	
 	
 	//drawing//
 	
-	public float stepper = 0.13f;
+	public float Stepper = 0.1f;
+	public int MinLoopLength = 5;
+	public float MinDistance = 0.25f;
 	
 	public Mesh mesh;
 	
@@ -48,7 +48,7 @@ public class ColorString : MonoBehaviour {
     void Awake()
     {
         MeshFilter m = GetComponent<MeshFilter>();
-        m.mesh = new Mesh();			
+        m.mesh = new Mesh();		
     }
     
     //============================================================================================================================================//
@@ -83,28 +83,33 @@ public class ColorString : MonoBehaviour {
 			
 			if (IsCurveBeingDrawn && ! HasCurveReachedTarget) 
 			{
-				/*
-				if (IsNewPointMatchMinDistance(Input.mousePosition))
+				if (HasFoundAnotherCurveDrawing()) 
 				{
-					AddScreenPointToTail(Input.mousePosition);	
-				}*/
-				
-				List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(Input.mousePosition);
-				foreach (Vector3 point in pointsToAdd) 
+					IsCurveBeingDrawn = false;
+				}
+				else 
 				{
-					AddScreenPointToTail(point);
-				}
-				
-				if (Tail.Count > 2) {
-					StopDrawingIfLastScreenPointEncouterBaseOrSelf(Input.mousePosition);
-				}
-
-                // Move Draw FX //
-                GameObject fx = GameObject.Find("FXDraw");
-                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                mousePos.z = -1;
-                if(fx != null)
-                    fx.transform.position = mousePos;
+					List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(Input.mousePosition);
+					foreach (Vector3 point in pointsToAdd) 
+					{
+						AddScreenPointToTail(point);
+						GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
+						CurveColliderDetector detector = curveManager.GetComponent<CurveColliderDetector>();
+						detector.CheckPositionForCurve(this);
+					}
+					
+					if (Tail.Count > 2) {
+						StopDrawingIfLastScreenPointEncouterBaseOrSelf(Input.mousePosition);
+					}
+	
+	                // Move Draw FX //
+	                GameObject fx = GameObject.Find("FXDraw");
+	                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+	                mousePos.z = -1;
+	                if(fx != null)
+	                    fx.transform.position = mousePos;	
+						
+					}
 			}
 		}
 		else 
@@ -124,84 +129,97 @@ public class ColorString : MonoBehaviour {
 			}
 		}
 		BuildMesh();
+		
+		
 	}
+	
+	
+	//============================================================================================================================================//
+	public bool HasFoundAnotherCurveDrawing() {
+		GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
+		CurveColliderDetector curveColliderDetector = curveManager.GetComponent<CurveColliderDetector> ();
+		int res = curveColliderDetector.GetNumberOfCurvesBeingDrawn();
+		if (res <= 1) 
+		{
+			return false;
+		}
+		else 
+		{
+			return true;
+		}
+	}
+	
+	//============================================================================================================================================//
+    Vector3[] GetLoop()
+    {
+        List<Vector3> loop = new List<Vector3>();
+        int start = 0;
+        int end = 0;
+
+        for (int i = 0; i < Tail.Count; i++)
+        {
+            for (int c = i + MinLoopLength; c < Tail.Count; c++)
+            {
+                // Found Intersection //
+                if (Vector3.Distance(Tail[i], Tail[c] ) < MinDistance)
+                {
+                    start = i;
+                    end = c;
+
+                    Vector3 lastPos = Vector3.zero;
+                    for (int x = start; x <= end; x++)
+                    {
+                        loop.Add(Tail[x]);
+                        //Debug.DrawLine(lastPos, curve.Tail[x], Color.black);
+                        lastPos = Tail[x];
+                    }
+                    break;
+                }
+            }
+        }
+
+        return loop.ToArray();
+    }
+	
 	
 	
 	//============================================================================================================================================//
 	public List<Vector3> GetPointsToAddIfTouchPositionMatchDistanceRequirement(Vector3 touchPosition) 
 	{
 		
-		//calculate distance between the two vector points
-		//the last Point
-		
-		//temporary code to smooth the vector to have same vector that was store in the Tail
-		
-		
-		
-		
 		List<Vector3> res = new List<Vector3> ();
 		
 		var worldTouchPosition = Camera.main.ScreenToWorldPoint(touchPosition);
-		
-		
 		Vector3 worldTouchPosition2D = new Vector3(worldTouchPosition.x,worldTouchPosition.y,0);
 		
-		Debug.Log("World touch position 2D" + worldTouchPosition2D);
-		
-		
-		//bool res = true;
+		Vector3 lastPoint;
 		if (Tail.Count > 1) 
-		{	
-			/*
-	        SmoothPosition =  Vector3.Lerp(worldTouchPosition, SmoothPosition, SmoothAmount);
-			Vector3 smoothedVector = new Vector3(SmoothPosition.x, SmoothPosition.y, 0);*/
-		
-			//Debug.Log("MAgnitude of smoothed vector is:" + smoothedVector.sqrMagnitude);
-			
-			Vector3 lastPoint = Tail[Tail.Count - 1];
-			//print (lastPoint);
-			Debug.Log("Last point" + lastPoint);
-			
-			float distance = Vector3.Distance(worldTouchPosition2D,lastPoint);
-			
-			int intermediatePointsToAdd = (int) (distance / stepper );
-			Debug.Log ("Number of intermediate points found" + intermediatePointsToAdd);
-			
-			
-			Debug.Log("Distance found between vectors:" + distance);
-			
-			//Debug.Log("Intermediate Points to add are: " + intermediatePointsToAdd);
-			
-			if (distance > stepper) 
-			{
-				Vector3 differenceVector = worldTouchPosition2D - lastPoint;
-				differenceVector = differenceVector;
-				print(differenceVector);
-				
-				differenceVector.Normalize();
-				
-				if (intermediatePointsToAdd < 30000) {
-				
-					for (int i=1;i<=intermediatePointsToAdd;i++)
-					{
-							Vector3 intermediateVector = differenceVector * stepper * i + lastPoint;;
-							//Debug.Log ("Intermediate Vector:" + intermediateVector);
-							//print (intermediateVector);
-							res.Add(intermediateVector);
-							
-					}
-				}
-				//res = true;
-			}
-			else
-			{
-				//res = false;
-			}
-			//res.Add(worldTouchPosition2D);
-		}else{
-			res.Add(worldTouchPosition2D);
+		{
+			lastPoint = Tail[Tail.Count - 1];	
+		}
+		else
+		{
+			lastPoint = new Vector3(BaseStart.transform.position.x,BaseStart.transform.position.y,0);
 		}
 		
+		/*
+        SmoothPosition =  Vector3.Lerp(worldTouchPosition, SmoothPosition, SmoothAmount);
+		Vector3 smoothedVector = new Vector3(SmoothPosition.x, SmoothPosition.y, 0);*/
+		
+		float distance = Vector3.Distance(worldTouchPosition2D,lastPoint);
+		int intermediatePointsToAdd = (int) (distance / Stepper );
+		
+		if (distance > Stepper) 
+		{
+			Vector3 differenceVector = worldTouchPosition2D - lastPoint;
+			differenceVector.Normalize();
+			
+			for (int i=1;i<=intermediatePointsToAdd;i++)
+			{
+					Vector3 intermediateVector = differenceVector * Stepper * i + lastPoint;;
+					res.Add(intermediateVector);
+			}
+		}
 		return res;
 	}
 	
@@ -230,9 +248,8 @@ public class ColorString : MonoBehaviour {
 		Tail = new List<Vector3>();
 		
 		if (colorBase != BaseStart) {
-			Destroy(gameObject);
+			KillCurve();
 		}
-		//TODO inform original base that the curve has been destroyed somehow ??//
 	}
 
     //============================================================================================================================================//
@@ -263,9 +280,30 @@ public class ColorString : MonoBehaviour {
 			}	
 		}
 		
-		//TODO code to manage self encounter//
-		//TODO need to implement the meeting with original base to avoid circular matching//
+		 Vector3[] loop = GetLoop();
+         if (loop.Length > 0)
+         {
+            CurveDidEncounterSelfAtPosition(loop[0]);
+         }
 	}
+	
+	//============================================================================================================================================//
+	void CurveDidEncounterSelfAtPosition(Vector3 intersectionPoint)
+	{
+		RemoveAllItemsFromTailAfterPoint(intersectionPoint);
+		//KillCurve();
+	}
+	
+	
+	//============================================================================================================================================//
+	void KillCurve() 
+	{
+		GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
+		CurveColliderDetector colliderDetector = curveManager.GetComponent<CurveColliderDetector>();
+		colliderDetector.RemoveCurveFromMonitoring(this);
+		Destroy(gameObject);
+	}
+	
 	
 	//============================================================================================================================================//
 	bool isLastPointCollidingWithBase(ColorBase colorBase)
@@ -280,7 +318,7 @@ public class ColorString : MonoBehaviour {
 	
 	
 	//============================================================================================================================================//
-	void InitializeCurveToResumeDrawingAtPosition(Vector3 position)
+	public void InitializeCurveToResumeDrawingAtPosition(Vector3 position)
 	{
         if (Tail.Count == 0)
             SmoothPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -313,9 +351,10 @@ public class ColorString : MonoBehaviour {
 	}
 	
 	//============================================================================================================================================//
-	void RemoveAllItemsFromTailAfterPoint(Vector3 position) 
+	public void RemoveAllItemsFromTailAfterPoint(Vector3 position) 
 	{
 		int indexPosition = Tail.IndexOf(position);
+		Debug.Log("Index Position for vector " + position + "is " + indexPosition);
 		Tail.RemoveRange (indexPosition,Tail.Count - indexPosition);
         TailWidth.RemoveRange(indexPosition, Tail.Count - indexPosition);
 	}	
@@ -341,11 +380,11 @@ public class ColorString : MonoBehaviour {
 			
 			Vector3 closestCurvePoint = GetClosestPoint(touchPosition2D);
 			
-			Debug.Log("Closest point found is point with X: " + closestCurvePoint.x + " Y: " + closestCurvePoint.y + " Z: " + closestCurvePoint.z);
-			Debug.Log("World touch position has X " + touchPosition2D.x + "Y: " + touchPosition2D.y + " Z: " + touchPosition2D.z);
+			//Debug.Log("Closest point found is point with X: " + closestCurvePoint.x + " Y: " + closestCurvePoint.y + " Z: " + closestCurvePoint.z);
+			//Debug.Log("World touch position has X " + touchPosition2D.x + "Y: " + touchPosition2D.y + " Z: " + touchPosition2D.z);
 			
 			float distance = Vector3.Distance(touchPosition2D,closestCurvePoint);
-			Debug.Log("Distance between closest and touch is: " + distance + " and width of curve is: " + Width);
+			//Debug.Log("Distance between closest and touch is: " + distance + " and width of curve is: " + Width);
 			
 			bool hasCurveBeenTouched = (distance < Width * 2) ;
 			if (hasCurveBeenTouched) {
@@ -374,7 +413,7 @@ public class ColorString : MonoBehaviour {
     }
 	
 	//============================================================================================================================================//
-    void AddScreenPointToTail(Vector3 touchPosition)
+    public void AddScreenPointToTail(Vector3 touchPosition)
     {
 		
 		//temporary disabled it to handle intermediate points
