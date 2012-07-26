@@ -4,9 +4,13 @@ using System.Collections.Generic;
 
 public class ColorString : MonoBehaviour {
 	
+	//properties//
+	public float CurveLength = 0f;
+	
+	
 	//logic//
 	public bool IsCurveBeingDrawn = false;	
-	bool HasCurveReachedTarget = false;
+	public bool HasCurveReachedTarget = false;
 	
 	public ColorBase BaseStart;
 	public List<ColorBase> BasesExpected = new List<ColorBase>();
@@ -357,6 +361,7 @@ public class ColorString : MonoBehaviour {
 		Debug.Log("Index Position for vector " + position + "is " + indexPosition);
 		Tail.RemoveRange (indexPosition,Tail.Count - indexPosition);
         TailWidth.RemoveRange(indexPosition, Tail.Count - indexPosition);
+		UpdateCurveLength();
 	}	
 	
 	//============================================================================================================================================//
@@ -413,6 +418,18 @@ public class ColorString : MonoBehaviour {
     }
 	
 	//============================================================================================================================================//
+	public void UpdateCurveLength() 
+	{
+		CurveLength = 0;
+		
+		foreach (Vector3 point in Tail) 
+		{
+			CurveLength = CurveLength + point.magnitude;
+		}
+	}
+	
+	
+	//============================================================================================================================================//
     public void AddScreenPointToTail(Vector3 touchPosition)
     {
 		
@@ -428,6 +445,7 @@ public class ColorString : MonoBehaviour {
 		
 		//Tail.Add(new Vector3(worldTouchPosition.x,worldTouchPosition.y,0));
 		Tail.Add (new Vector3(touchPosition.x,touchPosition.y,0));
+		UpdateCurveLength();
 
         // Varying Line Width //
         float acceleration = (WidthChange * Random.value - WidthChange * 0.5f);
