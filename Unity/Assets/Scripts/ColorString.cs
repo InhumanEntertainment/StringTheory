@@ -16,6 +16,12 @@ public class ColorString : MonoBehaviour {
 	public List<ColorBase> BasesExpected = new List<ColorBase>();
 	public List<ColorBase> BasesToAvoid = new List<ColorBase>();
 	
+	//ending management
+	public GameObject TouchTracker;
+	public GameObject ArrowTracker;
+	GameObject CurrentTracker;
+	
+	
 	//drawing//
 	
 	public float Stepper = 0.1f;
@@ -47,30 +53,40 @@ public class ColorString : MonoBehaviour {
     // Effects //
     public ParticleSystem FXComplete;
     public ParticleSystem FXDraw;
+    public ParticleSystem FXTest;
+    public Color[] fxColors = new Color[] { new Color(0, 1, 0), new Color(1, 1f, 0f), new Color(0.2f, 0, 1f), new Color(0f, 1f, 1), new Color(0.7f, 1, 0), new Color(0.5f, 0, 1f) };
+
 
 	//============================================================================================================================================//
     void Awake()
     {
         MeshFilter m = GetComponent<MeshFilter>();
-        m.mesh = new Mesh();		
+        m.mesh = new Mesh();
+
+        FXTest = (ParticleSystem)Instantiate(FXTest, transform.position, Quaternion.identity);
+        FXTest.emissionRate = 0;
     }
     
     //============================================================================================================================================//
 	void Update () 
-	{
+	{	
 		bool hasTouchStarted = (Input.GetMouseButtonDown(0));
 		bool isTouchUpdated = Input.GetMouseButton(0);
+		
+		if (Input.touches.Length<=1) { 
 		
 		if (hasTouchStarted) {
 			
 			if (! IsCurveBeingDrawn) 
 			{
+				CutAndResumeDrawingIfNecessary();
+				/*
 				if (HasCurveBeenHitAtPosition(Input.mousePosition))
 				{
 					//Game.Log("Curve has been Hit");
 					CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
 					InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
-				}
+				}*/ 
 			}
 			else
 			{
@@ -107,14 +123,31 @@ public class ColorString : MonoBehaviour {
 					}
 	
 	                // Move Draw FX //
-	                GameObject fx = GameObject.Find("FXDraw");
+	                /*GameObject fx = GameObject.Find("FXDraw");
 	                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 	                mousePos.z = -1;
 	                if(fx != null)
-	                    fx.transform.position = mousePos;	
+	                    fx.transform.position = mousePos;*/	
 						
 					}
 			}
+			else
+			{
+				if (! IsCurveBeingDrawn) 
+				{
+					CutAndResumeDrawingIfNecessary();		
+				}	
+			}
+				
+			
+			
+			//displaying of tracker
+			if (! HasCurveReachedTarget && IsCurveBeingDrawn)
+			{
+				Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+				UpdateTouchTrackerWithPosition(new Vector3(mousePosition.x,mousePosition.y,0));	
+			}
+			
 		}
 		else 
 		{
@@ -135,8 +168,66 @@ public class ColorString : MonoBehaviour {
 		BuildMesh();
 		
 		
+		if (! IsCurveBeingDrawn) 
+		{
+			ShowArrowTracker();
+		}else{
+			ShowTouchTracker();
+		}
+		
+		}//end if touches count
+	}
+					
+	
+	//============================================================================================================================================//
+	void CutAndResumeDrawingIfNecessary()
+	{
+					if (HasCurveBeenHitAtPosition(Input.mousePosition))
+				{
+					Debug.Log("Curve has been Hit");
+					CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
+					InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
+				}	
+	}					
+					
+	
+	//============================================================================================================================================//
+	public void InitializeTouchTrackerWithPosition(Vector3 touchPosition) 
+	{
+		ShowArrowTracker();
+		UpdateTouchTrackerWithPosition(new Vector3(touchPosition.x,touchPosition.y,0));
 	}
 	
+	//============================================================================================================================================//
+	public void UpdateTouchTrackerWithPosition(Vector3 touchPosition)
+	{
+		CurrentTracker.transform.position = touchPosition;
+	}
+	
+	
+	//============================================================================================================================================//
+	public void ShowTouchTracker() 
+	{
+		Vector3 currentTrackerPosition = new Vector3(CurrentTracker.transform.position.x,CurrentTracker.transform.position.y,-1);
+		CurrentTracker = TouchTracker;
+		ArrowTracker.transform.position = new Vector3 (ArrowTracker.transform.position.x,ArrowTracker.transform.position.y,-200);
+		CurrentTracker.transform.position = currentTrackerPosition;
+	}
+	
+	//============================================================================================================================================//
+	public void ShowArrowTracker() 
+	{
+		CurrentTracker = ArrowTracker;
+		TouchTracker.transform.position = new Vector3 (ArrowTracker.transform.position.x,ArrowTracker.transform.position.y,-200);
+		
+		Vector3 arrowPosition = new Vector3(0,0,-200);
+		if (Tail.Count > 1) 
+		{
+			Vector3 lastPosition = Tail[Tail.Count-1];
+			arrowPosition = new Vector3 (lastPosition.x,lastPosition.y,lastPosition.z);
+		}
+		CurrentTracker.transform.position = arrowPosition;
+	}
 	
 	//============================================================================================================================================//
 	public bool HasFoundAnotherCurveDrawing() {
@@ -232,6 +323,10 @@ public class ColorString : MonoBehaviour {
 	{
 		//put here reactions to this event//
 		HasCurveReachedTarget = true;
+		
+		//remove the trackers
+		ArrowTracker.transform.position = new Vector3(CurrentTracker.transform.position.x,CurrentTracker.transform.position.y,-200);
+		TouchTracker.transform.position = new Vector3(CurrentTracker.transform.position.x,CurrentTracker.transform.position.y,-200);
 
         // Play FX //
         Vector3 pos = colorBase.transform.position;
@@ -255,13 +350,30 @@ public class ColorString : MonoBehaviour {
 			KillCurve();
 		}
 	}
-
+	
     //============================================================================================================================================//
     public void SetColor(int color)
     {
         ColorIndex = color;
         renderer.material = ColorMaterials[ColorIndex];
     }
+	
+	//============================================================================================================================================//
+	public void SetTouchTracker(int trackerIndex) 
+	{
+		tk2dSprite sprite = TouchTracker.GetComponent<tk2dSprite>();
+        sprite.spriteId = trackerIndex;
+	}
+	
+	//============================================================================================================================================//
+	public void SetArrowTracker(int trackerIndex) 
+	{
+		tk2dSprite sprite = ArrowTracker.GetComponent<tk2dSprite>();
+        sprite.spriteId = trackerIndex;
+		
+		ArrowTracker.transform.localScale += new Vector3(-0.8F, -0.8f, 0);
+	}
+	
 	
 	//============================================================================================================================================//
 	void StopDrawingIfLastScreenPointEncouterBaseOrSelf(Vector3 mousePosition) 
@@ -367,6 +479,8 @@ public class ColorString : MonoBehaviour {
 		Tail.RemoveRange (indexPosition,Tail.Count - indexPosition);
         TailWidth.RemoveRange(indexPosition, Tail.Count - indexPosition);
 		UpdateCurveLength();
+		
+		UpdateTouchTrackerWithPosition(position);
 	}	
 	
 	//============================================================================================================================================//
@@ -470,6 +584,12 @@ public class ColorString : MonoBehaviour {
         }
 
         TailWidth.Add(Width);
+
+        // Test Particles //
+        
+        FXTest.transform.position = Tail[Tail.Count - 1];
+        FXTest.startColor = fxColors[ColorIndex];
+        FXTest.Emit(5);
 	}
 	
 	//============================================================================================================================================//
