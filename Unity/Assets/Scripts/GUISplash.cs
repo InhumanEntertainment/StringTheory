@@ -25,7 +25,7 @@ public class GUISplash : MonoBehaviour
             if (LoadIndex < LevelsToLoad.Length)
             {
                 async = Application.LoadLevelAdditiveAsync(LevelsToLoad[LoadIndex]);
-                print("Loading Level:" + LevelsToLoad[LoadIndex]);
+                Game.Log("Loading Level:" + LevelsToLoad[LoadIndex]);
                 LoadIndex++; 
             }                   
         }
@@ -33,7 +33,7 @@ public class GUISplash : MonoBehaviour
         if (async != null)
         {
             progress = ((float)LoadIndex / LevelsToLoad.Length) + async.progress * (1 / LevelsToLoad.Length);
-            print("Progress: " + progress);          
+            Game.Log("Progress: " + progress);          
         }
         else
         {

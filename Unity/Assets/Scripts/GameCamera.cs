@@ -6,6 +6,8 @@ public class GameCamera : MonoBehaviour
     public float ScreenSize = 5;
     public float AspectRatio;
     public int Width, Height;
+    public int TargetWidth = 1536;
+    public int TargetHeight = 2048;
 
     //=====================================================================================================================================//
     void Start()
@@ -26,13 +28,15 @@ public class GameCamera : MonoBehaviour
     //===================================================================================================================================================================//
     void SetupCamera()
     {
-        if (camera.aspect < 1)
+        float aspect = (float)TargetWidth / TargetHeight;
+
+        if (camera.aspect < aspect)
         {
             camera.orthographicSize = ScreenSize / camera.aspect;      
         }
         else
         {
-            camera.orthographicSize = ScreenSize;
+            camera.orthographicSize = ScreenSize / aspect;
         }
     }
 

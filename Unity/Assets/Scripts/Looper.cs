@@ -23,7 +23,7 @@ public class Looper : MonoBehaviour
 
             if (loop.Length > 0)
             {
-                print("Loop Found");
+                Game.Log("Loop Found");
                 CheckLoop(loop);
             }
         }
@@ -139,9 +139,9 @@ public class Looper : MonoBehaviour
 
         float x = Mathf.Cos(rotation) * localPoint.x - Mathf.Sin(rotation) * localPoint.y;
         float y = Mathf.Sin(rotation) * localPoint.x + Mathf.Cos(rotation) * localPoint.y;
-        //print("X: " + x + " Y: " + y + " Rotation: " + (rotation * Mathf.Rad2Deg));
+        //Game.Log("X: " + x + " Y: " + y + " Rotation: " + (rotation * Mathf.Rad2Deg));
         result = y > 0 ? 1 : -1;
-        //print(result);
+        //Game.Log(result);
 
         //Debug.DrawLine(transform.position, transform.position + (new Vector3(x, y, 0).normalized * 1), Color.yellow);
         //Debug.DrawLine(start, start - (localPoint.normalized * 1), Color.red);

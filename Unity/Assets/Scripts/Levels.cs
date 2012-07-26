@@ -71,7 +71,7 @@ public class Levels : MonoBehaviour
                     // Play Transition //
                     //Destroy(root); 
                     Animation anim = root.transform.FindChild("Nodes").animation;
-                    //root.transform.position = new Vector3(0, 0, 50);
+                    root.transform.position = new Vector3(0, 0, -5);
                     anim.PlayQueued("Level_Close", QueueMode.PlayNow);
 
                     // Play Level Open //
@@ -127,7 +127,7 @@ public class Levels : MonoBehaviour
 	    }
         else
 	    {
-              print("Level '" + level + "' Not Found");  
+              Game.Log("Level '" + level + "' Not Found");  
 	    }
     }
  

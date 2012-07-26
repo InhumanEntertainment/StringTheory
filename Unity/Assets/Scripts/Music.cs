@@ -51,7 +51,7 @@ public class Music : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
-            print("Full Screen");
+            Game.Log("Full Screen");
             Screen.fullScreen = !Screen.fullScreen;
         }
     }

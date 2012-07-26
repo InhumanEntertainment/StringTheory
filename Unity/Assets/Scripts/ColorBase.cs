@@ -27,7 +27,7 @@ public class ColorBase : MonoBehaviour {
 						//Destroy(Curve);	
 					}
 				}else {
-					Debug.Log("Touch peer base that was expecting a curve");
+					//Game.Log("Touch peer base that was expecting a curve");
 					KillCurve(ExpectedCurve);
 				}	
 				InstantiateBaseAwareCurve(Input.mousePosition);
@@ -39,13 +39,13 @@ public class ColorBase : MonoBehaviour {
 	//============================================================================================================================================//
 	public bool IsCollidingWithPoint(Vector3 point) 
 	{
-		//Debug.Log("Point position X :" + point.x + " Y:" + point.y + "Z:" + point.z);
+		//Game.Log("Point position X :" + point.x + " Y:" + point.y + "Z:" + point.z);
 		bool res = false;
 		if (gameObject.collider.bounds.Contains(point)){
 			res = true;
-			//Debug.Log("The damn base box " + baseName + " contains this point" + point.x);
+			//Game.Log("The damn base box " + baseName + " contains this point" + point.x);
 		}else{
-			//Debug.Log("The damn base box " + baseName + " does not contains this point" + point.x);
+			//Game.Log("The damn base box " + baseName + " does not contains this point" + point.x);
 		}
 		return res;
 	}
@@ -56,7 +56,7 @@ public class ColorBase : MonoBehaviour {
     {
         tk2dSprite sprite = GetComponent<tk2dSprite>();
         int index = sprite.spriteId;
-        print(index + " : " + CurveColorIndexes[index]);
+        Game.Log(index + " : " + CurveColorIndexes[index]);
 
         curve.SetColor(CurveColorIndexes[index]);
     }
@@ -97,14 +97,14 @@ public class ColorBase : MonoBehaviour {
 		GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
 		curveManager.SendMessage ("AddCurveToControl", stringScript);
 		
-		Debug.Log ("Attention curve with " + stringScript.BasesExpected.Count + " bases to detect");
-		Debug.Log ("Attention curve with " + stringScript.BasesToAvoid.Count + " bases to avoid");
+		//Debug.Log ("Attention curve with " + stringScript.BasesExpected.Count + " bases to detect");
+		//Debug.Log ("Attention curve with " + stringScript.BasesToAvoid.Count + " bases to avoid");
 	}
 	
 	//============================================================================================================================================//
 	void InformPeersToExpectCurve(GameObject curve)
 	{
-		Debug.Log("Dispatch Peers Expect Curve Information");
+		//Game.Log("Dispatch Peers Expect Curve Information");
 		foreach (ColorBase colorBase in colorBasePeers)
 		{
 			colorBase.ExpectCurve(curve);
@@ -114,7 +114,7 @@ public class ColorBase : MonoBehaviour {
 	//============================================================================================================================================//
 	void ExpectCurve(GameObject curveToSet) 
 	{
-		Debug.Log("Node: " + name + " has received a curve to set");
+		//Game.Log("Node: " + name + " has received a curve to set");
 		ExpectedCurve = curveToSet;
 	}
 	
