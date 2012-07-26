@@ -76,6 +76,7 @@ public class ColorBase : MonoBehaviour {
 		//set up original base and peeers base//
 		ColorBase currentBase = GetComponent<ColorBase> ();
 		stringScript.BaseStart = currentBase;
+		stringScript.InitializeTouchTrackerWithPosition(currentBase.transform.position);
 		//stringScript.BasesExpected.Add (currentBase); 
 		foreach (ColorBase colorBase in colorBasePeers) 
 		{

@@ -49,9 +49,6 @@ public class CurveColliderDetector : MonoBehaviour {
 				bool collisionHasBeenDetected = collisionPoint.z == 0;
 				if (collisionHasBeenDetected) 
 				{
-					Debug.Log("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
-					Debug.Log("Collision Point Find  IS:" + collisionPoint);
-					
 					PeformCutOnCurve(tempList[i],collisionPoint);
 					break;
 				}

@@ -16,6 +16,12 @@ public class ColorString : MonoBehaviour {
 	public List<ColorBase> BasesExpected = new List<ColorBase>();
 	public List<ColorBase> BasesToAvoid = new List<ColorBase>();
 	
+	//ending management
+	public GameObject TouchTracker;
+	public GameObject ArrowTracker;
+	GameObject CurrentTracker;
+	
+	
 	//drawing//
 	
 	public float Stepper = 0.1f;
@@ -52,7 +58,7 @@ public class ColorString : MonoBehaviour {
     void Awake()
     {
         MeshFilter m = GetComponent<MeshFilter>();
-        m.mesh = new Mesh();		
+        m.mesh = new Mesh();	
     }
     
     //============================================================================================================================================//
@@ -70,7 +76,10 @@ public class ColorString : MonoBehaviour {
 					Debug.Log("Curve has been Hit");
 					CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
 					InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
+					//SwitchTracker();
+					InitializeTouchTrackerWithPosition(Camera.main.ScreenToWorldPoint(Input.mousePosition)); 
 				}
+				
 			}
 			else
 			{
@@ -115,6 +124,14 @@ public class ColorString : MonoBehaviour {
 						
 					}
 			}
+			
+			//displaying of tracker
+			if (! HasCurveReachedTarget && IsCurveBeingDrawn)
+			{
+				Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+				UpdateTouchTrackerWithPosition(new Vector3(mousePosition.x,mousePosition.y,0));	
+			}
+			
 		}
 		else 
 		{
@@ -126,6 +143,7 @@ public class ColorString : MonoBehaviour {
 			//touch has been cancelled//
 			if (IsCurveBeingDrawn) {
 				IsCurveBeingDrawn = false;
+				SwitchTracker();
 			}
 			else
 			{
@@ -133,9 +151,62 @@ public class ColorString : MonoBehaviour {
 			}
 		}
 		BuildMesh();
-		
-		
 	}
+	
+	
+	public void ManageTrackersDisplaying()
+	{
+		
+		/*
+		bool hasTouchStarted = (Input.GetMouseButtonDown(0));
+		bool isTouchUpdated = Input.GetMouseButton(0);
+		
+
+		if (hasTouchStarted || hasTouchUpdated
+		SwitchTracker();
+		
+		if (! HasCurveReachedTarget && IsCurveBeingDrawn)
+		{
+			Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			UpdateTouchTrackerWithPosition(new Vector3(mousePosition.x,mousePosition.y,0));	
+		}*/
+	}
+	
+	
+	
+	//============================================================================================================================================//
+	public void InitializeTouchTrackerWithPosition(Vector3 touchPosition) 
+	{
+		CurrentTracker = ArrowTracker;
+		SwitchTracker();
+		UpdateTouchTrackerWithPosition(new Vector3(touchPosition.x,touchPosition.y,0));
+	}
+	
+	//============================================================================================================================================//
+	public void UpdateTouchTrackerWithPosition(Vector3 touchPosition)
+	{
+		CurrentTracker.transform.position = touchPosition;
+	}
+	
+	//============================================================================================================================================//
+	public void SwitchTracker() 
+	{
+	
+		if (! HasCurveReachedTarget) 
+		{
+			Vector3 currentTrackerPosition = new Vector3(CurrentTracker.transform.position.x,CurrentTracker.transform.position.y,0);
+			if (CurrentTracker != ArrowTracker) 
+			{
+				CurrentTracker = ArrowTracker;
+				TouchTracker.transform.position = new Vector3 (ArrowTracker.transform.position.x,ArrowTracker.transform.position.y,-200);
+			}else{
+				CurrentTracker = TouchTracker;
+				ArrowTracker.transform.position = new Vector3 (ArrowTracker.transform.position.x,ArrowTracker.transform.position.y,-200);
+			}
+			CurrentTracker.transform.position = currentTrackerPosition;
+		}
+	}
+	
 	
 	
 	//============================================================================================================================================//
@@ -232,6 +303,10 @@ public class ColorString : MonoBehaviour {
 	{
 		//put here reactions to this event//
 		HasCurveReachedTarget = true;
+		
+		//remove the trackers
+		ArrowTracker.transform.position = new Vector3(CurrentTracker.transform.position.x,CurrentTracker.transform.position.y,-200);
+		TouchTracker.transform.position = new Vector3(CurrentTracker.transform.position.x,CurrentTracker.transform.position.y,-200);
 
         // Play FX //
         Vector3 pos = colorBase.transform.position;
@@ -362,6 +437,8 @@ public class ColorString : MonoBehaviour {
 		Tail.RemoveRange (indexPosition,Tail.Count - indexPosition);
         TailWidth.RemoveRange(indexPosition, Tail.Count - indexPosition);
 		UpdateCurveLength();
+		
+		UpdateTouchTrackerWithPosition(position);
 	}	
 	
 	//============================================================================================================================================//
