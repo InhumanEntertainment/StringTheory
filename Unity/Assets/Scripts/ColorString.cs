@@ -74,12 +74,14 @@ public class ColorString : MonoBehaviour {
 			
 			if (! IsCurveBeingDrawn) 
 			{
+				CutAndResumeDrawingIfNecessary();
+				/*
 				if (HasCurveBeenHitAtPosition(Input.mousePosition))
 				{
 					Debug.Log("Curve has been Hit");
 					CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
 					InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
-				} 
+				}*/ 
 			}
 			else
 			{
@@ -124,6 +126,15 @@ public class ColorString : MonoBehaviour {
 						
 					}
 			}
+			else
+			{
+				if (! IsCurveBeingDrawn) 
+				{
+					CutAndResumeDrawingIfNecessary();		
+				}	
+			}
+				
+			
 			
 			//displaying of tracker
 			if (! HasCurveReachedTarget && IsCurveBeingDrawn)
@@ -161,6 +172,19 @@ public class ColorString : MonoBehaviour {
 		
 		}//end if touches count
 	}
+					
+	
+	//============================================================================================================================================//
+	void CutAndResumeDrawingIfNecessary()
+	{
+					if (HasCurveBeenHitAtPosition(Input.mousePosition))
+				{
+					Debug.Log("Curve has been Hit");
+					CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
+					InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
+				}	
+	}					
+					
 	
 	//============================================================================================================================================//
 	public void InitializeTouchTrackerWithPosition(Vector3 touchPosition) 
