@@ -10,10 +10,15 @@ public class ColorBase : MonoBehaviour {
 	public GameObject Curve;	
 	public GameObject ExpectedCurve;
 	
+	
+	
+	
+	
 	//============================================================================================================================================//
 	void Update () 
 	{
 		bool hasTouchStarted = (Input.GetMouseButtonDown(0));
+		bool isTouchUpdated = Input.GetMouseButton(0);
 		
 		if (hasTouchStarted) 
 		{
@@ -30,10 +35,29 @@ public class ColorBase : MonoBehaviour {
 					Debug.Log("Touch peer base that was expecting a curve");
 					KillCurve(ExpectedCurve);
 				}	
+				
 				InstantiateBaseAwareCurve(Input.mousePosition);
 				InformPeersToExpectCurve(Curve);
 			}
 		}
+		
+		else if (isTouchUpdated) 
+		{
+			
+		}
+		else
+		{
+			
+			if (Curve) 
+			{
+				ColorString colorString = Curve.GetComponent<ColorString>();
+				if (colorString.Tail.Count == 0) 
+				{
+					KillCurve(Curve);	
+				}
+			}
+		}
+		
 	}
 	
 	//============================================================================================================================================//
@@ -51,7 +75,45 @@ public class ColorBase : MonoBehaviour {
 	}
 	
 	//============================================================================================================================================//
-    Dictionary<int, int> CurveColorIndexes = new Dictionary<int, int>() { { 1, 0 }, { 2, 1 }, { 4, 2 }, { 11, 3 }, { 8, 4 }, { 7, 5 } };
+    enum CurveColorMaterial : int {Teal=0, Orange=1, Purple=2, Aqua=3, Yellow=4, Pink=5};
+	enum BaseColorSpriteID : int {Teal=1,Aqua=11,Orange=2,Pink=7,Purple=4,Yellow=8};
+	
+	enum CurveEndColorSpriteID : int {Teal=20,Aqua=24,Orange=19,Pink=22,Purple=23,Yellow=21};
+	enum CurveArrowColorSpriteID : int {Teal=20,Aqua=24,Orange=19,Pink=22,Purple=23,Yellow=21};
+	
+	Dictionary<int, int> CurveColorIndexes = new Dictionary<int, int>() { 
+		{(int)BaseColorSpriteID.Teal, (int)CurveColorMaterial.Teal}, 
+		{(int)BaseColorSpriteID.Aqua, (int)CurveColorMaterial.Aqua},
+		{(int)BaseColorSpriteID.Orange, (int)CurveColorMaterial.Orange},
+		{(int)BaseColorSpriteID.Pink, (int)CurveColorMaterial.Pink},
+		{(int)BaseColorSpriteID.Purple, (int)CurveColorMaterial.Purple},
+		{(int)BaseColorSpriteID.Yellow, (int)CurveColorMaterial.Yellow}
+	};
+	
+	Dictionary<int, int> CurveTrackerIndexes = new Dictionary<int, int> {
+		{(int)BaseColorSpriteID.Teal, (int)CurveEndColorSpriteID.Teal}, 
+		{(int)BaseColorSpriteID.Aqua, (int)CurveEndColorSpriteID.Aqua}, 
+		{(int)BaseColorSpriteID.Orange, (int)CurveEndColorSpriteID.Orange}, 
+		{(int)BaseColorSpriteID.Pink, (int)CurveEndColorSpriteID.Pink}, 
+		{(int)BaseColorSpriteID.Purple, (int)CurveEndColorSpriteID.Purple}, 
+		{(int)BaseColorSpriteID.Yellow, (int)CurveEndColorSpriteID.Yellow}, 
+		
+	};
+	
+	Dictionary<int, int> CurveTrackerArrowIndexes = new Dictionary<int, int> {
+		{(int)BaseColorSpriteID.Teal, (int)CurveEndColorSpriteID.Teal}, 
+		{(int)BaseColorSpriteID.Aqua, (int)CurveEndColorSpriteID.Aqua}, 
+		{(int)BaseColorSpriteID.Orange, (int)CurveEndColorSpriteID.Orange}, 
+		{(int)BaseColorSpriteID.Pink, (int)CurveEndColorSpriteID.Pink}, 
+		{(int)BaseColorSpriteID.Purple, (int)CurveEndColorSpriteID.Purple}, 
+		{(int)BaseColorSpriteID.Yellow, (int)CurveEndColorSpriteID.Yellow}, 
+		
+	};
+	
+	
+	//Dictionary<int, int> CurveColorIndexes = new Dictionary<int, int>() { { 1, 0 }, { 2, 1 }, { 4, 2 }, { 11, 3 }, { 8, 4 }, { 7, 5 } };
+	
+	//Dictionary<int, int> CurveTrackerIndexes = new Dictionary<int, int> {};
     public void SetCurveColor(ColorString curve)
     {
         tk2dSprite sprite = GetComponent<tk2dSprite>();
@@ -59,6 +121,10 @@ public class ColorBase : MonoBehaviour {
         print(index + " : " + CurveColorIndexes[index]);
 
         curve.SetColor(CurveColorIndexes[index]);
+		
+		//set the colors of the trackers
+		curve.SetTouchTracker(CurveTrackerIndexes[index]);
+		curve.SetArrowTracker(CurveTrackerArrowIndexes[index]);
     }
     
     //============================================================================================================================================//
@@ -68,16 +134,11 @@ public class ColorBase : MonoBehaviour {
 		ColorString stringScript = Curve.GetComponent<ColorString> ();
         SetCurveColor(stringScript);
 		
-		
-		//initialize curve with vector that match the one detected in position
-		//Vector3 touchWorldPoint = Camera.main.ScreenToWorldPoint(mousePosition);
-		//stringScript.InitializeCurveToResumeDrawingAtPosition(mousePosition);
-		
 		//set up original base and peeers base//
 		ColorBase currentBase = GetComponent<ColorBase> ();
 		stringScript.BaseStart = currentBase;
 		stringScript.InitializeTouchTrackerWithPosition(currentBase.transform.position);
-		//stringScript.BasesExpected.Add (currentBase); 
+		
 		foreach (ColorBase colorBase in colorBasePeers) 
 		{
 			stringScript.BasesExpected.Add(colorBase);

@@ -76,10 +76,7 @@ public class ColorString : MonoBehaviour {
 					Debug.Log("Curve has been Hit");
 					CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
 					InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
-					//SwitchTracker();
-					InitializeTouchTrackerWithPosition(Camera.main.ScreenToWorldPoint(Input.mousePosition)); 
 				}
-				
 			}
 			else
 			{
@@ -143,7 +140,6 @@ public class ColorString : MonoBehaviour {
 			//touch has been cancelled//
 			if (IsCurveBeingDrawn) {
 				IsCurveBeingDrawn = false;
-				SwitchTracker();
 			}
 			else
 			{
@@ -151,34 +147,21 @@ public class ColorString : MonoBehaviour {
 			}
 		}
 		BuildMesh();
-	}
-	
-	
-	public void ManageTrackersDisplaying()
-	{
 		
-		/*
-		bool hasTouchStarted = (Input.GetMouseButtonDown(0));
-		bool isTouchUpdated = Input.GetMouseButton(0);
 		
-
-		if (hasTouchStarted || hasTouchUpdated
-		SwitchTracker();
-		
-		if (! HasCurveReachedTarget && IsCurveBeingDrawn)
+		if (! IsCurveBeingDrawn) 
 		{
-			Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			UpdateTouchTrackerWithPosition(new Vector3(mousePosition.x,mousePosition.y,0));	
-		}*/
+			ShowArrowTracker();
+		}else{
+			ShowTouchTracker();
+		}
+		
 	}
-	
-	
 	
 	//============================================================================================================================================//
 	public void InitializeTouchTrackerWithPosition(Vector3 touchPosition) 
 	{
-		CurrentTracker = ArrowTracker;
-		SwitchTracker();
+		ShowArrowTracker();
 		UpdateTouchTrackerWithPosition(new Vector3(touchPosition.x,touchPosition.y,0));
 	}
 	
@@ -188,26 +171,30 @@ public class ColorString : MonoBehaviour {
 		CurrentTracker.transform.position = touchPosition;
 	}
 	
-	//============================================================================================================================================//
-	public void SwitchTracker() 
-	{
 	
-		if (! HasCurveReachedTarget) 
-		{
-			Vector3 currentTrackerPosition = new Vector3(CurrentTracker.transform.position.x,CurrentTracker.transform.position.y,0);
-			if (CurrentTracker != ArrowTracker) 
-			{
-				CurrentTracker = ArrowTracker;
-				TouchTracker.transform.position = new Vector3 (ArrowTracker.transform.position.x,ArrowTracker.transform.position.y,-200);
-			}else{
-				CurrentTracker = TouchTracker;
-				ArrowTracker.transform.position = new Vector3 (ArrowTracker.transform.position.x,ArrowTracker.transform.position.y,-200);
-			}
-			CurrentTracker.transform.position = currentTrackerPosition;
-		}
+	//============================================================================================================================================//
+	public void ShowTouchTracker() 
+	{
+		Vector3 currentTrackerPosition = new Vector3(CurrentTracker.transform.position.x,CurrentTracker.transform.position.y,-1);
+		CurrentTracker = TouchTracker;
+		ArrowTracker.transform.position = new Vector3 (ArrowTracker.transform.position.x,ArrowTracker.transform.position.y,-200);
+		CurrentTracker.transform.position = currentTrackerPosition;
 	}
 	
-	
+	//============================================================================================================================================//
+	public void ShowArrowTracker() 
+	{
+		CurrentTracker = ArrowTracker;
+		TouchTracker.transform.position = new Vector3 (ArrowTracker.transform.position.x,ArrowTracker.transform.position.y,-200);
+		
+		Vector3 arrowPosition = new Vector3(0,0,-200);
+		if (Tail.Count > 1) 
+		{
+			Vector3 lastPosition = Tail[Tail.Count-1];
+			arrowPosition = new Vector3 (lastPosition.x,lastPosition.y,lastPosition.z);
+		}
+		CurrentTracker.transform.position = arrowPosition;
+	}
 	
 	//============================================================================================================================================//
 	public bool HasFoundAnotherCurveDrawing() {
@@ -330,13 +317,30 @@ public class ColorString : MonoBehaviour {
 			KillCurve();
 		}
 	}
-
+	
     //============================================================================================================================================//
     public void SetColor(int color)
     {
         ColorIndex = color;
         renderer.material = ColorMaterials[ColorIndex];
     }
+	
+	//============================================================================================================================================//
+	public void SetTouchTracker(int trackerIndex) 
+	{
+		tk2dSprite sprite = TouchTracker.GetComponent<tk2dSprite>();
+        sprite.spriteId = trackerIndex;
+	}
+	
+	//============================================================================================================================================//
+	public void SetArrowTracker(int trackerIndex) 
+	{
+		tk2dSprite sprite = ArrowTracker.GetComponent<tk2dSprite>();
+        sprite.spriteId = trackerIndex;
+		
+		ArrowTracker.transform.localScale += new Vector3(-0.8F, -0.8f, 0);
+	}
+	
 	
 	//============================================================================================================================================//
 	void StopDrawingIfLastScreenPointEncouterBaseOrSelf(Vector3 mousePosition) 
