@@ -64,8 +64,11 @@ public class ColorString : MonoBehaviour {
     //============================================================================================================================================//
 	void Update () 
 	{
+		
 		bool hasTouchStarted = (Input.GetMouseButtonDown(0));
 		bool isTouchUpdated = Input.GetMouseButton(0);
+		
+		if (Input.touches.Length<=1) { 
 		
 		if (hasTouchStarted) {
 			
@@ -76,7 +79,7 @@ public class ColorString : MonoBehaviour {
 					Debug.Log("Curve has been Hit");
 					CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
 					InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
-				}
+				} 
 			}
 			else
 			{
@@ -156,6 +159,7 @@ public class ColorString : MonoBehaviour {
 			ShowTouchTracker();
 		}
 		
+		}//end if touches count
 	}
 	
 	//============================================================================================================================================//

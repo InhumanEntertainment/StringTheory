@@ -11,12 +11,12 @@ public class ColorBase : MonoBehaviour {
 	public GameObject ExpectedCurve;
 	
 	
-	
-	
-	
 	//============================================================================================================================================//
 	void Update () 
 	{
+		
+	  if (Input.touches.Length<=1) { 
+		
 		bool hasTouchStarted = (Input.GetMouseButtonDown(0));
 		bool isTouchUpdated = Input.GetMouseButton(0);
 		
@@ -29,10 +29,10 @@ public class ColorBase : MonoBehaviour {
 					if (Curve)
 					{
 						KillCurve(Curve);
-						//Destroy(Curve);	
 					}
-				}else {
-					Debug.Log("Touch peer base that was expecting a curve");
+				}
+				else 
+				{		
 					KillCurve(ExpectedCurve);
 				}	
 				
@@ -40,10 +40,40 @@ public class ColorBase : MonoBehaviour {
 				InformPeersToExpectCurve(Curve);
 			}
 		}
-		
 		else if (isTouchUpdated) 
 		{
-			
+			if (!Curve) 
+			{
+				if (HasTouchedMe(Input.mousePosition)) 
+				{
+					if (! ExpectedCurve) 
+					{	
+						InstantiateBaseAwareCurve(Input.mousePosition);
+						InformPeersToExpectCurve(Curve);	
+					}
+					else 
+					{
+						ColorString colorString = ExpectedCurve.GetComponent<ColorString>();
+						if (! colorString.IsCurveBeingDrawn) {
+							KillCurve(ExpectedCurve);
+							InstantiateBaseAwareCurve(Input.mousePosition);
+							InformPeersToExpectCurve(Curve);	
+						}else {
+							Debug.Log("");		
+						}
+					}
+				}
+			}
+			else 
+			{
+				if (HasTouchedMe(Input.mousePosition)) 
+				{
+					KillCurve(Curve);
+					InstantiateBaseAwareCurve(Input.mousePosition);
+					InformPeersToExpectCurve(Curve);
+				}	
+			}
+				
 		}
 		else
 		{
@@ -56,6 +86,8 @@ public class ColorBase : MonoBehaviour {
 					KillCurve(Curve);	
 				}
 			}
+		}
+			
 		}
 		
 	}
