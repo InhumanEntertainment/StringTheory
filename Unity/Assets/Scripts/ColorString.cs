@@ -130,7 +130,8 @@ public class ColorString : MonoBehaviour {
 			{
 				if (! IsCurveBeingDrawn) 
 				{
-					CutAndResumeDrawingIfNecessary();		
+					//CutAndResumeDrawingIfNecessary();		
+						CutWithoutResumeDrawingIfNecessary();
 				}	
 			}
 				
@@ -177,7 +178,7 @@ public class ColorString : MonoBehaviour {
 	//============================================================================================================================================//
 	void CutAndResumeDrawingIfNecessary()
 	{
-					if (HasCurveBeenHitAtPosition(Input.mousePosition))
+				if (HasCurveBeenHitAtPosition(Input.mousePosition))
 				{
 					Debug.Log("Curve has been Hit");
 					CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
@@ -185,6 +186,20 @@ public class ColorString : MonoBehaviour {
 				}	
 	}					
 					
+	//============================================================================================================================================//
+	void CutWithoutResumeDrawingIfNecessary() 
+	{
+		if (HasCurveBeenHitAtPosition(Input.mousePosition))
+				{
+					Debug.Log("Curve has been Hit");
+					CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
+					if (!IsAnotherCurveBeingDrawnExists()) 
+					{
+						InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
+					}
+				}	
+	}
+	
 	
 	//============================================================================================================================================//
 	public void InitializeTouchTrackerWithPosition(Vector3 touchPosition) 
@@ -223,6 +238,23 @@ public class ColorString : MonoBehaviour {
 		}
 		CurrentTracker.transform.position = arrowPosition;
 	}
+	
+	
+	//============================================================================================================================================//
+	public bool IsAnotherCurveBeingDrawnExists () {
+		GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
+		CurveColliderDetector curveColliderDetector = curveManager.GetComponent<CurveColliderDetector> ();
+		int res = curveColliderDetector.GetNumberOfCurvesBeingDrawn();
+		if (res <= 0) 
+		{
+			return false;
+		}
+		else 
+		{
+			return true;
+		}
+	}
+	
 	
 	//============================================================================================================================================//
 	public bool HasFoundAnotherCurveDrawing() {
