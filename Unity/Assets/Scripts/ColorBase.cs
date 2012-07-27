@@ -2,20 +2,28 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class ColorBase : MonoBehaviour {
+public class ColorBase : MonoBehaviour 
+{
 	
 	public List<ColorBase> colorBasePeers;
 	public string baseName;
 		
 	public GameObject Curve;	
 	public GameObject ExpectedCurve;
-	
+    public Game Game;
 	
 	//============================================================================================================================================//
+    void Awake()
+    {
+        Game = (Game)GameObject.FindObjectOfType(typeof(Game));
+    }
+    
+    //============================================================================================================================================//
 	void Update () 
 	{
 		
-	  if (Input.touches.Length<=1) { 
+	  if (Input.touches.Length<=1) 
+      { 
 		
 		bool hasTouchStarted = (Input.GetMouseButtonDown(0));
 		bool isTouchUpdated = Input.GetMouseButton(0);
@@ -162,8 +170,9 @@ public class ColorBase : MonoBehaviour {
     //============================================================================================================================================//
 	void InstantiateBaseAwareCurve(Vector3 mousePosition)
 	{
-		Curve = (GameObject) Instantiate(Resources.Load("ColorCurve"));
-		ColorString stringScript = Curve.GetComponent<ColorString> ();
+		//Curve = (GameObject) Instantiate(Resources.Load("ColorCurve"));
+        Curve = (GameObject)Game.Spawn(Resources.Load("ColorCurve"));
+        ColorString stringScript = Curve.GetComponent<ColorString>();
         SetCurveColor(stringScript);
 		
 		//set up original base and peeers base//

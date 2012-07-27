@@ -50,23 +50,28 @@ public class ColorString : MonoBehaviour {
     public float WidthChange = 0.1f;
 
     int ColorIndex;
-    public Material[] ColorMaterials;	
+    public Material[] ColorMaterials;
+    public Game Game;
 
     // Effects //
     public ParticleSystem FXComplete;
     public ParticleSystem FXDraw;
-    public ParticleSystem FXTest;
+    public ParticleSystem FXCut;
+    ParticleSystem FXDrawObject;
+
     public Color[] fxColors = new Color[] { new Color(0, 1, 0), new Color(1, 1f, 0f), new Color(0.2f, 0, 1f), new Color(0f, 1f, 1), new Color(0.7f, 1, 0), new Color(0.5f, 0, 1f) };
 
 
 	//============================================================================================================================================//
     void Awake()
     {
-        MeshFilter m = GetComponent<MeshFilter>();
-        m.mesh = new Mesh();
+        // Does this cause memory leak?? //
+        //MeshFilter m = GetComponent<MeshFilter>();
+        //m.mesh = new Mesh();
+        Game = (Game)GameObject.FindObjectOfType(typeof(Game));
 
-        FXTest = (ParticleSystem)Instantiate(FXTest, transform.position, Quaternion.identity);
-        FXTest.emissionRate = 0;
+        FXDrawObject = (ParticleSystem)Game.Spawn(FXDraw, transform.position, Quaternion.identity);
+        FXDrawObject.emissionRate = 0;          
     }
     
     //============================================================================================================================================//
@@ -120,18 +125,11 @@ public class ColorString : MonoBehaviour {
 						detector.CheckPositionForCurve(this);
 					}
 					
-					if (Tail.Count > 2) {
+					if (Tail.Count > 2) 
+                    {
 						StopDrawingIfLastScreenPointEncouterBaseOrSelf(Input.mousePosition);
-					}
-	
-	                // Move Draw FX //
-	                /*GameObject fx = GameObject.Find("FXDraw");
-	                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-	                mousePos.z = -1;
-	                if(fx != null)
-	                    fx.transform.position = mousePos;*/	
-						
-					}
+					}				
+				}
 			}
 			else
 			{
@@ -154,11 +152,6 @@ public class ColorString : MonoBehaviour {
 		}
 		else 
 		{
-            // Move Draw FX Behind Camera //
-            GameObject fx = GameObject.Find("FXDraw");
-            if (fx != null)
-                fx.transform.position = new Vector3(0, 0, -100);
-
 			//touch has been cancelled//
 			if (IsCurveBeingDrawn) {
 				IsCurveBeingDrawn = false;
@@ -244,11 +237,11 @@ public class ColorString : MonoBehaviour {
 			arrowPosition = new Vector3 (lastPosition.x,lastPosition.y,lastPosition.z);
 		}
 		CurrentTracker.transform.position = arrowPosition;
-	}
-	
+	}	
 	
 	//============================================================================================================================================//
-	public bool IsAnotherCurveBeingDrawnExists () {
+	public bool IsAnotherCurveBeingDrawnExists () 
+    {
 		GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
 		CurveColliderDetector curveColliderDetector = curveManager.GetComponent<CurveColliderDetector> ();
 		int res = curveColliderDetector.GetNumberOfCurvesBeingDrawn();
@@ -260,11 +253,11 @@ public class ColorString : MonoBehaviour {
 		{
 			return true;
 		}
-	}
-	
+	}	
 	
 	//============================================================================================================================================//
-	public bool HasFoundAnotherCurveDrawing() {
+	public bool HasFoundAnotherCurveDrawing() 
+    {
 		GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
 		CurveColliderDetector curveColliderDetector = curveManager.GetComponent<CurveColliderDetector> ();
 		int res = curveColliderDetector.GetNumberOfCurvesBeingDrawn();
@@ -309,8 +302,14 @@ public class ColorString : MonoBehaviour {
 
         return loop.ToArray();
     }
-	
-	
+
+    //============================================================================================================================================//
+    void OnDestroy()
+    {
+        // Remove FX //
+        Destroy(FXDrawObject);
+        Game.Log("Destroyed FX");
+    }	
 	
 	//============================================================================================================================================//
 	public List<Vector3> GetPointsToAddIfTouchPositionMatchDistanceRequirement(Vector3 touchPosition) 
@@ -366,12 +365,12 @@ public class ColorString : MonoBehaviour {
         Vector3 pos = colorBase.transform.position;
         pos.z = -1;
         
-        Instantiate(FXComplete, pos, Quaternion.identity);
+        Game.Spawn(FXComplete, pos, Quaternion.identity);
 
         Vector3 posStart = BaseStart.transform.position;
         posStart.z = -1;
 
-        Instantiate(FXComplete, posStart, Quaternion.identity);        
+        Game.Spawn(FXComplete, posStart, Quaternion.identity);        
 	}
 	
 	//============================================================================================================================================//
@@ -510,6 +509,27 @@ public class ColorString : MonoBehaviour {
 	{
 		int indexPosition = Tail.IndexOf(position);
 		//Game.Log("Index Position for vector " + position + "is " + indexPosition);
+
+        // Emit Cut Particles //
+        ParticleSystem FXCutObject = (ParticleSystem)Game.Spawn(FXCut, transform.position, Quaternion.identity);
+        FXCutObject.startColor = fxColors[ColorIndex];
+        ParticleSystem.Particle[] particles = new ParticleSystem.Particle[(Tail.Count - indexPosition) * 10];
+        for (int i = indexPosition; i < Tail.Count; i++)
+        {
+            for (int c = 0; c < 10; c++)
+            {
+                particles[(i - indexPosition) * c] = new ParticleSystem.Particle();
+                particles[(i - indexPosition) * c].position = Tail[i];
+                particles[(i - indexPosition) * c].size = FXCutObject.startSize;
+                particles[(i - indexPosition) * c].lifetime = FXCutObject.startLifetime * ((float)(i - indexPosition) / (Tail.Count - indexPosition));
+                particles[(i - indexPosition) * c].color = FXCutObject.startColor;
+                particles[(i - indexPosition) * c].velocity = FXCutObject.startSpeed * (new Vector3(Random.value, Random.value, 0) - Vector3.one * 0.5f);
+            }
+            
+        }
+        FXCutObject.SetParticles(particles, particles.Length);
+        FXCutObject.Play();
+
 		Tail.RemoveRange (indexPosition,Tail.Count - indexPosition);
         TailWidth.RemoveRange(indexPosition, Tail.Count - indexPosition);
 		UpdateCurveLength();
@@ -619,11 +639,10 @@ public class ColorString : MonoBehaviour {
 
         TailWidth.Add(Width);
 
-        // Test Particles //
-        
-        FXTest.transform.position = Tail[Tail.Count - 1];
-        FXTest.startColor = fxColors[ColorIndex];
-        FXTest.Emit(5);
+        // Emit Draw Particles //
+        FXDrawObject.transform.position = Tail[Tail.Count - 1];
+        FXDrawObject.startColor = fxColors[ColorIndex];
+        FXDrawObject.Emit(5);
 	}
 	
 	//============================================================================================================================================//

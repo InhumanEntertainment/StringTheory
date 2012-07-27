@@ -120,6 +120,8 @@ public class Frontend : MonoBehaviour
         }
         else if (Command == "levels")
         {
+            Game.DestroyCurrentLevel(Game.CurrentLevel);
+            Game.DestroyCurrentLevel(Game.LastLevel);
             Game.SetScreen(Game.GameScreen.Menu);
         }
 
