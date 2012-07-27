@@ -38,17 +38,20 @@ public class CurveColliderDetector : MonoBehaviour {
 		int currentIndex = Curves.IndexOf(colorString);
 		
 		ColorString[] tempList = Curves.ToArray();
-		Debug.Log("Size of the list done by the curve " +tempList.Length);
+		Game.Log("Size of the list done by the curve " +tempList.Length);
 		
 		for (int i=0;i<tempList.Length;i++) 
 		{
-			Debug.Log("Inside loop of colorString " + i);
+			//Game.Log("Inside loop of colorString " + i);
 			if (currentIndex != i) 
 			{
 				Vector3 collisionPoint = GetIntersectionPointIfExistsForCurve(colorString,tempList[i]);
 				bool collisionHasBeenDetected = collisionPoint.z == 0;
 				if (collisionHasBeenDetected) 
 				{
+					//Game.Log("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
+					//Game.Log("Collision Point Find  IS:" + collisionPoint);
+					
 					PeformCutOnCurve(tempList[i],collisionPoint);
 					break;
 				}
@@ -56,7 +59,7 @@ public class CurveColliderDetector : MonoBehaviour {
 		}
 		
 		if (colorString.Tail.Count > 0) {
-			//Debug.Log("Last point of curve that updated is: " + colorString.Tail[colorString.Tail.Count - 1]);
+			//Game.Log("Last point of curve that updated is: " + colorString.Tail[colorString.Tail.Count - 1]);
 		}
 	}
 	
@@ -79,7 +82,7 @@ public class CurveColliderDetector : MonoBehaviour {
 			foreach (Vector3 point in curve2.Tail) 
 			{
 				float distance = Vector3.Distance(lastPointCurve1,point);
-				//Debug.Log("Distance between the two curve is: " + distance);
+				//Game.Log("Distance between the two curve is: " + distance);
 				//if (distance < 0.1f) {
 				if (distance < DistanceMaxAllowed)
 				{

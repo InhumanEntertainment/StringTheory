@@ -46,7 +46,7 @@ public class CurveBuilder : MonoBehaviour {
 					
 					if (HasCurveBeenHitAtPosition(Input.mousePosition))
 					{
-						Debug.Log("Curve has been Hit");
+						//Game.Log("Curve has been Hit");
 						
 						CutStringIfLastPointDoesNotMatchPosition(Input.mousePosition);
 						SmoothPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -57,7 +57,7 @@ public class CurveBuilder : MonoBehaviour {
 			else
 			{
 				//should not be possible unless multi touch//
-				Debug.LogError("Start a touch while being drawn. IsCurvedBeingDrawn is probably not being handle correctly");	
+				//Debug.LogError("Start a touch while being drawn. IsCurvedBeingDrawn is probably not being handle correctly");	
 			}
 		}
 		else if (isTouchUpdated) 
@@ -69,12 +69,12 @@ public class CurveBuilder : MonoBehaviour {
 		else 
 		{
 			if (IsCurvedBeingDrawn) {
-				Debug.Log("Cancel touched");
+				//Game.Log("Cancel touched");
 				IsCurvedBeingDrawn = false;
 			}
 			else
 			{
-				Debug.Log("No touch");	
+				//Game.Log("No touch");	
 			}
 			
 		}
@@ -130,11 +130,11 @@ public class CurveBuilder : MonoBehaviour {
 			
 			Vector3 closestCurvePoint = GetClosestPoint(touchPosition2D);
 			
-			Debug.Log("Closest point found is point with X: " + closestCurvePoint.x + " Y: " + closestCurvePoint.y + " Z: " + closestCurvePoint.z);
-			Debug.Log("World touch position has X " + touchPosition2D.x + "Y: " + touchPosition2D.y + " Z: " + touchPosition2D.z);
+			//Game.Log("Closest point found is point with X: " + closestCurvePoint.x + " Y: " + closestCurvePoint.y + " Z: " + closestCurvePoint.z);
+			//Game.Log("World touch position has X " + touchPosition2D.x + "Y: " + touchPosition2D.y + " Z: " + touchPosition2D.z);
 			
 			float distance = Vector3.Distance(touchPosition2D,closestCurvePoint);
-			Debug.Log("Distance between closest and touch is: " + distance + " and width of curve is: " + Width);
+			//Game.Log("Distance between closest and touch is: " + distance + " and width of curve is: " + Width);
 			
 			bool hasCurveBeenTouched = (distance < Width * 2) ;
 			if (hasCurveBeenTouched) {
@@ -153,7 +153,7 @@ public class CurveBuilder : MonoBehaviour {
 		RaycastHit hit;
 		if (gameObject.collider.Raycast(ray,out hit,50.0f)) 
         {
-			Debug.Log("Hit");
+			//Game.Log("Hit");
 			 Debug.DrawLine (ray.origin, hit.point);
 			return true;
 		}

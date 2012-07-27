@@ -39,7 +39,7 @@ public class MobiusStrip : MonoBehaviour
     {
         int a = Mathf.Abs(pos - index);
         int b = looplength - pos + index;
-        //print(a + " : " + b + " = " + Mathf.Min(a, b));
+        //Game.Log(a + " : " + b + " = " + Mathf.Min(a, b));
 
         return Mathf.Min(a, b);
     }
