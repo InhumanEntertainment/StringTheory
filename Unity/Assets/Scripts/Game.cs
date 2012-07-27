@@ -216,7 +216,7 @@ public class Game : MonoBehaviour
     public List<string> LevelIgnoreList;
 
     //=====================================================================================================================================//
-    void OnGUI()
+    /*void OnGUI()
     {
         // Temp Game Buttons //
         if (CurrentScreen == GameScreen.Game)
@@ -264,7 +264,7 @@ public class Game : MonoBehaviour
                 SetScreen(GameScreen.Menu); 
             }
         }
-    } 
+    } */
 
     //=====================================================================================================================================//
     void CreateButton(int index, float x)

@@ -73,7 +73,7 @@ public class Frontend : MonoBehaviour
             // Play "Packs_Open" Animation //
         }
 
-        // Level Buttons //
+        // Level Buttons //============================================================================//
         else if (Command.Contains("Level"))
         {
             LevelsAnimation.PlayQueued("Menu_Close");
@@ -83,10 +83,45 @@ public class Frontend : MonoBehaviour
             {
                 Game.LoadLevel(Command);
             }  
-
         }
 
-        
+        // Social Buttons //============================================================================//
+        else if (Command == "Facebook")
+        {
+            Application.OpenURL("http://www.facebook.com/larssontech/");
+        }
+        else if (Command == "Twitter")
+        {
+            Application.OpenURL("http://www.twitter.com/larssontech/");
+        }
+
+        // Game Buttons //============================================================================//
+        else if (Command == "Next")
+        {
+            if (Game.CurrentLevel + 1 < Game.LevelList.Count)
+            {
+                Game.LoadLevel(Game.CurrentLevel + 1);
+            }
+        }
+        else if (Command == "Prev")
+        {
+            if (Game.CurrentLevel > 0)
+            {
+                Game.LoadLevel(Game.CurrentLevel - 1);
+            }
+        }
+        else if (Command == "Retry")
+        {
+            var curves = GameObject.FindObjectsOfType(typeof(ColorString));
+            for (int i = 0; i < curves.Length; i++)
+            {
+                Destroy(((ColorString)curves[i]).gameObject);
+            }
+        }
+        else if (Command == "levels")
+        {
+            Game.SetScreen(Game.GameScreen.Menu);
+        }
 
 	}
 }
