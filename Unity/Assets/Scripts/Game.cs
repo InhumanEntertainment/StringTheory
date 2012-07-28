@@ -15,7 +15,8 @@ public class Game : MonoBehaviour
     public Transform GameGroup;
 
     public bool Logging = true;
-	
+    public FXStars FX;
+
     //============================================================================================================================================//
 	void Awake() 
 	{
@@ -51,36 +52,79 @@ public class Game : MonoBehaviour
                 // Delete Old Level Objects //
                 if (LastLevel != -1)
                 {
-                    if (CurrentLevel != LastLevel || LastLevel == -1)
-                    {
-                        GameObject root = GameObject.Find(LevelList[LastLevel]);
-                        if (root != null)
-                        {
-                            // Play Transition //
-                            Animation anim = root.transform.FindChild("Nodes").animation;
-                            root.transform.position = new Vector3(0, 0, -5);
-                            anim.PlayQueued("Level_Close", QueueMode.PlayNow);
-                        }
+                    if (CurrentLevel != LastLevel)
+                        DestroyCurrentLevel(LastLevel);
+                    
+                    // Play Level Open //
+                    GameObject rootNew = GameObject.Find(LevelList[CurrentLevel]);
+                    Animation animNew = rootNew.transform.FindChild("Nodes").animation;
+                    animNew.PlayQueued("Level_Open", QueueMode.PlayNow);
 
-                        // Play Level Open //
-                        GameObject rootNew = GameObject.Find(LevelList[CurrentLevel]);
-                        Animation animNew = rootNew.transform.FindChild("Nodes").animation;
-                        animNew.PlayQueued("Level_Open", QueueMode.PlayNow);
-
-                        Async = null;
-
-                        // Destroy All Curves //
-                        var curves = GameObject.FindObjectsOfType(typeof(ColorString));
-                        for (int i = 0; i < curves.Length; i++)
-                        {
-                            GameObject obj = ((ColorString)curves[i]).gameObject;
-                            Destroy(obj);
-                        }
-                    }
+                    Async = null;
                 }                
             }
         }
 	}
+
+    //============================================================================================================================================//
+    // Spawn object and parent it under the current level so it will be destoryed on level exit //
+    //============================================================================================================================================//
+    public Object Spawn(Object original, Vector3 position, Quaternion rotation)
+    {
+        Object obj = (Object)Instantiate(original, position, rotation);
+        GameObject parent = GameObject.Find(LevelList[CurrentLevel]);
+
+        if (parent != null)
+        {
+            Transform xform = null;
+            if (obj is GameObject)
+                xform = ((GameObject)obj).transform;
+            else if (obj is Component)
+                xform = ((Component)obj).transform;
+
+            if(xform != null)
+                xform.parent = parent.transform;
+        }
+
+        return obj;
+    }
+
+    public Object Spawn(Object original)
+    {
+        return Spawn(original, Vector3.zero, Quaternion.identity);
+    }
+
+    //============================================================================================================================================//
+    public void DestroyCurrentLevel(int levelIndex)
+    {
+        if (levelIndex != -1)
+        {
+            GameObject root = GameObject.Find(LevelList[levelIndex]);
+            if (root != null)
+            {
+                // Play Transition //
+                Animation anim = root.transform.FindChild("Nodes").animation;
+                root.transform.position = new Vector3(0, 0, -5);
+                anim.PlayQueued("Level_Close", QueueMode.PlayNow);
+
+                // Destroy All Objects //
+                //root.SetActiveRecursively(false);
+            }
+
+            // Destroy All Curves //
+            var curves = GameObject.FindObjectsOfType(typeof(ColorString));
+            for (int i = 0; i < curves.Length; i++)
+            {
+                GameObject obj = ((ColorString)curves[i]).gameObject;
+                Destroy(obj);
+            }
+
+            // Reset Detector //
+            GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
+            CurveColliderDetector detector = curveManager.GetComponent<CurveColliderDetector>();
+            detector.Curves.Clear();
+        }                
+    }
 
     //============================================================================================================================================//
 	void UpdateHud()
