@@ -63,12 +63,29 @@ public class FXStars : MonoBehaviour
                     p.position = newPos;
                     p.position += (p.velocity * Time.deltaTime);
                 }
+                if (Mode == ParticleMode.BlackHole)
+                {                  
+                    float radius = 2;
+
+                    p.position += (p.velocity * Time.deltaTime);
+                    Vector3 radiusPoint = p.position.normalized * radius;
+                    Vector3 dir = radiusPoint - p.position;
+                    float distance = Vector3.Distance(p.position, radiusPoint);
+                    float strength = Mathf.Pow(1 - (distance / 7f), 2);
+
+                    p.position += dir * strength * 5f * Time.deltaTime;             
+                }
+                else if (Mode == ParticleMode.Chaos)
+                {
+                    float amount = 10;
+                    Vector3 rnd = new Vector3(amount * Random.value, amount * Random.value, 0) - new Vector3(amount * 0.5f, amount * 0.5f, 0);
+                    p.position += ((p.velocity  + rnd)* Time.deltaTime);
+                }
                 else
                 {
                     p.position += (p.velocity * Time.deltaTime);
                 }
                 
-
                 ParticleList[i] = p;
             }
         }
@@ -83,7 +100,7 @@ public class FXStars : MonoBehaviour
     public Vector3 Velocity = Vector3.zero;
     public Color ColorMin = Color.white;
     public Color ColorMax = Color.white;
-    public enum ParticleMode {Chaos, Border, Horizontal, Game, GreenPack, Vortex};
+    public enum ParticleMode {Chaos, Border, Horizontal, Game, GreenPack, Vortex, BlackHole};
     public ParticleMode Mode = ParticleMode.Border;
 
     void Emit(int number)

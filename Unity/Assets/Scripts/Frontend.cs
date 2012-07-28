@@ -52,7 +52,7 @@ public class Frontend : MonoBehaviour
             PacksAnimation.PlayQueued("Menu_Close");
             MenuAnimation.PlayQueued("Menu_Open");
 
-            Game.FX.Mode = FXStars.ParticleMode.Border;
+            Game.FX.Mode = FXStars.ParticleMode.Vortex;
         }
         else if (Command == "Levels_Open")
         {
