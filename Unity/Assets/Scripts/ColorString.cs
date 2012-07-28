@@ -2,11 +2,11 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class ColorString : MonoBehaviour {
+public class ColorString : MonoBehaviour 
+{
 	
 	//properties//
-	public float CurveLength = 0f;
-	
+	public float CurveLength = 0f;	
 	
 	//logic//
 	public bool IsCurveBeingDrawn = false;	
@@ -57,17 +57,20 @@ public class ColorString : MonoBehaviour {
     public ParticleSystem FXComplete;
     public ParticleSystem FXDraw;
     public ParticleSystem FXCut;
-    ParticleSystem FXDrawObject;
+    public ParticleSystem FXDrawObject;
 
     public Color[] fxColors = new Color[] { new Color(0, 1, 0), new Color(1, 1f, 0f), new Color(0.2f, 0, 1f), new Color(0f, 1f, 1), new Color(0.7f, 1, 0), new Color(0.5f, 0, 1f) };
 
+    Mesh CurveMesh;
 
 	//============================================================================================================================================//
     void Awake()
     {
         // Does this cause memory leak?? //
-        //MeshFilter m = GetComponent<MeshFilter>();
-        //m.mesh = new Mesh();
+        MeshFilter m = GetComponent<MeshFilter>();
+        CurveMesh = new Mesh();
+        m.mesh = CurveMesh;
+
         Game = (Game)GameObject.FindObjectOfType(typeof(Game));
 
         FXDrawObject = (ParticleSystem)Game.Spawn(FXDraw, transform.position, Quaternion.identity);
@@ -309,6 +312,9 @@ public class ColorString : MonoBehaviour {
         // Remove FX //
         Destroy(FXDrawObject);
         Game.Log("Destroyed FX");
+
+        // Remove Mesh //
+        Destroy(CurveMesh);
     }	
 	
 	//============================================================================================================================================//
@@ -455,6 +461,7 @@ public class ColorString : MonoBehaviour {
 		GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
 		CurveColliderDetector colliderDetector = curveManager.GetComponent<CurveColliderDetector>();
 		colliderDetector.RemoveCurveFromMonitoring(this);
+        Destroy(FXDrawObject);
 		Destroy(gameObject);
 	}
 	

@@ -230,6 +230,7 @@ public class ColorBase : MonoBehaviour
 		ColorString colorString = curveToKill.GetComponent<ColorString>();
 		
 		curveManager.SendMessage ("RemoveCurveFromMonitoring", colorString);
+        Destroy(colorString.FXDrawObject);
 		Destroy(curveToKill);
 	}
 	

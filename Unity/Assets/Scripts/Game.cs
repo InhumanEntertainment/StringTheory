@@ -15,7 +15,8 @@ public class Game : MonoBehaviour
     public Transform GameGroup;
 
     public bool Logging = true;
-	
+    public FXStars FX;
+
     //============================================================================================================================================//
 	void Awake() 
 	{

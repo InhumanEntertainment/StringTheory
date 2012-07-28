@@ -43,29 +43,37 @@ public class Frontend : MonoBehaviour
             Game.SetScreen(Game.GameScreen.Packs);
             PacksAnimation.PlayQueued("Menu_Open");
             MenuAnimation.PlayQueued("Menu_Close");
+
+            Game.FX.Mode = FXStars.ParticleMode.Horizontal;
         }
         else if (Command == "Packs_Close")
         {
             Game.SetScreen(Game.GameScreen.Menu);
             PacksAnimation.PlayQueued("Menu_Close");
             MenuAnimation.PlayQueued("Menu_Open");
+
+            Game.FX.Mode = FXStars.ParticleMode.Border;
         }
         else if (Command == "Levels_Open")
         {
             Game.SetScreen(Game.GameScreen.Levels);
             LevelsAnimation.PlayQueued("Menu_Open");
             PacksAnimation.PlayQueued("Menu_Close");
+
+            Game.FX.Mode = FXStars.ParticleMode.GreenPack;
         }
         else if (Command == "Levels_Close")
         {
             Game.SetScreen(Game.GameScreen.Packs);
             PacksAnimation.PlayQueued("Menu_Open");
             LevelsAnimation.PlayQueued("Menu_Close");
+
+            Game.FX.Mode = FXStars.ParticleMode.Horizontal;
         }
         else if (Command == "Game_Open")
         {
             Game.SetScreen(Game.GameScreen.Game);
-            // Play "Packs_Open" Animation //
+            Game.FX.Mode = FXStars.ParticleMode.Game;
         }
         else if (Command == "Game_Close")
         {
@@ -81,6 +89,7 @@ public class Frontend : MonoBehaviour
 
             if (Game != null)
             {
+                Game.FX.Mode = FXStars.ParticleMode.Game;
                 Game.LoadLevel(Command);
             }  
         }
@@ -123,6 +132,8 @@ public class Frontend : MonoBehaviour
             Game.DestroyCurrentLevel(Game.CurrentLevel);
             Game.DestroyCurrentLevel(Game.LastLevel);
             Game.SetScreen(Game.GameScreen.Menu);
+
+            Game.FX.Mode = FXStars.ParticleMode.GreenPack;
         }
 
 	}
