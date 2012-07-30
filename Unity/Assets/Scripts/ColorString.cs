@@ -234,10 +234,18 @@ public class ColorString : MonoBehaviour
 		TouchTracker.transform.position = new Vector3 (ArrowTracker.transform.position.x,ArrowTracker.transform.position.y,-200);
 		
 		Vector3 arrowPosition = new Vector3(0,0,-200);
-		if (Tail.Count > 1) 
+		if (Tail.Count > 3) 
 		{
-			Vector3 lastPosition = Tail[Tail.Count-1];
+			Vector3 lastPosition = Tail[Tail.Count-3];
 			arrowPosition = new Vector3 (lastPosition.x,lastPosition.y,lastPosition.z);
+			
+			//set up arrow orientation
+			float angle = Mathf.Atan(lastPosition.y / lastPosition.x);
+			if (lastPosition.y * lastPosition.x < 0) {
+				angle += 180;
+			}
+			CurrentTracker.transform.rotation = Quaternion.AngleAxis(angle,CurrentTracker.transform.position);
+			
 		}
 		CurrentTracker.transform.position = arrowPosition;
 	}	
@@ -416,9 +424,12 @@ public class ColorString : MonoBehaviour
 	public void SetArrowTracker(int trackerIndex) 
 	{
 		tk2dSprite sprite = ArrowTracker.GetComponent<tk2dSprite>();
-        sprite.spriteId = trackerIndex;
+        //sprite.spriteId = trackerIndex;
+		//ArrowTracker.transform.localScale += new Vector3(-0.5f, -0.5f, 0);
 		
-		ArrowTracker.transform.localScale += new Vector3(-0.8F, -0.8f, 0);
+		//temp code
+		sprite.spriteId = 14;
+		ArrowTracker.transform.localScale += new Vector3(+0.5f, +0.5f, 0);
 	}
 	
 	
