@@ -363,6 +363,14 @@ public class ColorString : MonoBehaviour
 		//put here reactions to this event//
 		HasCurveReachedTarget = true;
 		
+		//add missing points to connect to the base center
+		Vector3 baseScreenPoint = Camera.main.WorldToScreenPoint(colorBase.transform.position);
+		List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(baseScreenPoint);
+		foreach (Vector3 point in pointsToAdd) 
+		{
+			AddScreenPointToTail(point);
+		}
+		
 		//remove the trackers
 		ArrowTracker.transform.position = new Vector3(CurrentTracker.transform.position.x,CurrentTracker.transform.position.y,-200);
 		TouchTracker.transform.position = new Vector3(CurrentTracker.transform.position.x,CurrentTracker.transform.position.y,-200);
