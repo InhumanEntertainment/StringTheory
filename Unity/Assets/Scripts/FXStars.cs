@@ -19,6 +19,8 @@ public class FXStars : MonoBehaviour
     // Stats //
     public int Count = 0;
 
+    public FX[] FX;
+
     //============================================================================================================================================//
     void Awake()
     {
@@ -29,7 +31,7 @@ public class FXStars : MonoBehaviour
     //============================================================================================================================================//
     void Update()
     {
-        Emit(8);
+        Emit(10);
 
         for (int i = 0; i < ParticleList.Count; i++)
         {
@@ -77,9 +79,10 @@ public class FXStars : MonoBehaviour
                 }
                 else if (Mode == ParticleMode.Chaos)
                 {
-                    float amount = 10;
+                    float amount = 50;
                     Vector3 rnd = new Vector3(amount * Random.value, amount * Random.value, 0) - new Vector3(amount * 0.5f, amount * 0.5f, 0);
-                    p.position += ((p.velocity  + rnd)* Time.deltaTime);
+                    p.velocity = p.velocity * 0.8f + rnd * Time.deltaTime;
+                    p.position += p.velocity * Time.deltaTime;
                 }
                 else
                 {
@@ -109,7 +112,7 @@ public class FXStars : MonoBehaviour
         {
             ParticleSystem.Particle particle = new ParticleSystem.Particle();
 
-            if (Mode == ParticleMode.GreenPack)
+            if (Mode == ParticleMode.GreenPack || Mode == ParticleMode.Chaos)
                 particle.color = Color.Lerp(Color.green, Color.white, Random.value);
             else
                 particle.color = Color.Lerp(ColorMin, ColorMax, Random.value);

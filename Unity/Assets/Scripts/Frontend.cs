@@ -8,9 +8,12 @@ public class Frontend : MonoBehaviour
     Animation MenuAnimation;
     Animation AboutAnimation;
     Animation PacksAnimation;
-    Animation LevelsAnimation;
     Animation GameAnimation;
 
+    // Packs //
+    Animation ChaosAnimation;
+    Animation VortexAnimation;
+    
     //=======================================================================================================================================================================//
     void Awake()
     {
@@ -22,9 +25,22 @@ public class Frontend : MonoBehaviour
 
         MenuAnimation = GameObject.Find("MenuPanel").animation;
         PacksAnimation = GameObject.Find("PacksPanel").animation;
-        LevelsAnimation = GameObject.Find("LevelsPanel").animation;
+        ChaosAnimation = GameObject.Find("LevelsChaos").animation;
+        VortexAnimation = GameObject.Find("LevelsVortex").animation;
+        GameAnimation = GameObject.Find("GamePanel").animation;
     }
-    
+
+    //=======================================================================================================================================================================//
+    void SwitchScreens(Game.GameScreen screen, Animation from, Animation to, FXStars.ParticleMode fxmode)
+    {
+        Game.SetScreen(screen);
+
+        to.PlayQueued("Menu_Open");
+        from.PlayQueued("Menu_Close");
+
+        Game.FX.Mode = fxmode;
+    }
+
     //=======================================================================================================================================================================//
     void OnClick()
     {
@@ -52,40 +68,58 @@ public class Frontend : MonoBehaviour
             PacksAnimation.PlayQueued("Menu_Close");
             MenuAnimation.PlayQueued("Menu_Open");
 
-            Game.FX.Mode = FXStars.ParticleMode.Vortex;
+            Game.FX.Mode = FXStars.ParticleMode.BlackHole;
         }
-        else if (Command == "Levels_Open")
+        else if (Command == "Vortex_Open")
         {
-            Game.SetScreen(Game.GameScreen.Levels);
-            LevelsAnimation.PlayQueued("Menu_Open");
-            PacksAnimation.PlayQueued("Menu_Close");
-
-            Game.FX.Mode = FXStars.ParticleMode.GreenPack;
+            LoadScreen("Vortex");
         }
-        else if (Command == "Levels_Close")
+        else if (Command == "Pack_Close")
         {
             Game.SetScreen(Game.GameScreen.Packs);
+            Game.CurrentPack.Close(Game);
             PacksAnimation.PlayQueued("Menu_Open");
-            LevelsAnimation.PlayQueued("Menu_Close");
 
             Game.FX.Mode = FXStars.ParticleMode.Horizontal;
         }
+        else if (Command == "Vortex_Close")
+        {
+            SwitchScreens(Game.GameScreen.Packs, VortexAnimation, PacksAnimation, FXStars.ParticleMode.Horizontal);
+        }
+        else if (Command == "Chaos_Open")
+        {
+            LoadScreen("Chaos");
+        }
+        else if (Command == "Chaos_Close")
+        {
+            SwitchScreens(Game.GameScreen.Packs, ChaosAnimation, PacksAnimation, FXStars.ParticleMode.Horizontal);
+        }
+        else if (Command == "Starter_Open")
+        {
+            LoadScreen("Starter");
+        }
+        else if (Command == "Starter_Close")
+        {
+            SwitchScreens(Game.GameScreen.Packs, Game.CurrentPack.AnimationObject, PacksAnimation, FXStars.ParticleMode.Horizontal);
+        }
         else if (Command == "Game_Open")
         {
-            Game.SetScreen(Game.GameScreen.Game);
-            Game.FX.Mode = FXStars.ParticleMode.Game;
+            SwitchScreens(Game.GameScreen.Game, Game.CurrentPack.AnimationObject, GameAnimation, FXStars.ParticleMode.Game);
         }
         else if (Command == "Game_Close")
-        {
-            Game.SetScreen(Game.GameScreen.Levels);
-            // Play "Packs_Open" Animation //
+        {            
+            Game.CurrentPack.Open(Game);
+            Game.DestroyCurrentLevel(Game.CurrentLevel);
+            GameAnimation.PlayQueued("Menu_Close");
+            Game.FX.Mode = Game.CurrentPack.FXMode;
         }
 
         // Level Buttons //============================================================================//
-        else if (Command.Contains("Level"))
+        else if (Game.LevelList.Contains(Command))
         {
-            LevelsAnimation.PlayQueued("Menu_Close");
+            Game.CurrentPack.Close(Game);
             Game.SetScreen(Game.GameScreen.Game);
+            GameAnimation.PlayQueued("Menu_Open");
 
             if (Game != null)
             {
@@ -127,14 +161,22 @@ public class Frontend : MonoBehaviour
                 Destroy(((ColorString)curves[i]).gameObject);
             }
         }
-        else if (Command == "levels")
-        {
-            Game.DestroyCurrentLevel(Game.CurrentLevel);
-            Game.DestroyCurrentLevel(Game.LastLevel);
-            Game.SetScreen(Game.GameScreen.Menu);
-
-            Game.FX.Mode = FXStars.ParticleMode.GreenPack;
-        }
-
 	}
+
+    //=======================================================================================================================================================================//
+    void LoadScreen(string level)
+    {
+        // If pack name exists set current //
+        for (int i = 0; i < Game.Packs.Length; i++)
+        {
+            if (Game.Packs[i].Name == level)
+            {
+                //Game.CurrentPack.Close(Game);   
+                PacksAnimation.PlayQueued("Menu_Close");
+
+                Game.CurrentPack = Game.Packs[i];
+                Game.Packs[i].Open(Game);
+            }
+        }
+    }
 }

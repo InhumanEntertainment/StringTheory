@@ -9,8 +9,13 @@ public class Game : MonoBehaviour
 	string PlayTimeLabel;
 	bool  HasLevelBeenCompleted = false;
 
-    public enum GameScreen { Splash, Menu, About, Packs, Levels, Game, Pause, Complete };
+    public enum GameScreen { Splash, Menu, About, Packs, ChaosPack, VortexPack, BasicPack, Game, Pause, Complete };
     public GameScreen CurrentScreen = GameScreen.Splash;
+
+    //public enum GamePacks {Basic, Chaos, Vortex };
+    public GamePack CurrentPack;
+    public GamePack[] Packs;
+
     public Transform MenuGroup;
     public Transform GameGroup;
 
@@ -50,18 +55,17 @@ public class Game : MonoBehaviour
             if (Async.isDone)
             {
                 // Delete Old Level Objects //
-                if (LastLevel != -1)
+                if (LastLevel != -1 && CurrentLevel != LastLevel)
                 {
-                    if (CurrentLevel != LastLevel)
-                        DestroyCurrentLevel(LastLevel);
-                    
-                    // Play Level Open //
-                    GameObject rootNew = GameObject.Find(LevelList[CurrentLevel]);
-                    Animation animNew = rootNew.transform.FindChild("Nodes").animation;
-                    animNew.PlayQueued("Level_Open", QueueMode.PlayNow);
+                    DestroyCurrentLevel(LastLevel);
+                }
 
-                    Async = null;
-                }                
+                // Play Level Open //
+                GameObject rootNew = GameObject.Find(LevelList[CurrentLevel]);
+                Animation animNew = rootNew.transform.FindChild("Nodes").animation;
+                animNew.PlayQueued("Level_Open", QueueMode.PlayNow);
+
+                Async = null;
             }
         }
 	}
@@ -108,7 +112,7 @@ public class Game : MonoBehaviour
                 anim.PlayQueued("Level_Close", QueueMode.PlayNow);
 
                 // Destroy All Objects //
-                //root.SetActiveRecursively(false);
+                //root.SetActiveRecursively(false);     
             }
 
             // Destroy All Curves //
@@ -157,15 +161,10 @@ public class Game : MonoBehaviour
         {
             CurrentScreen = screen;
 
-            if (screen == GameScreen.Menu)
+            if (screen == GameScreen.Game)
             {
-                GameGroup.gameObject.SetActiveRecursively(false);
-                MenuGroup.gameObject.SetActiveRecursively(true);
-            }
-            else if (screen == GameScreen.Game)
-            {
-                GameGroup.gameObject.SetActiveRecursively(true);
-                MenuGroup.gameObject.SetActiveRecursively(false);
+                LastLevel = -1;
+                CurrentLevel = -1;
             }
         }       
     }
