@@ -10,6 +10,39 @@ public class PackDataModel {
 	
 	
 	//============================================================================================================================================//
+	public void AddLevel(LevelDataModel level) 
+	{
+		Levels.Add(level);
+	}
+	
+	
+	//============================================================================================================================================//
+	public void UpdateLevel(LevelDataModel levelToUpdate) 
+	{
+		LevelDataModel existingModel = GetLevelByID(levelToUpdate.levelId);
+		if (existingModel.levelId > 0) 
+		{
+			Levels.Remove(existingModel);	
+		}
+		Levels.Add(levelToUpdate);
+	}
+	
+	//============================================================================================================================================//
+	public LevelDataModel GetLevelByID(int levelID) 
+	{
+		foreach (LevelDataModel level in Levels) 
+		{
+			if (level.levelId == levelID) 
+			{
+				return level;
+			}
+		}	
+		return new LevelDataModel();
+	}
+	
+	
+	
+	//============================================================================================================================================//
 	public Dictionary<string,object> ConvertIntoDictionary()
 	{
 		Dictionary<string,object> levelModelDic = new Dictionary<string, object>();

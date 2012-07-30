@@ -165,6 +165,7 @@ public class ColorBase : MonoBehaviour
 		//set the colors of the trackers
 		curve.SetTouchTracker(CurveTrackerIndexes[index]);
 		curve.SetArrowTracker(CurveTrackerArrowIndexes[index]);
+		//curve.SetArrowTracker(
     }
     
     //============================================================================================================================================//

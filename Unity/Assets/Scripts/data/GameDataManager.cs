@@ -3,21 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using MiniJSON;
 
-public class GameDataManager : MonoBehaviour {
+public class GameDataManager {
 
 	//============================================================================================================================================//
-	public void SaveUserDataFromGameDataModel(GameDataModel dataModel)
+	public static void SaveUserDataFromGameDataModel(GameDataModel dataModel)
 	{
-		//Dictionary<string,GameDataModel> gameUserDataDictionary = new Dictionary<string, GameDataModel>();
-		//Debug.Log("Data model should not be null " +  dataModel.fastestTime);
-		//gameUserDataDictionary.Add("gameDataModel",);
 		
-		string userDataSerialized = Json.Serialize(dataModel.ConvertIntoDictionary());	
-		System.IO.File.WriteAllText(IOUtils.GetPathForDefaultDataFile(),userDataSerialized);
+		string userDataSerialized = Json.Serialize(dataModel.ConvertIntoDictionary());		
+		string filePath = IOUtils.GetPathForDefaultDataFile();
+		
+		if (System.IO.File.Exists(filePath)) 
+		{
+			System.IO.File.Delete(filePath);
+		} 
+		System.IO.File.WriteAllText(filePath,userDataSerialized);
 	}
 	
 	//============================================================================================================================================//
-	public GameDataModel GetUserDataFromFile() 
+	public static GameDataModel GetUserDataFromFile() 
 	{	
 		GameDataModel gameDataModel = new GameDataModel();
 		string userDataFilePath = IOUtils.GetPathForDefaultDataFile();
@@ -26,8 +29,6 @@ public class GameDataManager : MonoBehaviour {
 		{
 			string jsonString = System.IO.File.ReadAllText(userDataFilePath);
 			gameDataModel = GameDataModel.GameDataModelFromJsonString(jsonString);
-			//Dictionary<string,object> userDataJson = (IDictionary) Json.Deserialize(jsonPrizesList);
-			//GameDataModel.
 		}
 		return gameDataModel;
 	}

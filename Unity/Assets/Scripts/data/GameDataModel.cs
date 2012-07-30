@@ -8,20 +8,8 @@ public class GameDataModel {
 	public float FastestTime = 0.2f;
 	public List<PackDataModel> packLevelList = new List<PackDataModel>();	
 	
-	/*
-	public void UpdatePackLevel(int packId, LevelDataModel level) 
-	{
 	
-		//retrieve the packId if exists from the packLevellist
-		foreach (PackDataModel pack in packLevelList) 
-		{
-			if (pack.PackId == packId) {
-				//find the  pack we are looking for
-			}
-		}
-		
-	}*/
-	
+	//============================================================================================================================================//
 	public IDictionary ConvertIntoDictionary() {
 		
 		Dictionary<string,object> dataModelDic = new Dictionary<string, object>();
@@ -39,7 +27,7 @@ public class GameDataModel {
 		return dataModelDic;
 	}
 	
-	
+	//============================================================================================================================================//
 	public static GameDataModel GameDataModelFromJsonString(string jsonString) 
 	{
 		GameDataModel dataModel = new GameDataModel();
@@ -71,7 +59,47 @@ public class GameDataModel {
 		return dataModel;
 	}
 	
+	//============================================================================================================================================//
+	public void AddNewPack(PackDataModel newPack) 
+	{
+		bool isPackExistsAlready = false;
+		foreach (PackDataModel pack in packLevelList) 
+		{
+			if (pack.PackId == newPack.PackId) {
+				isPackExistsAlready = true;
+			}
+		}
+		if (! isPackExistsAlready) 
+		{
+			packLevelList.Add(newPack);
+		}
+	}
 	
+	//============================================================================================================================================//
+	public void UpdatePack(PackDataModel packToUpdate) 
+	{
+		PackDataModel existingPack = this.GetPackByID(packToUpdate.PackId);
+		if (existingPack.PackId > 0) 
+		{
+			this.packLevelList.Remove(existingPack);
+		}
+		this.packLevelList.Add(packToUpdate);
+	}
+	
+	//============================================================================================================================================//
+	public PackDataModel GetPackByID(int packID) 
+	{
+		foreach (PackDataModel pack in packLevelList) 
+		{
+			if (pack.PackId == packID) {
+				return pack;
+			}
+		}
+		return new PackDataModel();
+	}
+	
+	
+	//============================================================================================================================================//
 	public GameDataModel DummyDataModel() 
 	{
 		GameDataModel UserData = new GameDataModel();
