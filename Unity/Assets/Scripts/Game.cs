@@ -76,20 +76,23 @@ public class Game : MonoBehaviour
     public Object Spawn(Object original, Vector3 position, Quaternion rotation)
     {
         Object obj = (Object)Instantiate(original, position, rotation);
-        GameObject parent = GameObject.Find(LevelList[CurrentLevel]);
-
-        if (parent != null)
-        {
-            Transform xform = null;
-            if (obj is GameObject)
-                xform = ((GameObject)obj).transform;
-            else if (obj is Component)
-                xform = ((Component)obj).transform;
-
-            if(xform != null)
-                xform.parent = parent.transform;
-        }
-
+		
+		if (CurrentLevel >0) 
+		{
+	        GameObject parent = GameObject.Find(LevelList[CurrentLevel]);
+	
+	        if (parent != null)
+	        {
+	            Transform xform = null;
+	            if (obj is GameObject)
+	                xform = ((GameObject)obj).transform;
+	            else if (obj is Component)
+	                xform = ((Component)obj).transform;
+	
+	            if(xform != null)
+	                xform.parent = parent.transform;
+	        }
+		}
         return obj;
     }
 
