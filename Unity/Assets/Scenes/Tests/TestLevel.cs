@@ -1,5 +1,9 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Xml;
+using System.Xml.Serialization;
+using System.IO;
 
 public class TestLevel : MonoBehaviour 
 {
@@ -7,10 +11,18 @@ public class TestLevel : MonoBehaviour
     public string CurrentLevel;
     public string LastLevel;
 
+    public GamePack[] Packs;
+
 	//=====================================================================================================================================//
-	void Update () 
+	void Awake () 
     {
-        
+        MonsterContainer monsters = new MonsterContainer();
+
+        monsters.Level = new LevelDataModel() { levelId = 1, levelCompletion = true, levelName = "N00bs" };
+        monsters.Level = new LevelDataModel() { levelId = 2, levelCompletion = false, levelName = "World Tour" };
+        monsters.Level = new LevelDataModel() { levelId = 3, levelCompletion = true, levelName = "Ape Shit" };
+
+        monsters.Save(Application.persistentDataPath + "/monsters.xml");
 	}
 
     //=====================================================================================================================================//
@@ -47,6 +59,49 @@ public class TestLevel : MonoBehaviour
             {
                 Async = Application.LoadLevelAdditiveAsync(CurrentLevel);
             }
+        }
+    }
+}
+
+//=====================================================================================================================================//
+//=====================================================================================================================================//
+//=====================================================================================================================================//
+public class Monster
+{
+    [XmlAttribute("name")]
+    public string Name;
+
+    public int Health;
+}
+
+//=====================================================================================================================================//
+//=====================================================================================================================================//
+//=====================================================================================================================================//
+[XmlRoot("MonsterCollection")]
+public class MonsterContainer
+{
+    [XmlArray("Monsters"),XmlArrayItem("Monster")]
+    public List<Monster> Monsters = new List<Monster>();
+    public LevelDataModel Level;
+    public Dictionary<string, string> Dick;
+
+    //=====================================================================================================================================//
+    public void Save(string path)
+    {
+        var serializer = new XmlSerializer(typeof(MonsterContainer));
+        using(var stream = new FileStream(path, FileMode.Create))
+        {
+            serializer.Serialize(stream, this);
+        }
+    }
+
+    //=====================================================================================================================================//
+    public static MonsterContainer Load(string path)
+    {
+        var serializer = new XmlSerializer(typeof(MonsterContainer));
+        using(var stream = new FileStream(path, FileMode.Open))
+        {
+            return serializer.Deserialize(stream) as MonsterContainer;
         }
     }
 }

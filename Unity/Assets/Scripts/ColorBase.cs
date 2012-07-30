@@ -76,9 +76,9 @@ public class ColorBase : MonoBehaviour
 			{
 				if (HasTouchedMe(Input.mousePosition)) 
 				{
-					KillCurve(Curve);
+					/*KillCurve(Curve);
 					InstantiateBaseAwareCurve(Input.mousePosition);
-					InformPeersToExpectCurve(Curve);
+					InformPeersToExpectCurve(Curve);*/
 				}	
 			}
 				
@@ -171,6 +171,7 @@ public class ColorBase : MonoBehaviour
     //============================================================================================================================================//
 	void InstantiateBaseAwareCurve(Vector3 mousePosition)
 	{
+        
 		//Curve = (GameObject) Instantiate(Resources.Load("ColorCurve"));
         Curve = (GameObject)Game.Spawn(Resources.Load("ColorCurve"));
         ColorString stringScript = Curve.GetComponent<ColorString>();
@@ -203,6 +204,7 @@ public class ColorBase : MonoBehaviour
 		
 		Debug.Log ("Attention curve with " + stringScript.BasesExpected.Count + " bases to detect");
 		Debug.Log ("Attention curve with " + stringScript.BasesToAvoid.Count + " bases to avoid");
+        
 	}
 	
 	//============================================================================================================================================//
@@ -231,7 +233,6 @@ public class ColorBase : MonoBehaviour
 		ColorString colorString = curveToKill.GetComponent<ColorString>();
 		
 		curveManager.SendMessage ("RemoveCurveFromMonitoring", colorString);
-        Destroy(colorString.FXDrawObject);
 		Destroy(curveToKill);
 	}
 	
