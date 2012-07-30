@@ -62,7 +62,7 @@ public class ColorString : MonoBehaviour
     public Color[] fxColors = new Color[] { new Color(0, 1, 0), new Color(1, 1f, 0f), new Color(0.2f, 0, 1f), new Color(0f, 1f, 1), new Color(0.7f, 1, 0), new Color(0.5f, 0, 1f) };
 
     Mesh CurveMesh;
-
+	
 	//============================================================================================================================================//
     void Awake()
     {
@@ -221,10 +221,13 @@ public class ColorString : MonoBehaviour
 	//============================================================================================================================================//
 	public void ShowTouchTracker() 
 	{
-		Vector3 currentTrackerPosition = new Vector3(CurrentTracker.transform.position.x,CurrentTracker.transform.position.y,-1);
-		CurrentTracker = TouchTracker;
-		ArrowTracker.transform.position = new Vector3 (ArrowTracker.transform.position.x,ArrowTracker.transform.position.y,-200);
-		CurrentTracker.transform.position = currentTrackerPosition;
+		if (!HasCurveReachedTarget) {
+		
+			Vector3 currentTrackerPosition = new Vector3(CurrentTracker.transform.position.x,CurrentTracker.transform.position.y,-1);
+			CurrentTracker = TouchTracker;
+			ArrowTracker.transform.position = new Vector3 (ArrowTracker.transform.position.x,ArrowTracker.transform.position.y,-200);
+			CurrentTracker.transform.position = currentTrackerPosition;
+		}
 	}
 	
 	//============================================================================================================================================//
