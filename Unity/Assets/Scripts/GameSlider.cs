@@ -98,13 +98,13 @@ public class GameSlider : MonoBehaviour
 
         if (PauseMenu)
         {
-            //print(startDistance);
+            //Game.Log(startDistance);
             if (startDistance < 10)
             {
                 if (Game.Instance.Paused)
                 {
                     Game.Instance.Resume();
-                    print("Resume");
+                    Game.Log("Resume");
                 }
             }
             else
@@ -112,7 +112,7 @@ public class GameSlider : MonoBehaviour
                 if (!Game.Instance.Paused)
                 {
                     Game.Instance.Pause();
-                    print("Pause");
+                    Game.Log("Pause");
                 }
             }
         }

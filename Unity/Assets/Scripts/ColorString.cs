@@ -125,7 +125,7 @@ public class ColorString : MonoBehaviour
                         {
                             
 							
-					Vector3 mousePosition =  Camera.main.ScreenToWorldPoint( Input.mousePosition);
+					/*Vector3 mousePosition =  Camera.main.ScreenToWorldPoint( Input.mousePosition);
 						
 					if (mousePosition.y <= -4.9f) 
 						{
@@ -145,10 +145,10 @@ public class ColorString : MonoBehaviour
 					if (mousePosition.x >= 4.9f) 
 						{
 							mousePosition.x = 4.9f;	
-						}	
+						}	*/
 
 							
-							List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(mousePosition);
+							List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(Input.mousePosition);
                             foreach (Vector3 point in pointsToAdd)
                             {
                                 AddScreenPointToTail(point);
@@ -216,7 +216,7 @@ public class ColorString : MonoBehaviour
 	{
 		if (HasCurveBeenHitAtPosition(Input.mousePosition))
 		{
-			Debug.Log("Curve has been Hit");
+			Game.Log("Curve has been Hit");
 			CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
 			InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
 		}	
@@ -227,7 +227,7 @@ public class ColorString : MonoBehaviour
 	{
 		if (HasCurveBeenHitAtPosition(Input.mousePosition))
 		{
-			Debug.Log("Curve has been Hit");
+			Game.Log("Curve has been Hit");
 			CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
 			if (!IsAnotherCurveBeingDrawnExists()) 
 			{
@@ -365,7 +365,7 @@ public class ColorString : MonoBehaviour
 	{		
 		List<Vector3> res = new List<Vector3> ();
 		
-		var worldTouchPosition = touchPosition;
+		var worldTouchPosition = Camera.main.ScreenToWorldPoint(touchPosition);
 		Vector3 worldTouchPosition2D = new Vector3(worldTouchPosition.x,worldTouchPosition.y,0);
 		
 		Vector3 lastPoint;

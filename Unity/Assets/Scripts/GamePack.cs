@@ -12,14 +12,14 @@ public class GamePack
     public GameAnim[] AnimationsClose;
     public Animation AnimationObject;
 
-    public FXStars.ParticleMode FXMode;
+    public string FXMode;
 
     //============================================================================================================================================//
     // Plays all of the open animations and sets current fx mode //
     //============================================================================================================================================//
     public void Open(Game game)
     {
-        game.FX.Mode = FXMode;
+        Game.Instance.FX.SetEffect(FXMode);
         game.SetScreen(Game.GameScreen.Packs);
         
         for (int i = 0; i < AnimationsOpen.Length; i++)

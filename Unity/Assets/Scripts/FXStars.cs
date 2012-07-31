@@ -7,33 +7,45 @@ public class FXStars : MonoBehaviour
     List<ParticleSystem.Particle> ParticleList = new List<ParticleSystem.Particle>();
     ParticleSystem.Particle[] Particles;
     List<float> ParticleStartSize = new List<float>();
-    
-    int NumberOfParticles = 0;
 
-    public float LifeTimeMin = 1;
-    public float LifeTimeMax = 2;
-    public float StartSizeMin = 1;
-    public float StartSizeMax = 2;
-    public Color StartColor = Color.white;
+    public int Rate = 5;
+    public int NumberOfParticles = 0;
+    public enum ParticleMode { Chaos, Border, Horizontal, Game, GreenPack, Vortex, BlackHole };
+    public ParticleMode Mode = ParticleMode.Border;
 
-    // Stats //
-    public int Count = 0;
-
-    public FX[] FX;
+    public FXBase[] FX;
+    public int FXIndex = 0;
+    public Dictionary<string, int> FXNames = new Dictionary<string, int>();
 
     //============================================================================================================================================//
     void Awake()
     {
-        Particles = new ParticleSystem.Particle[4096];
+        // Store Names //
+        for (int i = 0; i < FX.Length; i++)
+        {
+            FXNames.Add(FX[i].Name, i);
+        }
+
         particleSystem.Play();
 	}
+
+    //============================================================================================================================================//
+    public void SetEffect(string name)
+    {
+        if (FXNames.ContainsKey(name))
+        {
+            FXIndex = FXNames[name];
+        }
+        else
+            FXIndex = 0;       
+    }
 
     //============================================================================================================================================//
     void Update()
     {
         if (!Game.Instance.Paused)
         {
-            Emit(10);
+            Emit(Rate);
 
             for (int i = 0; i < ParticleList.Count; i++)
             {
@@ -42,7 +54,7 @@ public class FXStars : MonoBehaviour
                 if (life > 1)
                 {
                     ParticleList.RemoveAt(i);
-                    ParticleStartSize.RemoveAt(i);
+                    ParticleStartSize.RemoveAt(i);             
                 }
                 else
                 {
@@ -50,144 +62,115 @@ public class FXStars : MonoBehaviour
                     //p.size = ParticleStartSize[i] * (1f - life);
                     p.size = ParticleStartSize[i] * (0.5f - Mathf.Abs(life - 0.5f)) * 2;
 
-                    if (Mode == ParticleMode.Vortex)
+                    // Vortex //
+                    if (FX[FXIndex].VortexForce)
                     {
-                        // Get Angle //
-                        // Rotate Faster Close to Center //
-                        float angle = Mathf.Atan(p.position.y / p.position.x);
                         float distance = p.position.magnitude;
-                        float strength = Mathf.Pow(1f - (distance / 10f), 6) * 5 * Time.deltaTime;
-
-                        angle += strength;
+                        float strength = Mathf.Pow(1f - (distance / FX[FXIndex].VortexRadius), FX[FXIndex].VortexExponent) * FX[FXIndex].VortexStength * Time.deltaTime;
 
                         Vector3 newPos = new Vector3();
                         newPos.x = Mathf.Cos(strength) * p.position.x + Mathf.Sin(strength) * p.position.y;
                         newPos.y = -Mathf.Sin(strength) * p.position.x + Mathf.Cos(strength) * p.position.y;
 
+                        //p.velocity += newPos - p.position;
                         p.position = newPos;
-                        p.position += (p.velocity * Time.deltaTime);
                     }
-                    if (Mode == ParticleMode.BlackHole)
-                    {
-                        float radius = 2;
 
-                        p.position += (p.velocity * Time.deltaTime);
-                        Vector3 radiusPoint = p.position.normalized * radius;
+                    // Radial //
+                    if (FX[FXIndex].RadialForce && FX[FXIndex].RadialOuterRadius > 0)
+                    {
+                        Vector3 radiusPoint = p.position.normalized * FX[FXIndex].RadialInnerRadius;
                         Vector3 dir = radiusPoint - p.position;
                         float distance = Vector3.Distance(p.position, radiusPoint);
-                        float strength = Mathf.Pow(1 - (distance / 7f), 2);
 
-                        p.position += dir * strength * 5f * Time.deltaTime;
+                        float strength = Mathf.Pow(1 - (distance / FX[FXIndex].RadialOuterRadius), 2);
+
+                        //p.velocity += dir * strength * FX[FXIndex].RadialStrength;
+                        p.position += dir * strength * FX[FXIndex].RadialStrength * Time.deltaTime;
                     }
-                    else if (Mode == ParticleMode.Chaos)
+
+                    // Jitter //
+                    if (FX[FXIndex].JitterForce)
                     {
-                        float amount = 50;
+                        float amount = FX[FXIndex].JitterStrength;
                         Vector3 rnd = new Vector3(amount * Random.value, amount * Random.value, 0) - new Vector3(amount * 0.5f, amount * 0.5f, 0);
+
                         p.velocity = p.velocity * 0.8f + rnd * Time.deltaTime;
-                        p.position += p.velocity * Time.deltaTime;
                     }
-                    else
-                    {
-                        p.position += (p.velocity * Time.deltaTime);
-                    }
+                    
+                    p.position += (p.velocity * Time.deltaTime);
 
                     ParticleList[i] = p;
                 }
             }
 
             particleSystem.SetParticles(ParticleList.ToArray(), ParticleList.Count);
-            Count = particleSystem.particleCount;
+            NumberOfParticles = ParticleList.Count;
         }
 	}
 
     //============================================================================================================================================//
-    public Vector3 VelocityRandom = Vector3.zero;
-    public Vector3 Velocity = Vector3.zero;
-    public Color ColorMin = Color.white;
-    public Color ColorMax = Color.white;
-    public enum ParticleMode {Chaos, Border, Horizontal, Game, GreenPack, Vortex, BlackHole};
-    public ParticleMode Mode = ParticleMode.Border;
-
     void Emit(int number)
     {
         for (int i = 0; i < number; i++)
         {
             ParticleSystem.Particle particle = new ParticleSystem.Particle();
 
-            if (Mode == ParticleMode.GreenPack || Mode == ParticleMode.Chaos)
-                particle.color = Color.Lerp(Color.green, Color.white, Random.value);
-            else
-                particle.color = Color.Lerp(ColorMin, ColorMax, Random.value);
-
-            if (Mode == ParticleMode.Game)
-            {
-                particle.color = new Color(particle.color.r, particle.color.g, particle.color.b, Random.value * 0.3f);
-            }
-
+            particle.color = Color.Lerp(FX[FXIndex].ColorMin, FX[FXIndex].ColorMax, Random.value);
             particle.startLifetime = Time.timeSinceLevelLoad;
-            particle.lifetime = Mathf.Lerp(LifeTimeMin, LifeTimeMax, Random.value);
-            particle.size = Mathf.Lerp(StartSizeMin, StartSizeMax, Random.value);
-
-            if (Mode == ParticleMode.Border)
+            particle.lifetime = Mathf.Lerp(FX[FXIndex].LifeTimeMin, FX[FXIndex].LifeTimeMax, Random.value);
+            particle.size = Mathf.Lerp(FX[FXIndex].StartSizeMin, FX[FXIndex].StartSizeMax, Random.value);
+            particle.velocity = new Vector3(Random.value * FX[FXIndex].VelocityRandom.x, Random.value * FX[FXIndex].VelocityRandom.y, 0) - new Vector3(FX[FXIndex].VelocityRandom.x * 0.5f, FX[FXIndex].VelocityRandom.y * 0.5f, 0) + FX[FXIndex].Velocity;
+            
+            // Position //
+            if (FX[FXIndex].Emitter == FXBase.EmitterType.Border)
             {
-                particle.position = GetPointOnRectangle();           
+                particle.position = GetPointOnRectangle(FX[FXIndex].PositionMin, FX[FXIndex].PositionMax);           
+            }
+            else if (FX[FXIndex].Emitter == FXBase.EmitterType.Box)
+            {
+                Vector2 size = FX[FXIndex].PositionMax - FX[FXIndex].PositionMin;
+                particle.position = new Vector3(Random.value * size.x, Random.value * size.y, 0) + new Vector3(FX[FXIndex].PositionMin.x, FX[FXIndex].PositionMin.y, 0);
+            }
+            else if (FX[FXIndex].Emitter == FXBase.EmitterType.Point)
+            {
+                particle.position = new Vector3(FX[FXIndex].PositionMin.x, FX[FXIndex].PositionMin.y, 0);
             }
             else
             {
-                particle.position = new Vector3(Random.value * 10, Random.value * 10, 0) - new Vector3(5, 5, 0);
+                particle.position = Vector3.zero;
             }
-
-            if (Mode == ParticleMode.Horizontal || Mode == ParticleMode.GreenPack)
-            {
-                particle.velocity = new Vector3(Random.value * VelocityRandom.x, 0, 0) - new Vector3(VelocityRandom.x * 0.5f, 0, 0) + Velocity;
-            }
-            else
-            {
-                particle.velocity = new Vector3(Random.value * VelocityRandom.x, Random.value * VelocityRandom.y, 0) - new Vector3(VelocityRandom.x * 0.5f, VelocityRandom.y * 0.5f, 0) + Velocity;
-            }
-            if (Mode == ParticleMode.Game)
-            {
-                particle.velocity *= 0.2f;
-            }
-
+            particle.position = particle.position + new Vector3(0, 0, 1);
             
             ParticleStartSize.Add(particle.size);
-            //Particles[NumberOfParticles] = particle;
             ParticleList.Add(particle);
-
-            NumberOfParticles++;
         }
     }
 
     //============================================================================================================================================//
-    Vector3 GetPointOnRectangle()
+    Vector3 GetPointOnRectangle(Vector2 min, Vector2 max)
     {
         float rnd = Random.value;
         Vector3 result = Vector3.zero;
-        Rect rect = new Rect(-5, -5, 10, 10);
-
+        Vector2 size = max - min;
+                
         if (rnd < 0.25f)
         {
-            result = new Vector3(rect.left, rect.height * Random.value + rect.top);
+            result = new Vector3(min.x, size.y * Random.value + min.y);
         }
         else if (rnd < 0.5f)
         {
-            result = new Vector3(rect.right, rect.height * Random.value + rect.top);
+            result = new Vector3(max.x, size.y * Random.value + min.y);
         }
         else if (rnd < 0.75f)
         {
-            result = new Vector3(rect.width * Random.value + rect.left, rect.top);
+            result = new Vector3(size.x * Random.value + min.x, min.y);
         }
         else
         {
-            result = new Vector3(rect.width * Random.value + rect.left, rect.bottom);
+            result = new Vector3(size.x * Random.value + min.x, max.y);
         }
 
         return result;
     }
 }
-
-
-// Spawn at location //
-// Set random Velocity //
-// Set Size Fade //

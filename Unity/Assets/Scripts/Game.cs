@@ -6,6 +6,7 @@ public class Game : MonoBehaviour
 {
     static public Game Instance;
     public bool Logging = true;
+    public int TargetFrameRate = 60;
     
     // Logic //
 	float PlayTime;
@@ -43,13 +44,15 @@ public class Game : MonoBehaviour
         }
 
    		StartTime = Time.time;
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = TargetFrameRate;
 	}
 
     //============================================================================================================================================//
 	void Update()
 	{
         DebugMode = Logging;
+        if(Application.targetFrameRate != TargetFrameRate)
+            Application.targetFrameRate = TargetFrameRate;
 
         if (!Paused)
         {

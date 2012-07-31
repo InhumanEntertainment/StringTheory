@@ -31,14 +31,14 @@ public class Frontend : MonoBehaviour
     }
 
     //=======================================================================================================================================================================//
-    void SwitchScreens(Game.GameScreen screen, Animation from, Animation to, FXStars.ParticleMode fxmode)
+    void SwitchScreens(Game.GameScreen screen, Animation from, Animation to, string effect)
     {
         Game.SetScreen(screen);
 
         to.PlayQueued("Menu_Open");
         from.PlayQueued("Menu_Close");
 
-        Game.FX.Mode = fxmode;
+        Game.FX.SetEffect(effect);
     }
 
     //=======================================================================================================================================================================//
@@ -61,7 +61,7 @@ public class Frontend : MonoBehaviour
             PacksAnimation.PlayQueued("Menu_Open");
             MenuAnimation.PlayQueued("Menu_Close");
 
-            Game.FX.Mode = FXStars.ParticleMode.Horizontal;
+            Game.FX.SetEffect("Horizontal");
         }
         else if (Command == "Packs_Close")
         {
@@ -69,7 +69,7 @@ public class Frontend : MonoBehaviour
             PacksAnimation.PlayQueued("Menu_Close");
             MenuAnimation.PlayQueued("Menu_Open");
 
-            Game.FX.Mode = FXStars.ParticleMode.BlackHole;
+            Game.FX.SetEffect("BlackHole");
         }
 
         else if (Command == "Vortex_Open")
@@ -82,11 +82,11 @@ public class Frontend : MonoBehaviour
             Game.CurrentPack.Close(Game);
             PacksAnimation.PlayQueued("Menu_Open");
 
-            Game.FX.Mode = FXStars.ParticleMode.Horizontal;
+            Game.FX.SetEffect("Horizontal");
         }
         else if (Command == "Vortex_Close")
         {
-            SwitchScreens(Game.GameScreen.Packs, VortexAnimation, PacksAnimation, FXStars.ParticleMode.Horizontal);
+            SwitchScreens(Game.GameScreen.Packs, VortexAnimation, PacksAnimation, "Horizontal");
         }
         else if (Command == "Chaos_Open")
         {
@@ -94,7 +94,7 @@ public class Frontend : MonoBehaviour
         }
         else if (Command == "Chaos_Close")
         {
-            SwitchScreens(Game.GameScreen.Packs, ChaosAnimation, PacksAnimation, FXStars.ParticleMode.Horizontal);
+            SwitchScreens(Game.GameScreen.Packs, ChaosAnimation, PacksAnimation, "Horizontal");
         }
         else if (Command == "Starter_Open")
         {
@@ -102,11 +102,11 @@ public class Frontend : MonoBehaviour
         }
         else if (Command == "Starter_Close")
         {
-            SwitchScreens(Game.GameScreen.Packs, Game.CurrentPack.AnimationObject, PacksAnimation, FXStars.ParticleMode.Horizontal);
+            SwitchScreens(Game.GameScreen.Packs, Game.CurrentPack.AnimationObject, PacksAnimation, "Horizontal");
         }
         else if (Command == "Game_Open")
         {
-            SwitchScreens(Game.GameScreen.Game, Game.CurrentPack.AnimationObject, GameAnimation, FXStars.ParticleMode.Game);
+            SwitchScreens(Game.GameScreen.Game, Game.CurrentPack.AnimationObject, GameAnimation, "Game");
         }
         
 
@@ -119,7 +119,7 @@ public class Frontend : MonoBehaviour
 
             if (Game != null)
             {
-                Game.FX.Mode = FXStars.ParticleMode.Game;
+                Game.FX.SetEffect("Game");
                 Game.LoadLevel(Command);
             }  
         }
@@ -168,7 +168,8 @@ public class Frontend : MonoBehaviour
             Game.CurrentPack.Open(Game);
             Game.DestroyLevel(Game.CurrentLevel);
             GameAnimation.PlayQueued("Menu_Close");
-            Game.FX.Mode = Game.CurrentPack.FXMode;
+
+            Game.FX.SetEffect(Game.CurrentPack.FXMode);
         }
 
         // Menus //============================================================================//
