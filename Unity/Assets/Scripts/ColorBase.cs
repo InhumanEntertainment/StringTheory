@@ -115,7 +115,7 @@ public class ColorBase : MonoBehaviour
 	}
 	
 	//============================================================================================================================================//
-    enum CurveColorMaterial : int {Teal=0, Orange=1, Purple=2, Aqua=3, Yellow=4, Pink=5};
+    public enum CurveColorMaterial : int {Teal=0, Orange=1, Purple=2, Aqua=3, Yellow=4, Pink=5};
 	enum BaseColorSpriteID : int {Teal=1,Aqua=11,Orange=2,Pink=7,Purple=4,Yellow=8};
 	
 	enum CurveEndColorSpriteID : int {Teal=20,Aqua=24,Orange=19,Pink=22,Purple=23,Yellow=21};

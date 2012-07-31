@@ -49,7 +49,7 @@ public class ColorString : MonoBehaviour
     public float WidthMax = 0.1f;
     public float WidthChange = 0.1f;
 
-    int ColorIndex;
+    public int ColorIndex;
     public Material[] ColorMaterials;
     public Game Game;
 
@@ -119,7 +119,36 @@ public class ColorString : MonoBehaviour
 				}
 				else 
 				{
-					List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(Input.mousePosition);
+					
+					Vector3 mousePosition =  Camera.main.ScreenToWorldPoint( Input.mousePosition);
+						
+					if (mousePosition.y <= -4.9f) 
+						{
+							mousePosition.y = -4.9f;	
+						}
+						
+					if (mousePosition.y >= 4.9f) 
+						{
+							mousePosition.y = 4.9f;	
+						}	
+					
+						if (mousePosition.x <= -4.9f) 
+						{
+							mousePosition.x = -4.9f;	
+						}
+						
+					if (mousePosition.x >= 4.9f) 
+						{
+							mousePosition.x = 4.9f;	
+						}	
+						
+						
+						print ("MOUSE POSITION :" + mousePosition.y);
+						
+						
+						
+						
+					List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(mousePosition);
 					foreach (Vector3 point in pointsToAdd) 
 					{
 						AddScreenPointToTail(point);
@@ -334,7 +363,11 @@ public class ColorString : MonoBehaviour
 		
 		List<Vector3> res = new List<Vector3> ();
 		
-		var worldTouchPosition = Camera.main.ScreenToWorldPoint(touchPosition);
+		var worldTouchPosition = touchPosition;
+		
+		
+		
+		
 		Vector3 worldTouchPosition2D = new Vector3(worldTouchPosition.x,worldTouchPosition.y,0);
 		
 		Vector3 lastPoint;
