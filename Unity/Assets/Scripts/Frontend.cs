@@ -54,6 +54,7 @@ public class Frontend : MonoBehaviour
             Game.SetScreen(Game.GameScreen.Menu);
             // Play "Packs_Open" Animation //
         }
+
         else if (Command == "Packs_Open")
         {
             Game.SetScreen(Game.GameScreen.Packs);
@@ -70,6 +71,7 @@ public class Frontend : MonoBehaviour
 
             Game.FX.Mode = FXStars.ParticleMode.BlackHole;
         }
+
         else if (Command == "Vortex_Open")
         {
             LoadScreen("Vortex");
@@ -106,13 +108,7 @@ public class Frontend : MonoBehaviour
         {
             SwitchScreens(Game.GameScreen.Game, Game.CurrentPack.AnimationObject, GameAnimation, FXStars.ParticleMode.Game);
         }
-        else if (Command == "Game_Close")
-        {            
-            Game.CurrentPack.Open(Game);
-            Game.DestroyCurrentLevel(Game.CurrentLevel);
-            GameAnimation.PlayQueued("Menu_Close");
-            Game.FX.Mode = Game.CurrentPack.FXMode;
-        }
+        
 
         // Level Buttons //============================================================================//
         else if (Game.LevelList.Contains(Command))
@@ -143,6 +139,7 @@ public class Frontend : MonoBehaviour
         {
             if (Game.CurrentLevel + 1 < Game.LevelList.Count)
             {
+                ResetPauseSlider();
                 Game.LoadLevel(Game.CurrentLevel + 1);
             }
         }
@@ -150,18 +147,58 @@ public class Frontend : MonoBehaviour
         {
             if (Game.CurrentLevel > 0)
             {
+                ResetPauseSlider();
                 Game.LoadLevel(Game.CurrentLevel - 1);
             }
         }
         else if (Command == "Retry")
         {
-            var curves = GameObject.FindObjectsOfType(typeof(ColorString));
-            for (int i = 0; i < curves.Length; i++)
-            {
-                Destroy(((ColorString)curves[i]).gameObject);
-            }
+            Game.Retry();
+            ResetPauseSlider();
+
+            // Destroy Curves // 
         }
+        else if (Command == "Resume")
+        {
+            ResetPauseSlider();
+        }
+        else if (Command == "Game_Close")
+        {
+            ResetPauseSlider();
+            Game.CurrentPack.Open(Game);
+            Game.DestroyLevel(Game.CurrentLevel);
+            GameAnimation.PlayQueued("Menu_Close");
+            Game.FX.Mode = Game.CurrentPack.FXMode;
+        }
+
+        // Menus //============================================================================//
+        else if (Command == "InhumanEntertainment")
+        {
+            Application.OpenURL("http://www.inhumanentertainment.com");
+        }
+        else if (Command == "Sompom")
+        {
+            Application.OpenURL("http://www.sompon.com");
+        }
+        else if (Command == "Email")
+        {
+            Application.OpenURL("email:ecl3d@hotmail.com");
+        }
+        else if (Command == "Rate")
+        {
+            
+        }
+
+        Game.Log("Frontend Command: " + Command);
 	}
+
+    //=======================================================================================================================================================================//
+    public void ResetPauseSlider()
+    {
+        var obj = GameObject.Find("PauseSlider");
+        var slider = obj.GetComponent<GameSlider>();
+        slider.Target = slider.StartPosition;
+    }
 
     //=======================================================================================================================================================================//
     void LoadScreen(string level)

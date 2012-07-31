@@ -3,28 +3,45 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Game : MonoBehaviour
-{	
+{
+    static public Game Instance;
+    public bool Logging = true;
+    
+    // Logic //
 	float PlayTime;
 	float StartTime;
 	string PlayTimeLabel;
 	bool  HasLevelBeenCompleted = false;
+    public bool Paused = false;
 
+    // UI //
     public enum GameScreen { Splash, Menu, About, Packs, ChaosPack, VortexPack, BasicPack, Game, Pause, Complete };
     public GameScreen CurrentScreen = GameScreen.Splash;
-
-    //public enum GamePacks {Basic, Chaos, Vortex };
     public GamePack CurrentPack;
     public GamePack[] Packs;
-
-    public Transform MenuGroup;
-    public Transform GameGroup;
-
-    public bool Logging = true;
     public FXStars FX;
+
+    // Levels //
+    AsyncOperation Async;
+    public int CurrentLevel;
+    public int LastLevel;
+    public List<string> LevelList;
+    public List<int> LevelIndexList;
+    public List<string> LevelIgnoreList;
 
     //============================================================================================================================================//
 	void Awake() 
 	{
+        // Singleton //
+        if (Game.Instance == null)
+        {
+            Game.Instance = this;
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+
    		StartTime = Time.time;
         Application.targetFrameRate = 60;
 	}
@@ -34,19 +51,25 @@ public class Game : MonoBehaviour
 	{
         DebugMode = Logging;
 
-        if (CurrentScreen == GameScreen.Game)
-	    {    
-		    if (PairOfCurvesToConnect() == 0 && ! HasLevelBeenCompleted) {
-			    LevelCompleted();
-		    }else{
-			    if (! HasLevelBeenCompleted) 
-			    {
-				    UpdateStringTime ();	
-			    }
-		    }
+        if (!Paused)
+        {
+            if (CurrentScreen == GameScreen.Game)
+            {
+                if (PairOfCurvesToConnect() == 0 && !HasLevelBeenCompleted)
+                {
+                    LevelCompleted();
+                }
+                else
+                {
+                    if (!HasLevelBeenCompleted)
+                    {
+                        UpdateStringTime();
+                    }
+                }
 
-            UpdateStringTime();
-            UpdateHud();
+                UpdateStringTime();
+                UpdateHud();
+            }
         }
 
         // Handle Async Level Loading //
@@ -57,7 +80,7 @@ public class Game : MonoBehaviour
                 // Delete Old Level Objects //
                 if (LastLevel != -1 && CurrentLevel != LastLevel)
                 {
-                    DestroyCurrentLevel(LastLevel);
+                    DestroyLevel(LastLevel);
                 }
 
                 // Play Level Open //
@@ -69,6 +92,27 @@ public class Game : MonoBehaviour
             }
         }
 	}
+
+    //============================================================================================================================================//
+    public void Pause()
+    {
+        Time.timeScale = 0;
+        Paused = true;
+    }
+
+    //============================================================================================================================================//
+    public void Resume()
+    {
+        Time.timeScale = 1;
+        Paused = false;
+    }
+
+    //============================================================================================================================================//
+    public void Retry()
+    {
+        CleanupScene();
+        StartTime = Time.time;
+    }
 
     //============================================================================================================================================//
     // Spawn object and parent it under the current level so it will be destoryed on level exit //
@@ -95,14 +139,13 @@ public class Game : MonoBehaviour
 		}
         return obj;
     }
-
     public Object Spawn(Object original)
     {
         return Spawn(original, Vector3.zero, Quaternion.identity);
     }
 
     //============================================================================================================================================//
-    public void DestroyCurrentLevel(int levelIndex)
+    public void DestroyLevel(int levelIndex)
     {
         if (levelIndex != -1)
         {
@@ -118,19 +161,25 @@ public class Game : MonoBehaviour
                 //root.SetActiveRecursively(false);     
             }
 
-            // Destroy All Curves //
-            var curves = GameObject.FindObjectsOfType(typeof(ColorString));
-            for (int i = 0; i < curves.Length; i++)
-            {
-                GameObject obj = ((ColorString)curves[i]).gameObject;
-                Destroy(obj);
-            }
-
-            // Reset Detector //
-            GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
-            CurveColliderDetector detector = curveManager.GetComponent<CurveColliderDetector>();
-            detector.Curves.Clear();
+            CleanupScene();
         }                
+    }
+
+    //============================================================================================================================================//
+    public void CleanupScene()
+    {
+        // Destroy All Curves //
+        var curves = GameObject.FindObjectsOfType(typeof(ColorString));
+        for (int i = 0; i < curves.Length; i++)
+        {
+            GameObject obj = ((ColorString)curves[i]).gameObject;
+            Destroy(obj);
+        }
+
+        // Reset Detector //
+        GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
+        CurveColliderDetector detector = curveManager.GetComponent<CurveColliderDetector>();
+        detector.Curves.Clear();
     }
 
     //============================================================================================================================================//
@@ -249,81 +298,6 @@ public class Game : MonoBehaviour
 		}
     }*/
 
-
-
-
-
-
-    AsyncOperation Async;
-    public int CurrentLevel;
-    public int LastLevel;
-    public List<string> LevelList;
-    public List<int> LevelIndexList;
-    public List<string> LevelIgnoreList;
-
-    //=====================================================================================================================================//
-    /*void OnGUI()
-    {
-        // Temp Game Buttons //
-        if (CurrentScreen == GameScreen.Game)
-        {
-            for (int i = 0; i < LevelList.Count; i++)
-            {
-                CreateButton(i, (float)i / LevelList.Count * Screen.width);
-            }
-
-            // Previous Level //
-            float aspect = (float)Screen.width / Screen.height;
-            float top = (Screen.height - Screen.width) / 2f + Screen.width;
-            float height = Screen.height * 0.05f;
-
-            if (GUI.Button(new Rect(Screen.width * 0.0f, top, Screen.width * 0.33f, height), "Previous"))
-            {
-                if (CurrentLevel > 0)
-                {
-                    LoadLevel(CurrentLevel - 1);
-                }
-            }
-
-            // Retry Level //
-            if (GUI.Button(new Rect(Screen.width * 0.33f, top, Screen.width * 0.34f, height), "Retry"))
-            {
-                var curves = GameObject.FindObjectsOfType(typeof(ColorString));
-                for (int i = 0; i < curves.Length; i++)
-                {
-                    Destroy(((ColorString)curves[i]).gameObject);
-                }
-            }
-
-            // Next Level //
-            if (GUI.Button(new Rect(Screen.width * 0.67f, top, Screen.width * 0.33f, height), "Next"))
-            {
-                if (CurrentLevel + 1 < LevelList.Count)
-                {
-                    LoadLevel(CurrentLevel + 1);
-                }
-            }
-
-            // Levels Level //
-            if (GUI.Button(new Rect(Screen.width * 0.0f, Screen.height - height, Screen.width * 0.2f, height), "Levels"))
-            {
-                SetScreen(GameScreen.Menu); 
-            }
-        }
-    } */
-
-    //=====================================================================================================================================//
-    void CreateButton(int index, float x)
-    {
-        float height = Screen.height * 0.05f;
-        float top = (Screen.height - Screen.width) / 2f - height;
-
-        if (GUI.Button(new Rect(x, top, 1f / LevelList.Count * Screen.width, height), index.ToString()))
-        {
-            LoadLevel(index);
-        }
-    }
-
     //=====================================================================================================================================//
     public void LoadLevel(int index)
     {
@@ -336,8 +310,6 @@ public class Game : MonoBehaviour
             Async = Application.LoadLevelAdditiveAsync(LevelIndexList[index]);
         }
     }
-
-    //=====================================================================================================================================//
     public void LoadLevel(string level)
     {
         // Find index //
@@ -352,7 +324,13 @@ public class Game : MonoBehaviour
         }
     }
 
-#if UNITY_EDITOR
+
+//============================================================================================================================================//
+// Editor Tools //
+//============================================================================================================================================//
+#region Editor
+
+    #if UNITY_EDITOR
     //=====================================================================================================================================//
     static List<string> ReadNames()
     {
@@ -390,7 +368,8 @@ public class Game : MonoBehaviour
         context.LevelList = gameLevels;
         context.LevelIndexList = gameIndexes;
     }
-#endif
+    #endif
+
 
     //=====================================================================================================================================//
     static public bool DebugMode = true;
@@ -401,4 +380,7 @@ public class Game : MonoBehaviour
             Debug.Log(obj.ToString());
         }
     }
+
+#endregion
 }
+

@@ -79,128 +79,136 @@ public class ColorString : MonoBehaviour
     
     //============================================================================================================================================//
 	void Update () 
-	{	
-		bool hasTouchStarted = (Input.GetMouseButtonDown(0));
-		bool isTouchUpdated = Input.GetMouseButton(0);
-		
-		if (Input.touches.Length<=1) { 
-		
-		if (hasTouchStarted) {
-			
-			if (! IsCurveBeingDrawn) 
-			{
-				CutAndResumeDrawingIfNecessary();
-				/*
-				if (HasCurveBeenHitAtPosition(Input.mousePosition))
-				{
-					//Game.Log("Curve has been Hit");
-					CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
-					InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
-				}*/ 
-			}
-			else
-			{
-				//should not be possible unless multi touch//
-				//Debug.LogError("Start a touch while being drawn. IsCurvedBeingDrawn is probably not being handle correctly");	
-			}
-		}
-		else if (isTouchUpdated) 
-		{         
-			if (Tail.Count == 0) 
+	{
+        if (!Game.Paused)
+        {
+            bool hasTouchStarted = (Input.GetMouseButtonDown(0));
+            bool isTouchUpdated = Input.GetMouseButton(0);
+
+            if (Input.touches.Length <= 1)
             {
-				InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
-			}
-			
-			if (IsCurveBeingDrawn && ! HasCurveReachedTarget) 
-			{
-				if (HasFoundAnotherCurveDrawing()) 
-				{
-					IsCurveBeingDrawn = false;
-				}
-				else 
-				{
-					List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(Input.mousePosition);
-					foreach (Vector3 point in pointsToAdd) 
-					{
-						AddScreenPointToTail(point);
-						GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
-						CurveColliderDetector detector = curveManager.GetComponent<CurveColliderDetector>();
-						detector.CheckPositionForCurve(this);
-					}
-					
-					if (Tail.Count > 2) 
+
+                if (hasTouchStarted)
+                {
+
+                    if (!IsCurveBeingDrawn)
                     {
-						StopDrawingIfLastScreenPointEncouterBaseOrSelf(Input.mousePosition);
-					}				
-				}
-			}
-			else
-			{
-				if (! IsCurveBeingDrawn) 
-				{
-					//CutAndResumeDrawingIfNecessary();		
-						CutWithoutResumeDrawingIfNecessary();
-				}	
-			}
-				
-			
-			
-			//displaying of tracker
-			if (! HasCurveReachedTarget && IsCurveBeingDrawn)
-			{
-				Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-				UpdateTouchTrackerWithPosition(new Vector3(mousePosition.x,mousePosition.y,0));	
-			}
-			
-		}
-		else 
-		{
-			//touch has been cancelled//
-			if (IsCurveBeingDrawn) {
-				IsCurveBeingDrawn = false;
-			}
-			else
-			{
-				//Game.Log("No touch");	
-			}
-		}
-		BuildMesh();
-		
-		
-		if (! IsCurveBeingDrawn) 
-		{
-			ShowArrowTracker();
-		}else{
-			ShowTouchTracker();
-		}
-		
-		}//end if touches count
+                        CutAndResumeDrawingIfNecessary();
+                        /*
+                        if (HasCurveBeenHitAtPosition(Input.mousePosition))
+                        {
+                            //Game.Log("Curve has been Hit");
+                            CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
+                            InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
+                        }*/
+                    }
+                    else
+                    {
+                        //should not be possible unless multi touch//
+                        //Debug.LogError("Start a touch while being drawn. IsCurvedBeingDrawn is probably not being handle correctly");	
+                    }
+                }
+                else if (isTouchUpdated)
+                {
+                    if (Tail.Count == 0)
+                    {
+                        InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
+                    }
+
+                    if (IsCurveBeingDrawn && !HasCurveReachedTarget)
+                    {
+                        if (HasFoundAnotherCurveDrawing())
+                        {
+                            IsCurveBeingDrawn = false;
+                        }
+                        else
+                        {
+                            List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(Input.mousePosition);
+                            foreach (Vector3 point in pointsToAdd)
+                            {
+                                AddScreenPointToTail(point);
+                                GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
+                                CurveColliderDetector detector = curveManager.GetComponent<CurveColliderDetector>();
+                                detector.CheckPositionForCurve(this);
+                            }
+
+                            if (Tail.Count > 2)
+                            {
+                                StopDrawingIfLastScreenPointEncouterBaseOrSelf(Input.mousePosition);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!IsCurveBeingDrawn)
+                        {
+                            //CutAndResumeDrawingIfNecessary();		
+                            CutWithoutResumeDrawingIfNecessary();
+                        }
+                    }
+
+
+
+                    //displaying of tracker
+                    if (!HasCurveReachedTarget && IsCurveBeingDrawn)
+                    {
+                        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                        UpdateTouchTrackerWithPosition(new Vector3(mousePosition.x, mousePosition.y, 0));
+                    }
+
+                }
+                else
+                {
+                    //touch has been cancelled//
+                    if (IsCurveBeingDrawn)
+                    {
+                        IsCurveBeingDrawn = false;
+                    }
+                    else
+                    {
+                        //Game.Log("No touch");	
+                    }
+                }
+                BuildMesh();
+
+
+                if (!IsCurveBeingDrawn)
+                {
+                    ShowArrowTracker();
+                }
+                else
+                {
+                    ShowTouchTracker();
+                }
+
+            }//end if touches count
+        }
 	}
 					
 	
 	//============================================================================================================================================//
 	void CutAndResumeDrawingIfNecessary()
 	{
-				if (HasCurveBeenHitAtPosition(Input.mousePosition))
-				{
-					Debug.Log("Curve has been Hit");
-					CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
-					InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
-				}	
+		if (HasCurveBeenHitAtPosition(Input.mousePosition))
+		{
+			Debug.Log("Curve has been Hit");
+			CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
+			InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
+		}	
 	}					
 					
 	//============================================================================================================================================//
 	void CutWithoutResumeDrawingIfNecessary() 
 	{
 		if (HasCurveBeenHitAtPosition(Input.mousePosition))
-				{
-					Debug.Log("Curve has been Hit");
-					CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
-					if (!IsAnotherCurveBeingDrawnExists()) 
-					{
-						InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
-					}
-				}	
+		{
+			Debug.Log("Curve has been Hit");
+			CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
+			if (!IsAnotherCurveBeingDrawnExists()) 
+			{
+				InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
+			}
+		}	
 	}
 	
 	
@@ -217,12 +225,11 @@ public class ColorString : MonoBehaviour
 		CurrentTracker.transform.position = touchPosition;
 	}
 	
-	
 	//============================================================================================================================================//
 	public void ShowTouchTracker() 
 	{
-		if (!HasCurveReachedTarget) {
-		
+		if (!HasCurveReachedTarget) 
+        {		
 			Vector3 currentTrackerPosition = new Vector3(CurrentTracker.transform.position.x,CurrentTracker.transform.position.y,-1);
 			CurrentTracker = TouchTracker;
 			ArrowTracker.transform.position = new Vector3 (ArrowTracker.transform.position.x,ArrowTracker.transform.position.y,-200);
@@ -330,8 +337,7 @@ public class ColorString : MonoBehaviour
 	
 	//============================================================================================================================================//
 	public List<Vector3> GetPointsToAddIfTouchPositionMatchDistanceRequirement(Vector3 touchPosition) 
-	{
-		
+	{		
 		List<Vector3> res = new List<Vector3> ();
 		
 		var worldTouchPosition = Camera.main.ScreenToWorldPoint(touchPosition);
@@ -433,8 +439,7 @@ public class ColorString : MonoBehaviour
 		//temp code
 		sprite.spriteId = 14;
 		ArrowTracker.transform.localScale += new Vector3(+0.5f, +0.5f, 0);
-	}
-	
+	}	
 	
 	//============================================================================================================================================//
 	void StopDrawingIfLastScreenPointEncouterBaseOrSelf(Vector3 mousePosition) 

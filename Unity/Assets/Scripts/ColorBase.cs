@@ -21,83 +21,86 @@ public class ColorBase : MonoBehaviour
     //============================================================================================================================================//
 	void Update () 
 	{
-		
-	  if (Input.touches.Length<=1) 
-      { 
-		
-		bool hasTouchStarted = (Input.GetMouseButtonDown(0));
-		bool isTouchUpdated = Input.GetMouseButton(0);
-		
-		if (hasTouchStarted) 
-		{
-			if (HasTouchedMe(Input.mousePosition)) 
-			{
-				if (! ExpectedCurve) 
-				{
-					if (Curve)
-					{
-						KillCurve(Curve);
-					}
-				}
-				else 
-				{		
-					KillCurve(ExpectedCurve);
-				}	
-				
-				InstantiateBaseAwareCurve(Input.mousePosition);
-				InformPeersToExpectCurve(Curve);
-			}
-		}
-		else if (isTouchUpdated) 
-		{
-			if (!Curve) 
-			{
-				if (HasTouchedMe(Input.mousePosition)) 
-				{
-					if (! ExpectedCurve) 
-					{	
-						InstantiateBaseAwareCurve(Input.mousePosition);
-						InformPeersToExpectCurve(Curve);	
-					}
-					else 
-					{
-						ColorString colorString = ExpectedCurve.GetComponent<ColorString>();
-						if (! colorString.IsCurveBeingDrawn) {
-							KillCurve(ExpectedCurve);
-							InstantiateBaseAwareCurve(Input.mousePosition);
-							InformPeersToExpectCurve(Curve);	
-						}else {
-							Debug.Log("");		
-						}
-					}
-				}
-			}
-			else 
-			{
-				if (HasTouchedMe(Input.mousePosition)) 
-				{
-					/*KillCurve(Curve);
-					InstantiateBaseAwareCurve(Input.mousePosition);
-					InformPeersToExpectCurve(Curve);*/
-				}	
-			}
-				
-		}
-		else
-		{
-			
-			if (Curve) 
-			{
-				ColorString colorString = Curve.GetComponent<ColorString>();
-				if (colorString.Tail.Count == 0) 
-				{
-					KillCurve(Curve);	
-				}
-			}
-		}
-			
-		}
-		
+        if (!Game.Paused)
+        {
+            if (Input.touches.Length <= 1)
+            {
+                bool hasTouchStarted = (Input.GetMouseButtonDown(0));
+                bool isTouchUpdated = Input.GetMouseButton(0);
+
+                if (hasTouchStarted)
+                {
+                    if (HasTouchedMe(Input.mousePosition))
+                    {
+                        if (!ExpectedCurve)
+                        {
+                            if (Curve)
+                            {
+                                KillCurve(Curve);
+                            }
+                        }
+                        else
+                        {
+                            KillCurve(ExpectedCurve);
+                        }
+
+                        InstantiateBaseAwareCurve(Input.mousePosition);
+                        InformPeersToExpectCurve(Curve);
+                    }
+                }
+                else if (isTouchUpdated)
+                {
+                    if (!Curve)
+                    {
+                        if (HasTouchedMe(Input.mousePosition))
+                        {
+                            if (!ExpectedCurve)
+                            {
+                                InstantiateBaseAwareCurve(Input.mousePosition);
+                                InformPeersToExpectCurve(Curve);
+                            }
+                            else
+                            {
+                                ColorString colorString = ExpectedCurve.GetComponent<ColorString>();
+                                if (!colorString.IsCurveBeingDrawn)
+                                {
+                                    KillCurve(ExpectedCurve);
+                                    InstantiateBaseAwareCurve(Input.mousePosition);
+                                    InformPeersToExpectCurve(Curve);
+                                }
+                                else
+                                {
+                                    Debug.Log("");
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (HasTouchedMe(Input.mousePosition))
+                        {
+                            /*KillCurve(Curve);
+                            InstantiateBaseAwareCurve(Input.mousePosition);
+                            InformPeersToExpectCurve(Curve);*/
+                        }
+                    }
+
+                }
+                else
+                {
+
+                    if (Curve)
+                    {
+                        ColorString colorString = Curve.GetComponent<ColorString>();
+                        if (colorString.Tail.Count == 0)
+                        {
+                            KillCurve(Curve);
+                        }
+                    }
+                }
+
+            }
+        }
 	}
 	
 	//============================================================================================================================================//
@@ -250,7 +253,6 @@ public class ColorBase : MonoBehaviour
         }
         Debug.DrawLine(ray.origin, hit.point);
 		
-        return res;
-		
+        return res;		
 	}
 }

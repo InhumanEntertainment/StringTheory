@@ -31,71 +31,73 @@ public class FXStars : MonoBehaviour
     //============================================================================================================================================//
     void Update()
     {
-        Emit(10);
-
-        for (int i = 0; i < ParticleList.Count; i++)
+        if (!Game.Instance.Paused)
         {
-            var life = ((Time.timeSinceLevelLoad - ParticleList[i].startLifetime) / ParticleList[i].lifetime);
+            Emit(10);
 
-            if (life > 1)
+            for (int i = 0; i < ParticleList.Count; i++)
             {
-                ParticleList.RemoveAt(i);
-                ParticleStartSize.RemoveAt(i);
-            }
-            else
-            {
-                ParticleSystem.Particle p = ParticleList[i];
-                //p.size = ParticleStartSize[i] * (1f - life);
-                p.size = ParticleStartSize[i] * (0.5f - Mathf.Abs(life - 0.5f)) * 2;
+                var life = ((Time.timeSinceLevelLoad - ParticleList[i].startLifetime) / ParticleList[i].lifetime);
 
-                if(Mode == ParticleMode.Vortex)
+                if (life > 1)
                 {
-                    // Get Angle //
-                    // Rotate Faster Close to Center //
-                    float angle = Mathf.Atan(p.position.y / p.position.x);
-                    float distance = p.position.magnitude;
-                    float strength = Mathf.Pow(1f - (distance / 10f), 6) * 5 * Time.deltaTime;
-
-                    angle += strength;
-
-                    Vector3 newPos = new Vector3();
-                    newPos.x = Mathf.Cos(strength) * p.position.x + Mathf.Sin(strength) * p.position.y;
-                    newPos.y = -Mathf.Sin(strength) * p.position.x + Mathf.Cos(strength) * p.position.y;
-
-                    p.position = newPos;
-                    p.position += (p.velocity * Time.deltaTime);
-                }
-                if (Mode == ParticleMode.BlackHole)
-                {                  
-                    float radius = 2;
-
-                    p.position += (p.velocity * Time.deltaTime);
-                    Vector3 radiusPoint = p.position.normalized * radius;
-                    Vector3 dir = radiusPoint - p.position;
-                    float distance = Vector3.Distance(p.position, radiusPoint);
-                    float strength = Mathf.Pow(1 - (distance / 7f), 2);
-
-                    p.position += dir * strength * 5f * Time.deltaTime;             
-                }
-                else if (Mode == ParticleMode.Chaos)
-                {
-                    float amount = 50;
-                    Vector3 rnd = new Vector3(amount * Random.value, amount * Random.value, 0) - new Vector3(amount * 0.5f, amount * 0.5f, 0);
-                    p.velocity = p.velocity * 0.8f + rnd * Time.deltaTime;
-                    p.position += p.velocity * Time.deltaTime;
+                    ParticleList.RemoveAt(i);
+                    ParticleStartSize.RemoveAt(i);
                 }
                 else
                 {
-                    p.position += (p.velocity * Time.deltaTime);
+                    ParticleSystem.Particle p = ParticleList[i];
+                    //p.size = ParticleStartSize[i] * (1f - life);
+                    p.size = ParticleStartSize[i] * (0.5f - Mathf.Abs(life - 0.5f)) * 2;
+
+                    if (Mode == ParticleMode.Vortex)
+                    {
+                        // Get Angle //
+                        // Rotate Faster Close to Center //
+                        float angle = Mathf.Atan(p.position.y / p.position.x);
+                        float distance = p.position.magnitude;
+                        float strength = Mathf.Pow(1f - (distance / 10f), 6) * 5 * Time.deltaTime;
+
+                        angle += strength;
+
+                        Vector3 newPos = new Vector3();
+                        newPos.x = Mathf.Cos(strength) * p.position.x + Mathf.Sin(strength) * p.position.y;
+                        newPos.y = -Mathf.Sin(strength) * p.position.x + Mathf.Cos(strength) * p.position.y;
+
+                        p.position = newPos;
+                        p.position += (p.velocity * Time.deltaTime);
+                    }
+                    if (Mode == ParticleMode.BlackHole)
+                    {
+                        float radius = 2;
+
+                        p.position += (p.velocity * Time.deltaTime);
+                        Vector3 radiusPoint = p.position.normalized * radius;
+                        Vector3 dir = radiusPoint - p.position;
+                        float distance = Vector3.Distance(p.position, radiusPoint);
+                        float strength = Mathf.Pow(1 - (distance / 7f), 2);
+
+                        p.position += dir * strength * 5f * Time.deltaTime;
+                    }
+                    else if (Mode == ParticleMode.Chaos)
+                    {
+                        float amount = 50;
+                        Vector3 rnd = new Vector3(amount * Random.value, amount * Random.value, 0) - new Vector3(amount * 0.5f, amount * 0.5f, 0);
+                        p.velocity = p.velocity * 0.8f + rnd * Time.deltaTime;
+                        p.position += p.velocity * Time.deltaTime;
+                    }
+                    else
+                    {
+                        p.position += (p.velocity * Time.deltaTime);
+                    }
+
+                    ParticleList[i] = p;
                 }
-                
-                ParticleList[i] = p;
             }
+
+            particleSystem.SetParticles(ParticleList.ToArray(), ParticleList.Count);
+            Count = particleSystem.particleCount;
         }
-
-        particleSystem.SetParticles(ParticleList.ToArray(), ParticleList.Count);
-
-        Count = particleSystem.particleCount;
 	}
 
     //============================================================================================================================================//
