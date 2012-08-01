@@ -6,10 +6,11 @@ public class GameSlider : MonoBehaviour
     public Vector3 Target = Vector3.zero;
     public Vector3 TouchPosition, StartPosition, TargetPosition, DownPosition;
     public Camera Camera;
+    public Transform NGUIRoot;
     public float Multiplier = 1;
-
     public bool PauseMenu = false;
-
+    bool Touched = false;
+    
     //============================================================================================================================================//
     void Start()
     {
@@ -18,7 +19,13 @@ public class GameSlider : MonoBehaviour
     }
 
     //============================================================================================================================================//
-    bool Touched = false;
+    public void MoveToTarget()
+    {
+        var pos = (Target.y - transform.localPosition.y) * NGUIRoot.localScale.x;
+        iTween.MoveBy(gameObject, iTween.Hash("y", pos, "isLocal", true, "time", 0.5f, "easeType", iTween.EaseType.easeOutExpo, "ignoreTimescale", true));
+    }
+
+    //============================================================================================================================================//
     void Update()
     {
         Vector3 mouse = Input.mousePosition;
@@ -87,18 +94,13 @@ public class GameSlider : MonoBehaviour
                         //transform.localPosition = StartPosition;
                     }
                 }
-            }
-        }
 
-        if (!Touched)
-        {
-            // Fade Between Targets //
-            transform.localPosition = transform.localPosition * 0.8f + 0.2f * Target;
+                MoveToTarget();             
+            }
         }
 
         if (PauseMenu)
         {
-            //Game.Log(startDistance);
             if (startDistance < 10)
             {
                 if (Game.Instance.Paused)
@@ -113,6 +115,20 @@ public class GameSlider : MonoBehaviour
                 {
                     Game.Instance.Pause();
                     Game.Log("Pause");
+                }
+            }
+        }
+        else
+        {
+            if (Game.Instance.CurrentScreen == Game.GameScreen.Menu)
+            {
+                if (startDistance < 10)
+                {
+                    Game.Instance.FX.SetEffect("BlackHole");
+                }
+                else
+                {
+                    Game.Instance.FX.SetEffect("About");
                 }
             }
         }

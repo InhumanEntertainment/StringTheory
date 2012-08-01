@@ -57,6 +57,8 @@ public class Frontend : MonoBehaviour
 
         else if (Command == "Packs_Open")
         {
+            ResetAboutSlider();
+
             Game.SetScreen(Game.GameScreen.Packs);
             PacksAnimation.PlayQueued("Menu_Open");
             MenuAnimation.PlayQueued("Menu_Close");
@@ -199,6 +201,16 @@ public class Frontend : MonoBehaviour
         var obj = GameObject.Find("PauseSlider");
         var slider = obj.GetComponent<GameSlider>();
         slider.Target = slider.StartPosition;
+        slider.MoveToTarget();
+    }
+
+    //=======================================================================================================================================================================//
+    public void ResetAboutSlider()
+    {
+        var obj = GameObject.Find("AboutSlider");
+        var slider = obj.GetComponent<GameSlider>();
+        slider.Target = slider.StartPosition;
+        slider.MoveToTarget();
     }
 
     //=======================================================================================================================================================================//
