@@ -19,6 +19,7 @@ public class FXBase
     public float StartSizeMin = 1;
     public float StartSizeMax = 2;
     public Color StartColor = Color.white;
+    public float Drag = 0;
 
     // Vortex Force //
     public bool VortexForce = false;

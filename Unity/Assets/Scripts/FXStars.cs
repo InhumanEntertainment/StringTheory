@@ -8,7 +8,7 @@ public class FXStars : MonoBehaviour
     ParticleSystem.Particle[] Particles;
     List<float> ParticleStartSize = new List<float>();
 
-    public int Rate = 5;
+    public int Rate = 100;
     public int NumberOfParticles = 0;
     public enum ParticleMode { Chaos, Border, Horizontal, Game, GreenPack, Vortex, BlackHole };
     public ParticleMode Mode = ParticleMode.Border;
@@ -16,6 +16,10 @@ public class FXStars : MonoBehaviour
     public FXBase[] FX;
     public int FXIndex = 0;
     public Dictionary<string, int> FXNames = new Dictionary<string, int>();
+
+    // Emitter Timing //
+    public float LastEmitTime = 0;
+    public 
 
     //============================================================================================================================================//
     void Awake()
@@ -34,7 +38,8 @@ public class FXStars : MonoBehaviour
     {
         if (FXNames.ContainsKey(name))
         {
-            FXIndex = FXNames[name];
+            if (FXNames[name] != FXIndex)
+                FXIndex = FXNames[name];
         }
         else
             FXIndex = 0;       
@@ -45,7 +50,16 @@ public class FXStars : MonoBehaviour
     {
         if (!Game.Instance.Paused)
         {
-            Emit(Rate);
+            if (Rate > 0)
+            {
+                float emitTime = 1f / Rate;
+
+                while (Time.timeSinceLevelLoad - LastEmitTime > emitTime)
+                {
+                    Emit(1);
+                    LastEmitTime += emitTime;
+                }
+            }          
 
             for (int i = 0; i < ParticleList.Count; i++)
             {
@@ -99,6 +113,7 @@ public class FXStars : MonoBehaviour
                     }
                     
                     p.position += (p.velocity * Time.deltaTime);
+                    p.velocity *= 1f - (FX[FXIndex].Drag * Time.deltaTime);
 
                     ParticleList[i] = p;
                 }
