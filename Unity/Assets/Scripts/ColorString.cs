@@ -132,7 +132,7 @@ public class ColorString : MonoBehaviour
                         {
                             
 							
-					/*Vector3 mousePosition =  Camera.main.ScreenToWorldPoint( Input.mousePosition);
+					Vector3 mousePosition =  Camera.main.ScreenToWorldPoint( Input.mousePosition);
 						
 					if (mousePosition.y <= -4.9f) 
 						{
@@ -152,11 +152,14 @@ public class ColorString : MonoBehaviour
 					if (mousePosition.x >= 4.9f) 
 						{
 							mousePosition.x = 4.9f;	
-						}	*/
+						}	
 
 							
-							List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(Input.mousePosition);
-                            foreach (Vector3 point in pointsToAdd)
+							//List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(Input.mousePosition);
+                            
+							List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(mousePosition);
+							
+							foreach (Vector3 point in pointsToAdd)
                             {
                                 AddScreenPointToTail(point);
                                 GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
@@ -372,7 +375,8 @@ public class ColorString : MonoBehaviour
 	{		
 		List<Vector3> res = new List<Vector3> ();
 		
-		var worldTouchPosition = Camera.main.ScreenToWorldPoint(touchPosition);
+		//var worldTouchPosition = Camera.main.ScreenToWorldPoint(touchPosition);
+		var worldTouchPosition = touchPosition;
 		Vector3 worldTouchPosition2D = new Vector3(worldTouchPosition.x,worldTouchPosition.y,0);
 		
 		Vector3 lastPoint;
@@ -414,7 +418,9 @@ public class ColorString : MonoBehaviour
 		
 		//add missing points to connect to the base center
 		Vector3 baseScreenPoint = Camera.main.WorldToScreenPoint(colorBase.transform.position);
-		List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(baseScreenPoint);
+		
+		//List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(baseScreenPoint);
+		List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(colorBase.transform.position);
 		foreach (Vector3 point in pointsToAdd) 
 		{
 			AddScreenPointToTail(point);
