@@ -165,12 +165,19 @@ public class ColorString : MonoBehaviour
                                 GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
                                 CurveColliderDetector detector = curveManager.GetComponent<CurveColliderDetector>();
                                 detector.CheckPositionForCurve(this);
+								
+								if (Tail.Count > 2)
+                            	{
+                                	StopDrawingIfLastScreenPointEncouterBaseOrSelf(Input.mousePosition);
+									if (HasCurveReachedTarget)
+									{
+										break;
+									}
+                            	}
+								
                             }
 
-                            if (Tail.Count > 2)
-                            {
-                                StopDrawingIfLastScreenPointEncouterBaseOrSelf(Input.mousePosition);
-                            }
+                            
                         }
                     }
                     else
