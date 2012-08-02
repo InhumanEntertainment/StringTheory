@@ -9,6 +9,9 @@ public class GameCamera : MonoBehaviour
     public int TargetWidth = 1536;
     public int TargetHeight = 2048;
 
+    public int GridX = 10;
+    public int GridY = 10;
+
     //=====================================================================================================================================//
     void Start()
     {
@@ -43,11 +46,31 @@ public class GameCamera : MonoBehaviour
     //=====================================================================================================================================//
     void OnDrawGizmos()
     {
+        Gizmos.color = Color.grey;
+        if (GridX > 0)
+        {
+            float stepX = 1f / GridX * ScreenSize * 2;
+
+            for (float x = -ScreenSize; x <= ScreenSize; x += stepX)
+            {
+                Gizmos.DrawLine(new Vector3(x, -ScreenSize, 0), new Vector3(x, ScreenSize, 0));
+            }
+        }
+
+        if (GridY > 0)
+        {
+            float stepY = 1f / GridY * ScreenSize * 2;
+
+            for (float y = -ScreenSize; y <= ScreenSize; y += stepY)
+            {
+                Gizmos.DrawLine(new Vector3(-ScreenSize, y, 0), new Vector3(ScreenSize, y, 0));
+            }
+        }
+
         Gizmos.color = Color.cyan;
         Gizmos.DrawLine(new Vector3(-ScreenSize, -ScreenSize, 0), new Vector3(ScreenSize, -ScreenSize, 0));
         Gizmos.DrawLine(new Vector3(-ScreenSize, ScreenSize, 0), new Vector3(ScreenSize, ScreenSize, 0));
         Gizmos.DrawLine(new Vector3(-ScreenSize, -ScreenSize, 0), new Vector3(-ScreenSize, ScreenSize, 0));
-        Gizmos.DrawLine(new Vector3(ScreenSize, -ScreenSize, 0), new Vector3(ScreenSize, ScreenSize, 0));
-        //SetupCamera();
+        Gizmos.DrawLine(new Vector3(ScreenSize, -ScreenSize, 0), new Vector3(ScreenSize, ScreenSize, 0));       
     }
 }
