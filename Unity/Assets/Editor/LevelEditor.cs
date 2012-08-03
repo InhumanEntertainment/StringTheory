@@ -163,6 +163,34 @@ public class LevelEditor : Editor
     }
 
     //======================================================================================================================================//
+    public override void OnInspectorGUI()
+    {
+        Level level = (Level)target;
+
+        if (GUILayout.Button("Reconnect Bases"))
+        {
+            ConnectBases();
+            EditorUtility.SetDirty(target);
+        }
+
+        this.DrawDefaultInspector();
+
+        /*EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField("Snapping");
+        Mesh.Snapping = EditorGUILayout.Toggle(Mesh.Snapping);
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.LabelField("Grid Spacing");
+        Mesh.GridSpacing = EditorGUILayout.Slider(Mesh.GridSpacing, 0.1f, 2);
+
+        EditorGUILayout.LabelField("Grid Size");
+        Mesh.GridSize = EditorGUILayout.IntSlider(Mesh.GridSize, 1, 100);*/
+
+        //this.DrawDefaultInspector();
+        this.Repaint();
+    }
+
+    //======================================================================================================================================//
     static void DrawGrid(Level level)
     {
         if (!level.HexGrid)
@@ -259,5 +287,57 @@ public class LevelEditor : Editor
         Debug.Log(shortestdistance);
 
         return closestBase;
+    }
+
+    //=====================================================================================================================================//
+    static bool hadBeenConnected = false;
+    static void ConnectBases()
+    {
+        Debug.Log("will try to connect bases");
+        ClearAllBaseConnections();
+
+        if (!hadBeenConnected)
+        {
+            ColorBase[] bases = (ColorBase[])GameObject.FindObjectsOfType(typeof(ColorBase));
+
+            for (int i = 0; i < bases.Length; i++)
+            {
+                Debug.Log("try to connect base of index " + i);
+                ConnectPairForBase(bases[i], bases);
+
+            }
+            hadBeenConnected = true;
+        }
+    }
+
+    //=====================================================================================================================================//
+    static void ClearAllBaseConnections()
+    {
+        ColorBase[] bases = (ColorBase[])GameObject.FindObjectsOfType(typeof(ColorBase));
+
+        for (int i = 0; i < bases.Length; i++)
+        {
+            bases[i].colorBasePeers.Clear();
+        }
+    }
+
+    //=====================================================================================================================================//
+    static void ConnectPairForBase(ColorBase colorBase, ColorBase[] allBases)
+    {
+        for (int i = 0; i < allBases.Length; i++)
+        {
+            ColorBase potentialPair = allBases[i];
+            if (potentialPair != colorBase)
+            {
+                Debug.Log("find potential pair that does not match base at index: " + i);
+
+                bool isColorMatch = (potentialPair.baseName == colorBase.baseName);
+                if (isColorMatch)
+                {
+                    Debug.Log(" find matching base and pair pair with name " + colorBase.baseName + " matching name of pair: " + potentialPair.baseName);
+                    colorBase.colorBasePeers.Add(potentialPair);
+                }
+            }
+        }
     }
 }
