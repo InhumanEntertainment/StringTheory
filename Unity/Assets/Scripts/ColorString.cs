@@ -572,10 +572,10 @@ public class ColorString : MonoBehaviour
         // Emit Cut Particles //
         ParticleSystem FXCutObject = (ParticleSystem)Game.Spawn(FXCut, transform.position, Quaternion.identity);
         FXCutObject.startColor = fxColors[ColorIndex];
-        ParticleSystem.Particle[] particles = new ParticleSystem.Particle[(Tail.Count - indexPosition) * 10];
+        ParticleSystem.Particle[] particles = new ParticleSystem.Particle[(Tail.Count - indexPosition) * 3];
         for (int i = indexPosition; i < Tail.Count; i++)
         {
-            for (int c = 0; c < 10; c++)
+            for (int c = 0; c < 3; c++)
             {
                 particles[(i - indexPosition) * c] = new ParticleSystem.Particle();
                 particles[(i - indexPosition) * c].position = Tail[i];
@@ -588,6 +588,7 @@ public class ColorString : MonoBehaviour
         }
         FXCutObject.SetParticles(particles, particles.Length);
         FXCutObject.Play();
+		
 
 		Tail.RemoveRange (indexPosition,Tail.Count - indexPosition);
         TailWidth.RemoveRange(indexPosition, Tail.Count - indexPosition);
@@ -701,7 +702,7 @@ public class ColorString : MonoBehaviour
         // Emit Draw Particles //
         FXDrawObject.transform.position = Tail[Tail.Count - 1];
         FXDrawObject.startColor = fxColors[ColorIndex];
-        FXDrawObject.Emit(5);
+        FXDrawObject.Emit(2);
 	}
 	
 	//============================================================================================================================================//
