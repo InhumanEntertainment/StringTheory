@@ -5,10 +5,21 @@ using System.Collections.Generic;
 public class ColorBar : MonoBehaviour {
 
 	public Game currentGame;
-	public UISlicedSprite[] colorSprites;
+	//public UISlicedSprite[] colorSprites;
 	public List<UISlicedSprite> colorSpritesList;
 	
-	public float MaximumPointsAllowed = 800;
+	
+	public float BarDistance;
+	public float BarDistanceStep; 
+	float DefaultBarDistance;
+	
+	public float LastDistance = 45;
+	
+	public UILabel DistanceLabel;
+	public UILabel CurrentDistanceLabel;
+	public UILabel LastDistanceLabel;
+	
+	//public float MaximumPointsAllowed = 800;
 	public float MaximumScreenSized = 1536;
 	
 	
@@ -34,26 +45,45 @@ public class ColorBar : MonoBehaviour {
 	
 	
 	Dictionary <int,Vector3> OriginalScalings = new Dictionary<int, Vector3> () ;
-	/*{
-		{(int) AQUA_SPRITE_INDEX,0.0f},
-		{(int) ORANGE_SPRITE_INDEX,0.0f},
-		{(int) PINK_SPRITE_INDEX,0.0f},
-		{(int) PURPLE_SPRITE_INDEX,0.0f},
-		{(int) TEAL_SPRITE_INDEX,0.0f},
-		{(int) YELLOW_SPRITE_INDEX,0.0f}
-	};*/
 	
 	Dictionary<ColorString,float> LastRecordedLength = new Dictionary<ColorString, float>();
-	Dictionary<int,float> OriginalScales = new Dictionary<int, float>();
 	
-
 	
 	//============================================================================================================================================//
     void Awake() 
 	{
 		SetUpOriginalScale();
+		DefaultBarDistance = BarDistance;
+		ResetColorBar();
+		UpdateLabelMaxDistance(BarDistance); 
+		UpdateLabelLastDistance();
 	}
 	
+	//============================================================================================================================================//
+	void Update() 
+	{	
+		UpdateSpriteListFromCurvesDetected();
+		UpdateScaleAndPositionsOfSpritesBeingDisplayed();
+	}
+	
+	//============================================================================================================================================//
+	public void ResetColorBar() 
+	{
+		BarDistance = DefaultBarDistance;
+		UpdateLabelMaxDistance(BarDistance); 
+		UpdateLabelLastDistance();
+		UpdateLabelCurrentDistance(0,CurrentDistanceLabel.transform.localPosition);
+		
+		foreach (UISlicedSprite sprite in colorSpritesList) 
+		{
+			sprite.transform.localPosition = new Vector3(sprite.transform.localPosition.x,sprite.transform.localPosition.y,-1);
+			sprite.transform.localScale = new Vector3(0,0,0);
+		}
+		
+		SpritesBeingDisplayed = new List<UISlicedSprite>();
+	}
+
+	//============================================================================================================================================//
 	void SetUpOriginalScale() 
 	{
 		OriginalScalings[AQUA_SPRITE_INDEX] 	= colorSpritesList[AQUA_SPRITE_INDEX].transform.localScale;
@@ -64,22 +94,32 @@ public class ColorBar : MonoBehaviour {
 		OriginalScalings[YELLOW_SPRITE_INDEX] 	= colorSpritesList[YELLOW_SPRITE_INDEX].transform.localScale;
 	}
 	
+	//============================================================================================================================================//
+	void UpdateLabelCurrentDistance(float totalCurveDistanceMeter,Vector3 newPosition) 
+	{
+		CurrentDistanceLabel.text = "" + totalCurveDistanceMeter.ToString("N1")  + "M";
+		CurrentDistanceLabel.transform.localPosition = newPosition;
+	}
 	
 	//============================================================================================================================================//
-	void Update() 
+	void UpdateLabelMaxDistance (float maxDistanceMeter) 
 	{
+		if (LastDistance > BarDistance) 
+		{
+			BarDistance = LastDistance + BarDistanceStep;
+		}	
+		DistanceLabel.text = "" + BarDistance.ToString("N1") + "M";
+	}
 	
-		//update list of sprite depending of curve being detected.
-		//loop on the list of sprite
-		//detect the lenghth of the sprite in the order of the list
+	//============================================================================================================================================//
+	void UpdateLabelLastDistance () 
+	{
+		LastDistanceLabel.text = "" + LastDistance.ToString("N1") + "M";
+		float res = LastDistance / BarDistance;
+		res = res * MaximumScreenSized;
 		
-		UpdateSpriteListFromCurvesDetected();
-		UpdateScaleAndPositionsOfSpritesBeingDisplayed();
-		
-		
-		
-		//legacy code
-		//RetrieveSpriteMathingCurves();
+		Vector3 newPosition = new Vector3(res,LastDistanceLabel.transform.localPosition.y,0);
+		LastDistanceLabel.transform.localPosition = newPosition;
 	}
 	
 	//============================================================================================================================================//
@@ -94,13 +134,12 @@ public class ColorBar : MonoBehaviour {
 		
 			int indexColor = c.ColorIndex;
 			int spriteIndex = ColorBarSpriteIndexes[indexColor];
-			UISlicedSprite s = colorSprites[spriteIndex];
+			UISlicedSprite s =  colorSpritesList[spriteIndex]; //colorSprites[spriteIndex];
 			if (s == sprite) 
 			{
 				return c;
 			}
 		}
-		
 		return null;
 	}
 	
@@ -119,7 +158,7 @@ public class ColorBar : MonoBehaviour {
 			{
 				int indexColor = curve.ColorIndex;
 				int spriteIndex = ColorBarSpriteIndexes[indexColor];
-				UISlicedSprite sprite = colorSprites[spriteIndex];
+				UISlicedSprite sprite =  colorSpritesList[spriteIndex]; //colorSprites[spriteIndex];
 				return sprite;
 			}
 		}
@@ -141,7 +180,7 @@ public class ColorBar : MonoBehaviour {
 			int indexColor = curve.ColorIndex;
 			int spriteIndex = ColorBarSpriteIndexes[indexColor];
 			
-			UISlicedSprite sprite = colorSprites[spriteIndex];
+			UISlicedSprite sprite =  colorSpritesList[spriteIndex]; //colorSprites[spriteIndex];
 			
 			if (! SpritesBeingDisplayed.Contains(sprite)) 
 			{
@@ -173,16 +212,25 @@ public class ColorBar : MonoBehaviour {
 	{
 		float res = 0.0f;
 		ColorString[] curves = GameObject.FindObjectsOfType(typeof(ColorString)) as ColorString[];
-		int totalCurves = curves.Length;
 		
-		//print (totalCurves);
-		if (totalCurves > 0) {
-			res = curve.CurveLength / (MaximumPointsAllowed * totalCurves);
+		float totalMeters = 0.0f;
+		for (int i=0;i<curves.Length;i++)
+		{
+			totalMeters += curves[i].GetCurveDistanceInMeters();	
 		}
 		
-		//TODO compute the depassement.
-		if (res > 1) {res = 1;}
-		//print (res);
+		//computation of ratio of the percentBarOfAllCurves. If greater than 100% resize the bar ratio
+		float percentBarOfAllCurves = totalMeters / BarDistance;
+		while (percentBarOfAllCurves >= 1) 
+		{	
+			BarDistance = BarDistance + BarDistanceStep;
+			UpdateLabelMaxDistance(BarDistance);
+			UpdateLabelLastDistance();
+			percentBarOfAllCurves = percentBarOfAllCurves - 1;
+		}
+		
+		//calculation of the percentage of the current segment
+		res = curve.GetCurveDistanceInMeters() / BarDistance;
 		res = res * MaximumScreenSized;
 		return res;
 	}
@@ -192,8 +240,6 @@ public class ColorBar : MonoBehaviour {
 	//============================================================================================================================================//
 	void ScaleSpriteWithPercentage(UISlicedSprite colorSprite, ColorString curve, float percentage) 
 	{
-		//print ("Float percentage in Scale SPrite with percentage " + percentage);
-		
 		int spriteIndex = colorSpritesList.IndexOf(colorSprite);
 		if (HasCurveLengthHasChangeSinceLastScale(curve)) {
 			colorSprite.transform.localScale = OriginalScalings[spriteIndex] + new Vector3(percentage, 0, 0);
@@ -218,145 +264,76 @@ public class ColorBar : MonoBehaviour {
 	
 	
 	//============================================================================================================================================//
+	UISlicedSprite FindLastSegmentBeingDisplayed() 
+	{
+		
+		if (SpritesBeingDisplayed.Count >=1)
+		{
+			UISlicedSprite res = SpritesBeingDisplayed[0];
+			for(int i =1;i<  SpritesBeingDisplayed.Count;i++)
+			{
+				UISlicedSprite sprite = SpritesBeingDisplayed[i];
+				bool hasFoundSprite = sprite.transform.localPosition.x > res.transform.localPosition.x;
+				if (hasFoundSprite) 
+				{
+					res = sprite;
+				}
+				
+			}
+			return res;
+		}
+		else
+		{
+			return null;	
+		}
+	}
+	
+	
+	//============================================================================================================================================//
 	void ScaleAllSprites() 
 	{
 		foreach (UISlicedSprite sprite in SpritesBeingDisplayed) 
 		{
 			ColorString curve = CurveMatchingSprite(sprite);
-			float percent = CalculatePercentageForSprite(sprite,curve);
-			ScaleSpriteWithPercentage(sprite,curve,percent);
+			
+			if (curve) {
+				float percent = CalculatePercentageForSprite(sprite,curve);
+				ScaleSpriteWithPercentage(sprite,curve,percent);	
+			}
+		}
+		
+		if (SpritesBeingDisplayed.Count > 0) 
+		{
+			ColorString[] curves = GameObject.FindObjectsOfType(typeof(ColorString)) as ColorString[];
+		
+			float totalMeters = 0.0f;
+			for (int i=0;i<curves.Length;i++)
+			{
+				totalMeters += curves[i].GetCurveDistanceInMeters();	
+			}
+			
+			UISlicedSprite lastSegment =   FindLastSegmentBeingDisplayed();
+			Vector3 markerPosition = new Vector3 (lastSegment.transform.localPosition.x + lastSegment.transform.localScale.x,CurrentDistanceLabel.transform.localPosition.y ,0);
+			UpdateLabelCurrentDistance(totalMeters,markerPosition);
 		}
 	}
 	
 	//============================================================================================================================================//
 	
 	void SetPositionForSprite(UISlicedSprite sprite) 
-	{
-		
-		//Vector3 accumulator = new Vector3(0,0,0);
-		
-		float accumulator = 0.0f;
-		
+	{	
+		float accumulator = 0.0f;	
 		int indexSprite = SpritesBeingDisplayed.IndexOf(sprite);
 		
-		
-		print ("SetPosition: " + indexSprite);
-		
-			//print ("Inside SetPositionForSprite " + accumulator.x);
 			for(int i=0;i<=indexSprite;i++) 
 			{
-				print ("SetPositionForSprite set accumulator for index: " + indexSprite);
-				
 				UISlicedSprite colorSprite = SpritesBeingDisplayed[i];
-				print ("Scale X: " + colorSprite.transform.localScale);
 				
 				if (colorSprite != sprite) {
-					print ("Scale X INSIDE: " + colorSprite.transform.localScale);
 					accumulator += colorSprite.transform.localScale.x;
 				}
 			}
-		
-		print ("Accumulator: " + accumulator);
-		
 		sprite.transform.localPosition =  new Vector3(OriginalScalings[indexSprite].x  + accumulator, sprite.transform.localPosition.y,0);
 	}
-	
-
-	
-	
-	
-	
-	
-	
-	//============================================================================================================================================//
-	//============================================================================================================================================//
-	//============================================================================================================================================//
-	//============================================================================================================================================//
-	
-				//JUNK CODE
-	
-	//============================================================================================================================================//
-	//============================================================================================================================================//
-	
-	
-	
-	//============================================================================================================================================//
-	/*
-	void RetrieveSpriteMathingCurves() 
-	{
-		ColorString[] curves = GameObject.FindObjectsOfType(typeof(ColorString)) as ColorString[];
-		for (int i=0;i<curves.Length;i++) 
-		{
-			ColorString curve = curves[i];
-			
-			int indexColor = curve.ColorIndex;
-			
-			int spriteIndex = ColorBarSpriteIndexes[indexColor];
-			
-			float percentage = CalculatePercentageForSprite(colorSprites[spriteIndex],curve);
-			//print (percentage);
-			ScaleSpriteWithPercentage (colorSprites[spriteIndex],curve,percentage);
-			
-			//ScaleSpriteDependingOnCurveLength (colorSprites[spriteIndex], curve);
-		}
-	}
-	
-	
-	
-	
-	//============================================================================================================================================//
-	void ScaleSpriteDependingOnCurveLength(UISlicedSprite colorSprite, ColorString curve) 
-	{
-		
-		int spriteIndex = colorSpritesList.IndexOf(colorSprite);
-		//float scalingFactor = ScalingFactors[spriteIndex];
-		
-		print (spriteIndex);
-		
-		if (HasCurveLengthHasChangeSinceLastScale(colorSprite,curve))
-		{
-			//float scaleThing = Mathf.Atan(curve.CurveLength) / Mathf.PI / 2;
-			//scaleThing *= 10;
-			float scaleThing = curve.CurveLength;
-			
-			print (curve.CurveLength);
-			
-			colorSprite.transform.localScale =  OriginalScalings[spriteIndex] + new Vector3(scaleThing, 0, 0);
-			UpdatedLenthForCurve(curve);
-		};
-	}
-			
-	
-	//============================================================================================================================================//		
-	void UpdatedLenthForCurve(ColorString curve) 
-	{
-		LastRecordedLength[curve] = curve.CurveLength;
-	}
-	
-	//============================================================================================================================================//		
-	bool HasCurveLengthHasChangeSinceLastScale(UISlicedSprite sprite,ColorString curve) 
-	{
-		if (LastRecordedLength.ContainsKey(curve)) 
-		{
-			float oldLength = LastRecordedLength[curve];
-			return (oldLength != curve.CurveLength);
-		}
-		else 
-		{
-			LastRecordedLength[curve] = curve.CurveLength;
-			/*
-			Vector3 accumulator = new Vector3(0,0,0);
-			foreach (UISlicedSprite colorSprite in colorSpritesList) 
-			{
-				if (colorSprite != sprite) 
-				{
-					accumulator += colorSprite.transform.localScale;
-				}
-			}*/
-	//		return true;
-//		}	
-//	}
-	
-	
 	
 }
