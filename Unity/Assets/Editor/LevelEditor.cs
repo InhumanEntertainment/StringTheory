@@ -30,6 +30,8 @@ public class LevelEditor : Editor
     {
         ColorBase[] bases = (ColorBase[])GameObject.FindObjectsOfType(typeof(ColorBase));
 
+        Undo.RegisterUndo(bases, "Level Editor: Restore Positions");
+
         if (bases.Length == SavedPositions.Length)
         {
             for (int i = 0; i < bases.Length; i++)
@@ -37,6 +39,8 @@ public class LevelEditor : Editor
                 bases[i].transform.position = SavedPositions[i];
                 Debug.Log("Restored " + i + ": " + SavedPositions[i]);
             }
+
+            SavedPositions = null;
         }
         else
         {
@@ -82,8 +86,7 @@ public class LevelEditor : Editor
         {
             if (GUI.Button(new Rect(0, 0, 120, 50), "Restore Positions"))
                 RestorePositions();
-        }
-        
+        }       
 
         GUI.EndGroup();
         Handles.EndGUI();
@@ -108,6 +111,8 @@ public class LevelEditor : Editor
             {
                 if (Event.current.button == 0 && SelectedBase != null)
                 {
+                    Undo.RegisterUndo(SelectedBase, "Level Editor: Move");
+
                     DownPosition = Event.current.mousePosition;
                     WorldDownPosition = SelectedBase.transform.position;
                 }
@@ -167,27 +172,108 @@ public class LevelEditor : Editor
     {
         Level level = (Level)target;
 
-        if (GUILayout.Button("Reconnect Bases"))
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField("Name");
+        level.Name = EditorGUILayout.TextField(level.Name);
+        EditorGUILayout.EndHorizontal();
+        
+        string editText = level.EditMode ? "Stop Editing" : "Edit";
+        if (GUILayout.Button(editText))
         {
-            ConnectBases();
+            level.EditMode = !level.EditMode;
             EditorUtility.SetDirty(target);
         }
 
-        this.DrawDefaultInspector();
+        
+        if (GUILayout.Button("ReSnap All Bases"))
+        {
+            SnapBases();
+            EditorUtility.SetDirty(target);
+        } 
+        
+        if (GUILayout.Button("Resize All Bases"))
+        {
+            ResizeBases();
+            EditorUtility.SetDirty(target);
+        }
 
-        /*EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField("Snapping");
-        Mesh.Snapping = EditorGUILayout.Toggle(Mesh.Snapping);
-        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.LabelField("Base Scale");
+        level.BaseScale = EditorGUILayout.Slider(level.BaseScale, 0.1f, 8f);
 
-        EditorGUILayout.LabelField("Grid Spacing");
-        Mesh.GridSpacing = EditorGUILayout.Slider(Mesh.GridSpacing, 0.1f, 2);
 
-        EditorGUILayout.LabelField("Grid Size");
-        Mesh.GridSize = EditorGUILayout.IntSlider(Mesh.GridSize, 1, 100);*/
+        string gridText = level.HexGrid ? "Grid: Hex" : "Grid: Square";
+        if (GUILayout.Button(gridText))
+        {
+            level.HexGrid = !level.HexGrid;
+            EditorUtility.SetDirty(target);
+        }
+
+        string snapText = level.Snapping ? "Snapping On" : "Snapping Off";
+        if (GUILayout.Button(snapText))
+        {
+            level.Snapping = !level.Snapping;
+            EditorUtility.SetDirty(target);
+        }
+
+        EditorGUILayout.LabelField("Grid X");
+        level.GridX = EditorGUILayout.IntSlider(level.GridX, 4, 40);
+
+        EditorGUILayout.LabelField("Grid Y");
+        level.GridY = EditorGUILayout.IntSlider(level.GridY, 4, 40);
 
         //this.DrawDefaultInspector();
+        EditorUtility.SetDirty(target);
         this.Repaint();
+    }
+
+    //======================================================================================================================================//
+    public void SnapBases()
+    {
+        Level level = (Level)target;
+        Object[] objects = GameObject.FindObjectsOfType(typeof(ColorBase));
+
+        Undo.RegisterUndo(objects, "Level Editor: Snap Bases");
+
+        for (int i = 0; i < objects.Length; i++)
+        {
+            Transform xform = ((ColorBase)objects[i]).transform;
+
+            float stepX = 1f / (level.GridX) * level.ScreenSize * 2;
+            float stepY = 1f / (level.GridY) * level.ScreenSize * 2;
+            float offsetX = ((level.GridX % 2) == 1) ? 0 : 0.5f * stepX;
+            float offsetY = ((level.GridY % 2) == 1) ? 0 : 0.5f * stepY;
+
+            float x = Mathf.Round((xform.position.x - offsetX) / stepX);
+            float y = Mathf.Round((xform.position.y - offsetY) / stepY);
+            float hexY = (xform.position.y + level.ScreenSize) / (level.ScreenSize * 2);
+            hexY = Mathf.Floor(hexY * level.GridY);
+
+            float hexOffset = 0;
+            if (level.HexGrid)
+                hexOffset = ((hexY % 2) == 0) ? 0 : stepX * 0.5f;
+
+            Vector3 newPosition = new Vector3(x * stepX + offsetX + hexOffset, y * stepY + offsetY, xform.position.z);
+            xform.position = newPosition;
+        }
+    }
+
+    //======================================================================================================================================//
+    public void ResizeBases()
+    {
+        Level level = (Level)target;
+        Object[] objects = GameObject.FindObjectsOfType(typeof(ColorBase));
+        Undo.RegisterUndo(objects, "Level Editor: Resize Bases");
+
+        for (int i = 0; i < objects.Length; i++)
+        {
+            Transform xform = ((ColorBase)objects[i]).transform;
+
+            float stepX = 1f / (level.GridX) * level.ScreenSize * 2;
+            float stepY = 1f / (level.GridY) * level.ScreenSize * 2;
+
+            float scale = Mathf.Min(stepX, stepY) * level.BaseScale;
+            xform.localScale = new Vector3(scale, scale, scale);
+        }
     }
 
     //======================================================================================================================================//
@@ -284,7 +370,6 @@ public class LevelEditor : Editor
             closestBase = null;
             SelectedBase = null;
         }
-        Debug.Log(shortestdistance);
 
         return closestBase;
     }

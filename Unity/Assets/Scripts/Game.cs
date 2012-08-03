@@ -37,14 +37,14 @@ public partial class Game : MonoBehaviour
         if (Game.Instance == null)
         {
             Game.Instance = this;
+            ReconnectBases();
+            StartTime = Time.time;
+            Application.targetFrameRate = TargetFrameRate;
         }
         else
         {
             Destroy(this.gameObject);
-        }
-
-   		StartTime = Time.time;
-        Application.targetFrameRate = TargetFrameRate;
+        }  		
 	}
 
     //============================================================================================================================================//

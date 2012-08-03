@@ -8,21 +8,12 @@ public partial class Game : MonoBehaviour
     //=====================================================================================================================================//
     void ReconnectBases() 
     {		
-		//Game.Log("will try to connect bases");
-        ClearAllBaseConnections();
-        hadBeenConnected = false;
-
-		if (!hadBeenConnected) 
+        ColorBase[] bases = (ColorBase[]) GameObject.FindObjectsOfType(typeof(ColorBase));
+        ClearAllBaseConnections(bases);
+		
+		for (int i=0;i<bases.Length;i++) 
 		{
-			 ColorBase[] bases = (ColorBase[]) GameObject.FindObjectsOfType(typeof(ColorBase));
-			
-			 for (int i=0;i<bases.Length;i++) 
-			 {
-				//Game.Log("try to connect base of index " +i);
-				ConnectPairForBase(bases[i],bases);						
-			 }
-
-			hadBeenConnected = true;
+		    ConnectPairForBase(bases[i],bases);						
 		}
 	}
 
@@ -36,10 +27,8 @@ public partial class Game : MonoBehaviour
     }
 
     //=====================================================================================================================================//
-    void ClearAllBaseConnections()
+    void ClearAllBaseConnections(ColorBase[] bases)
     {
-        ColorBase[] bases = (ColorBase[])GameObject.FindObjectsOfType(typeof(ColorBase));
-
         for (int i = 0; i < bases.Length; i++)
         {
             bases[i].colorBasePeers.Clear();
@@ -58,15 +47,8 @@ public partial class Game : MonoBehaviour
                 
             if (potentialPair != colorBase && isSibling(colorBase.gameObject, potentialPair.gameObject) ) 
             {
-                //Game.Log("find potential pair that does not match base at index: " + i);
-
-                //bool isColorMatch = (potentialPair.baseName == colorBase.baseName);
-                bool isColorMatch = (sprite1 == sprite2);
-                if (isColorMatch) 
-                {
-		            print(" find matching base and pair pair with name " + colorBase.baseName + " matching name of pair: "  + potentialPair.baseName);
+                if (sprite1 == sprite2) 
 		            colorBase.colorBasePeers.Add(potentialPair);
-	            }
             }
         }
 	}	

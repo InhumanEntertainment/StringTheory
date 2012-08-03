@@ -3,6 +3,9 @@ using System.Collections;
 
 public class Level : MonoBehaviour 
 {
+    public string Name = "Default";
+    public int Difficulty = 0;
+
     public bool EditMode = false;
     public bool Snapping = false;
     public int GridX = 10;
@@ -72,7 +75,7 @@ public class Level : MonoBehaviour
             }
         }
 
-        Gizmos.color = Color.cyan;
+        Gizmos.color = EditMode ? Color.red : Color.cyan;
         Gizmos.DrawLine(new Vector3(-ScreenSize, -ScreenSize, 0), new Vector3(ScreenSize, -ScreenSize, 0));
         Gizmos.DrawLine(new Vector3(-ScreenSize, ScreenSize, 0), new Vector3(ScreenSize, ScreenSize, 0));
         Gizmos.DrawLine(new Vector3(-ScreenSize, -ScreenSize, 0), new Vector3(-ScreenSize, ScreenSize, 0));
