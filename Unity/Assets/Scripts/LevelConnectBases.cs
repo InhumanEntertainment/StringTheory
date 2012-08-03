@@ -1,15 +1,16 @@
 using UnityEngine;
 using System.Collections;
 
-public class LevelConnectBases : MonoBehaviour {
-	
+public partial class Game : MonoBehaviour 
+{	
 	bool hadBeenConnected = false;
-	
-	// Use this for initialization
-	void Awake () 
+
+    //=====================================================================================================================================//
+    void ReconnectBases() 
     {		
-		Game.Log("will try to connect bases");
+		//Game.Log("will try to connect bases");
         ClearAllBaseConnections();
+        hadBeenConnected = false;
 
 		if (!hadBeenConnected) 
 		{
@@ -17,10 +18,10 @@ public class LevelConnectBases : MonoBehaviour {
 			
 			 for (int i=0;i<bases.Length;i++) 
 			 {
-				Game.Log("try to connect base of index " +i);
-				ConnectPairForBase(bases[i],bases);		
-				
+				//Game.Log("try to connect base of index " +i);
+				ConnectPairForBase(bases[i],bases);						
 			 }
+
 			hadBeenConnected = true;
 		}
 	}
@@ -30,7 +31,6 @@ public class LevelConnectBases : MonoBehaviour {
     {
         Transform parent1 = first.transform.parent;
         Transform parent2 = second.transform.parent;
-        Game.Log(parent1 == parent2);
 
         return (parent1 == parent2);
     }
@@ -47,24 +47,27 @@ public class LevelConnectBases : MonoBehaviour {
     }
 
     //=====================================================================================================================================//
-    int count = 0;
     void ConnectPairForBase(ColorBase colorBase, ColorBase[] allBases) 
 	{
+        int sprite1 = colorBase.GetComponent<tk2dSprite>().spriteId;
+                
 		for (int i=0;i<allBases.Length;i++) 
         {
             ColorBase potentialPair = allBases[i];
+            int sprite2 = potentialPair.GetComponent<tk2dSprite>().spriteId;
+                
             if (potentialPair != colorBase && isSibling(colorBase.gameObject, potentialPair.gameObject) ) 
             {
-                Game.Log("find potential pair that does not match base at index: " + i);
-				
-	            bool isColorMatch = (potentialPair.baseName == colorBase.baseName);
-	            if (isColorMatch) 
+                //Game.Log("find potential pair that does not match base at index: " + i);
+
+                //bool isColorMatch = (potentialPair.baseName == colorBase.baseName);
+                bool isColorMatch = (sprite1 == sprite2);
+                if (isColorMatch) 
                 {
-		            print (" find matching base and pair pair with name " + colorBase.baseName + " matching name of pair: "  + potentialPair.baseName);
+		            print(" find matching base and pair pair with name " + colorBase.baseName + " matching name of pair: "  + potentialPair.baseName);
 		            colorBase.colorBasePeers.Add(potentialPair);
 	            }
             }
-            Game.Log(count++);	
         }
 	}	
 }

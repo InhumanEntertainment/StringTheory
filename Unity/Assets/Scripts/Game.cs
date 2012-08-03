@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Game : MonoBehaviour
+public partial class Game : MonoBehaviour
 {
     static public Game Instance;
     public bool Logging = true;
@@ -86,6 +86,8 @@ public class Game : MonoBehaviour
                     DestroyLevel(LastLevel);
                 }
 
+                ReconnectBases();
+
                 // Play Level Open //
                 GameObject rootNew = GameObject.Find(LevelList[CurrentLevel]);
                 Animation animNew = rootNew.transform.FindChild("Nodes").animation;
@@ -124,10 +126,10 @@ public class Game : MonoBehaviour
     {
         Object obj = (Object)Instantiate(original, position, rotation);
 		
-		if (CurrentLevel >0) 
+		if (CurrentLevel >= 0) 
 		{
 	        GameObject parent = GameObject.Find(LevelList[CurrentLevel]);
-	
+
 	        if (parent != null)
 	        {
 	            Transform xform = null;
@@ -140,6 +142,7 @@ public class Game : MonoBehaviour
 	                xform.parent = parent.transform;
 	        }
 		}
+
         return obj;
     }
     public Object Spawn(Object original)
@@ -172,11 +175,10 @@ public class Game : MonoBehaviour
     public void CleanupScene()
     {
         // Destroy All Curves //
-        var curves = GameObject.FindObjectsOfType(typeof(ColorString));
+        ColorString[] curves = (ColorString[])GameObject.FindObjectsOfType(typeof(ColorString));
         for (int i = 0; i < curves.Length; i++)
         {
-            GameObject obj = ((ColorString)curves[i]).gameObject;
-            Destroy(obj);
+            Destroy(curves[i].gameObject);
         }
 
         // Reset Detector //
@@ -373,9 +375,8 @@ public class Game : MonoBehaviour
     }
     #endif
 
-
     //=====================================================================================================================================//
-    static public bool DebugMode = true;
+    static public bool DebugMode = true;   
     static public void Log(object obj)
     {
         if (DebugMode)
@@ -383,6 +384,25 @@ public class Game : MonoBehaviour
             Debug.Log(obj.ToString());
         }
     }
+
+    /*static string DebugBuffer;
+    static public void Store(object obj)
+    {
+        if (DebugMode)
+        {
+            //Debug.Log(obj.ToString());
+            DebugBuffer += obj.ToString() + "\n";
+        }
+    }
+    
+    static public void PrintLog()
+    {
+        if (DebugMode)
+        {
+            Debug.Log(DebugBuffer);
+            DebugBuffer = "\n";
+        }
+    }*/
 
 #endregion
 }

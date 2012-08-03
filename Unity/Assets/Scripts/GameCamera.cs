@@ -3,6 +3,8 @@ using System.Collections;
 
 public class GameCamera : MonoBehaviour 
 {
+    static public GameCamera Instance;
+
     public float ScreenSize = 5;
     public float AspectRatio;
     public int Width, Height;
@@ -15,8 +17,18 @@ public class GameCamera : MonoBehaviour
     public float BaseScale = 1;
 
     //=====================================================================================================================================//
-    void Start()
+    void Awake()
     {
+        // Singleton //
+        if (GameCamera.Instance == null)
+        {
+            GameCamera.Instance = this;
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+
         SetupCamera();
     }
 
