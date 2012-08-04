@@ -21,34 +21,12 @@ public class ColorBar : MonoBehaviour {
 	
 	//public float MaximumPointsAllowed = 800;
 	public float MaximumScreenSized = 1536;
-	
-	
+		
 	public List<UISlicedSprite> SpritesBeingDisplayed = new List<UISlicedSprite>();
-	
-	
-	const int AQUA_SPRITE_INDEX = 0;
-	const int ORANGE_SPRITE_INDEX = 1;
-	const int PINK_SPRITE_INDEX = 2;
-	const int PURPLE_SPRITE_INDEX = 3;
-	const int TEAL_SPRITE_INDEX = 4;
-	const int YELLOW_SPRITE_INDEX = 5;
-	
-	
-	Dictionary<int, int> ColorBarSpriteIndexes = new Dictionary<int, int>() { 
-		{(int)ColorBase.CurveColorMaterial.Aqua, (int) AQUA_SPRITE_INDEX},
-		{(int)ColorBase.CurveColorMaterial.Orange, (int) ORANGE_SPRITE_INDEX},
-		{(int)ColorBase.CurveColorMaterial.Pink, (int) PINK_SPRITE_INDEX},
-		{(int)ColorBase.CurveColorMaterial.Purple, (int) PURPLE_SPRITE_INDEX},
-		{(int)ColorBase.CurveColorMaterial.Teal, (int) TEAL_SPRITE_INDEX},
-		{(int)ColorBase.CurveColorMaterial.Yellow, (int) YELLOW_SPRITE_INDEX}
-	};
-	
-	
-	Dictionary <int,Vector3> OriginalScalings = new Dictionary<int, Vector3> () ;
-	
+			
+	Dictionary <int,Vector3> OriginalScalings = new Dictionary<int, Vector3> () ;	
 	Dictionary<ColorString,float> LastRecordedLength = new Dictionary<ColorString, float>();
-	
-	
+		
 	//============================================================================================================================================//
     void Awake() 
 	{
@@ -86,12 +64,12 @@ public class ColorBar : MonoBehaviour {
 	//============================================================================================================================================//
 	void SetUpOriginalScale() 
 	{
-		OriginalScalings[AQUA_SPRITE_INDEX] 	= colorSpritesList[AQUA_SPRITE_INDEX].transform.localScale;
+		/*OriginalScalings[AQUA_SPRITE_INDEX] 	= colorSpritesList[AQUA_SPRITE_INDEX].transform.localScale;
 		OriginalScalings[ORANGE_SPRITE_INDEX] 	= colorSpritesList[ORANGE_SPRITE_INDEX].transform.localScale;
 		OriginalScalings[PINK_SPRITE_INDEX] 	= colorSpritesList[PINK_SPRITE_INDEX].transform.localScale;
 		OriginalScalings[PURPLE_SPRITE_INDEX] 	= colorSpritesList[PURPLE_SPRITE_INDEX].transform.localScale;
 		OriginalScalings[TEAL_SPRITE_INDEX] 	= colorSpritesList[TEAL_SPRITE_INDEX].transform.localScale;
-		OriginalScalings[YELLOW_SPRITE_INDEX] 	= colorSpritesList[YELLOW_SPRITE_INDEX].transform.localScale;
+		OriginalScalings[YELLOW_SPRITE_INDEX] 	= colorSpritesList[YELLOW_SPRITE_INDEX].transform.localScale;*/
 	}
 	
 	//============================================================================================================================================//
@@ -132,13 +110,13 @@ public class ColorBar : MonoBehaviour {
 		{
 			ColorString c = curves[i];
 		
-			int indexColor = c.ColorIndex;
+			/*int indexColor = c.ColorIndex;
 			int spriteIndex = ColorBarSpriteIndexes[indexColor];
 			UISlicedSprite s =  colorSpritesList[spriteIndex]; //colorSprites[spriteIndex];
 			if (s == sprite) 
 			{
 				return c;
-			}
+			}*/
 		}
 		return null;
 	}
@@ -156,10 +134,10 @@ public class ColorBar : MonoBehaviour {
 			ColorString c = curves[i];
 			if (c == curve) 
 			{
-				int indexColor = curve.ColorIndex;
+				/*int indexColor = curve.ColorIndex;
 				int spriteIndex = ColorBarSpriteIndexes[indexColor];
 				UISlicedSprite sprite =  colorSpritesList[spriteIndex]; //colorSprites[spriteIndex];
-				return sprite;
+				return sprite;*/
 			}
 		}
 		return null;
@@ -177,7 +155,7 @@ public class ColorBar : MonoBehaviour {
 		{
 			ColorString curve = curves[i];
 			
-			int indexColor = curve.ColorIndex;
+			/*int indexColor = curve.ColorIndex;
 			int spriteIndex = ColorBarSpriteIndexes[indexColor];
 			
 			UISlicedSprite sprite =  colorSpritesList[spriteIndex]; //colorSprites[spriteIndex];
@@ -185,7 +163,7 @@ public class ColorBar : MonoBehaviour {
 			if (! SpritesBeingDisplayed.Contains(sprite)) 
 			{
 				SpritesBeingDisplayed.Add(sprite);	
-			}
+			}*/
 			
 		}
 		

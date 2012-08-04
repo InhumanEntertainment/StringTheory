@@ -30,6 +30,9 @@ public partial class Game : MonoBehaviour
     public List<int> LevelIndexList;
     public List<string> LevelIgnoreList;
 
+    // Colors //
+    public GameColor[] Colors;
+
     //============================================================================================================================================//
 	void Awake() 
 	{

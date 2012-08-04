@@ -4,7 +4,9 @@ using System.Collections.Generic;
 
 public class ColorString : MonoBehaviour 
 {
-	
+	// Color //
+    public GameColor Color;
+
 	//properties//
 	public float CurveLength = 0f;	
 	
@@ -461,13 +463,14 @@ public class ColorString : MonoBehaviour
 	}
 	
     //============================================================================================================================================//
-    public void SetColor(int color)
+    public void SetColor(GameColor color)
     {
-        ColorIndex = color;
-        renderer.material = ColorMaterials[ColorIndex];
+        Color = color;
+        renderer.material = Color.Material;
+        SetTouchTracker(Color.TrackerID);
     }
-	
-	//============================================================================================================================================//
+
+    //============================================================================================================================================//
 	public void SetTouchTracker(int trackerIndex) 
 	{
 		tk2dSprite sprite = TouchTracker.GetComponent<tk2dSprite>();
@@ -485,7 +488,8 @@ public class ColorString : MonoBehaviour
 		sprite.spriteId = 14;
 		ArrowTracker.transform.localScale += new Vector3(+0.5f, +0.5f, 0);
 	}	
-	
+
+
 	//============================================================================================================================================//
 	void StopDrawingIfLastScreenPointEncouterBaseOrSelf(Vector3 mousePosition) 
 	{
@@ -879,10 +883,10 @@ public class ColorString : MonoBehaviour
                 // Draw Wireframe //
                 if (DrawWireframe)
                 {
-                    Debug.DrawLine(vertices[t1], vertices[t2], Color.black);
-                    Debug.DrawLine(vertices[t3], vertices[t4], Color.black);
-                    Debug.DrawLine(vertices[t1], vertices[t3], Color.black);
-                    Debug.DrawLine(vertices[t2], vertices[t4], Color.black);
+                    Debug.DrawLine(vertices[t1], vertices[t2], UnityEngine.Color.black);
+                    Debug.DrawLine(vertices[t3], vertices[t4], UnityEngine.Color.black);
+                    Debug.DrawLine(vertices[t1], vertices[t3], UnityEngine.Color.black);
+                    Debug.DrawLine(vertices[t2], vertices[t4], UnityEngine.Color.black);
                 }
             }
 
@@ -923,7 +927,7 @@ public class ColorString : MonoBehaviour
         float distance = Vector3.Distance(smoothTail[i], intersectionPoint);
         if (distance < TailWidth[i] && intersection)
         {
-            Debug.DrawLine(smoothTail[i], new Vector3(intersectionPoint.x, intersectionPoint.y, 0), Color.red);
+            Debug.DrawLine(smoothTail[i], new Vector3(intersectionPoint.x, intersectionPoint.y, 0), UnityEngine.Color.red);
             return intersectionPoint;
         }
         else

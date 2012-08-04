@@ -37,18 +37,17 @@ public partial class Game : MonoBehaviour
 
     //=====================================================================================================================================//
     void ConnectPairForBase(ColorBase colorBase, ColorBase[] allBases) 
-	{
-        int sprite1 = colorBase.GetComponent<tk2dSprite>().spriteId;
-                
+	{        
 		for (int i=0;i<allBases.Length;i++) 
         {
             ColorBase potentialPair = allBases[i];
-            int sprite2 = potentialPair.GetComponent<tk2dSprite>().spriteId;
-                
+  
             if (potentialPair != colorBase && isSibling(colorBase.gameObject, potentialPair.gameObject) ) 
             {
-                if (sprite1 == sprite2) 
-		            colorBase.colorBasePeers.Add(potentialPair);
+                if (colorBase.Color == potentialPair.Color)
+                {             
+                    colorBase.colorBasePeers.Add(potentialPair);
+                }
             }
         }
 	}	

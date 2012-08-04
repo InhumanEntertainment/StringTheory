@@ -3,14 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class ColorBase : MonoBehaviour 
-{
-	
+{	
 	public List<ColorBase> colorBasePeers;
 	public string baseName;
 		
 	public GameObject Curve;	
 	public GameObject ExpectedCurve;
     public Game Game;
+
+    public GameColor Color;
 	
 	//============================================================================================================================================//
     void Awake()
@@ -116,69 +117,13 @@ public class ColorBase : MonoBehaviour
 		}
 		return res;
 	}
-	
-	//============================================================================================================================================//
-    public enum CurveColorMaterial : int {Teal=0, Orange=1, Purple=2, Aqua=3, Yellow=4, Pink=5};
-	enum BaseColorSpriteID : int {Teal=1,Aqua=11,Orange=2,Pink=7,Purple=4,Yellow=8};
-	
-	enum CurveEndColorSpriteID : int {Teal=20,Aqua=24,Orange=19,Pink=22,Purple=23,Yellow=21};
-	enum CurveArrowColorSpriteID : int {Teal=20,Aqua=24,Orange=19,Pink=22,Purple=23,Yellow=21};
-	
-	Dictionary<int, int> CurveColorIndexes = new Dictionary<int, int>() { 
-		{(int)BaseColorSpriteID.Teal, (int)CurveColorMaterial.Teal}, 
-		{(int)BaseColorSpriteID.Aqua, (int)CurveColorMaterial.Aqua},
-		{(int)BaseColorSpriteID.Orange, (int)CurveColorMaterial.Orange},
-		{(int)BaseColorSpriteID.Pink, (int)CurveColorMaterial.Pink},
-		{(int)BaseColorSpriteID.Purple, (int)CurveColorMaterial.Purple},
-		{(int)BaseColorSpriteID.Yellow, (int)CurveColorMaterial.Yellow}
-	};
-	
-	Dictionary<int, int> CurveTrackerIndexes = new Dictionary<int, int> {
-		{(int)BaseColorSpriteID.Teal, (int)CurveEndColorSpriteID.Teal}, 
-		{(int)BaseColorSpriteID.Aqua, (int)CurveEndColorSpriteID.Aqua}, 
-		{(int)BaseColorSpriteID.Orange, (int)CurveEndColorSpriteID.Orange}, 
-		{(int)BaseColorSpriteID.Pink, (int)CurveEndColorSpriteID.Pink}, 
-		{(int)BaseColorSpriteID.Purple, (int)CurveEndColorSpriteID.Purple}, 
-		{(int)BaseColorSpriteID.Yellow, (int)CurveEndColorSpriteID.Yellow}, 
-		
-	};
-	
-	Dictionary<int, int> CurveTrackerArrowIndexes = new Dictionary<int, int> {
-		{(int)BaseColorSpriteID.Teal, (int)CurveEndColorSpriteID.Teal}, 
-		{(int)BaseColorSpriteID.Aqua, (int)CurveEndColorSpriteID.Aqua}, 
-		{(int)BaseColorSpriteID.Orange, (int)CurveEndColorSpriteID.Orange}, 
-		{(int)BaseColorSpriteID.Pink, (int)CurveEndColorSpriteID.Pink}, 
-		{(int)BaseColorSpriteID.Purple, (int)CurveEndColorSpriteID.Purple}, 
-		{(int)BaseColorSpriteID.Yellow, (int)CurveEndColorSpriteID.Yellow}, 
-		
-	};
-	
-	
-	//Dictionary<int, int> CurveColorIndexes = new Dictionary<int, int>() { { 1, 0 }, { 2, 1 }, { 4, 2 }, { 11, 3 }, { 8, 4 }, { 7, 5 } };
-	
-	//Dictionary<int, int> CurveTrackerIndexes = new Dictionary<int, int> {};
-    public void SetCurveColor(ColorString curve)
-    {
-        tk2dSprite sprite = GetComponent<tk2dSprite>();
-        int index = sprite.spriteId;
-        Game.Log(index + " : " + CurveColorIndexes[index]);
 
-        curve.SetColor(CurveColorIndexes[index]);
-		
-		//set the colors of the trackers
-		curve.SetTouchTracker(CurveTrackerIndexes[index]);
-		curve.SetArrowTracker(CurveTrackerArrowIndexes[index]);
-		//curve.SetArrowTracker(
-    }
-    
     //============================================================================================================================================//
 	void InstantiateBaseAwareCurve(Vector3 mousePosition)
 	{
-        
-		//Curve = (GameObject) Instantiate(Resources.Load("ColorCurve"));
         Curve = (GameObject)Game.Spawn(Resources.Load("ColorCurve"));
         ColorString stringScript = Curve.GetComponent<ColorString>();
-        SetCurveColor(stringScript);
+        stringScript.SetColor(this.Color);
 		
 		//set up original base and peeers base//
 		ColorBase currentBase = GetComponent<ColorBase> ();
