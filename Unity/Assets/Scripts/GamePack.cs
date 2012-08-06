@@ -35,7 +35,7 @@ public class GameScreen
     {
         if (Game.Instance.FX != null)
         {
-            for (int i = 0; i < AnimationsOpen.Length; i++)
+            for (int i = 0; i < AnimationsClose.Length; i++)
             {
                 AnimationsClose[i].Play();
             }
