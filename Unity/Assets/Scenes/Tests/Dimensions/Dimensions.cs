@@ -14,37 +14,46 @@ public class Dimensions : MonoBehaviour
     public float Rotation;
 
     //============================================================================================================================================//
+    void Awake()
+    {
+		Application.targetFrameRate = 60;
+	}
+	
+	//============================================================================================================================================//
     void Update()
     {
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePos.z = 0;
-
-        Vector3 Player1Pos = mousePos;
-        Vector3 Player2Pos = mousePos;
-
-        if (SwapXY)
-        {
-            float temp = Player2Pos.x;
-            Player2Pos.x = Player2Pos.y;
-            Player2Pos.y = -temp;
-        }
-        if (FlipX)
-        {
-            Player2Pos.x = -Player2Pos.x;
-        }
-        if (FlipY)
-        {
-            Player2Pos.y = -Player2Pos.y;
-        }
-
-        float radian = Rotation * Mathf.Deg2Rad;
-        float x = Mathf.Cos(radian) * Player2Pos.x + Mathf.Sin(radian) * Player2Pos.y;
-        float y = -Mathf.Sin(radian) * Player2Pos.x + Mathf.Cos(radian) * Player2Pos.y;
-
-        Player2Pos = new Vector3(x, y, 0);
-        Player2Pos += Offset;
-
-        Player1.transform.position = Player1Pos;
-        Player2.transform.position = Player2Pos;
+		if (Input.GetMouseButton(0)) 
+		{		
+	        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+	        mousePos.z = 0;
+	
+	        Vector3 Player1Pos = mousePos;
+	        Vector3 Player2Pos = mousePos;
+	
+	        if (SwapXY)
+	        {
+	            float temp = Player2Pos.x;
+	            Player2Pos.x = Player2Pos.y;
+	            Player2Pos.y = -temp;
+	        }
+	        if (FlipX)
+	        {
+	            Player2Pos.x = -Player2Pos.x;
+	        }
+	        if (FlipY)
+	        {
+	            Player2Pos.y = -Player2Pos.y;
+	        }
+	
+	        float radian = Rotation * Mathf.Deg2Rad;
+	        float x = Mathf.Cos(radian) * Player2Pos.x + Mathf.Sin(radian) * Player2Pos.y;
+	        float y = -Mathf.Sin(radian) * Player2Pos.x + Mathf.Cos(radian) * Player2Pos.y;
+	
+	        Player2Pos = new Vector3(x, y, 0);
+	        Player2Pos += Offset;
+	
+	        Player1.transform.position = Player1Pos;
+	        Player2.transform.position = Player2Pos;
+		}
 	}
 }

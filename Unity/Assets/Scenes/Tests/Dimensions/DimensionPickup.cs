@@ -16,7 +16,7 @@ public class DimensionPickup : MonoBehaviour
         }
         else
         {
-            print("Death");
+            //print("Death");
         }   
     }
 }
