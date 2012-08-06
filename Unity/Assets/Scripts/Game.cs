@@ -210,7 +210,7 @@ public partial class Game : MonoBehaviour
         if (timeLabel != null)
         {
             UILabel time = timeLabel.GetComponent<UILabel>();
-            time.text = PlayTime.ToString("N1");
+            time.text = PlayTime.ToString("N1") + "sec";
 
             UILabel distance = distanceLabel.GetComponent<UILabel>();
             distance.text = (totalCurveLength / 100f).ToString("N1") + "m";

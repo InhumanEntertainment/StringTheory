@@ -62,7 +62,7 @@ public class ColorBar : MonoBehaviour
         labelX = Mathf.Clamp(labelX, 64f, ScreenWidth - 64f);
 
         CurrentDistanceLabel.transform.localPosition = new Vector3(labelX, -8, 0);
-        CurrentDistanceLabel.text = TotalLength.ToString("N1");// +"M";
+        CurrentDistanceLabel.text = TotalLength.ToString("N1") +"m";
 
         UILabel label = CurrentDistanceLabel.GetComponent<UILabel>();
         if (strings.Length > 0)
