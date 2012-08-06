@@ -595,7 +595,7 @@ public class ColorString : MonoBehaviour
 
         // Emit Cut Particles //
         ParticleSystem FXCutObject = (ParticleSystem)Game.Spawn(FXCut, transform.position, Quaternion.identity);
-        FXCutObject.startColor = fxColors[ColorIndex];
+        FXCutObject.startColor = Color.FXColor;
         ParticleSystem.Particle[] particles = new ParticleSystem.Particle[(Tail.Count - indexPosition) * 3];
         for (int i = indexPosition; i < Tail.Count; i++)
         {
@@ -725,7 +725,7 @@ public class ColorString : MonoBehaviour
 
         // Emit Draw Particles //
         FXDrawObject.transform.position = Tail[Tail.Count - 1];
-        FXDrawObject.startColor = fxColors[ColorIndex];
+        FXDrawObject.startColor = Color.FXColor;
         FXDrawObject.Emit(2);
 	}
 	

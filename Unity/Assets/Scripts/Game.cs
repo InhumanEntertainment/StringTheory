@@ -96,6 +96,9 @@ public partial class Game : MonoBehaviour
                 Animation animNew = rootNew.transform.FindChild("Nodes").animation;
                 animNew.PlayQueued("Level_Open", QueueMode.PlayNow);
 
+                ColorBar bar = (ColorBar)GameObject.FindObjectOfType(typeof(ColorBar));
+                bar.ResetColorBar();
+
                 Async = null;
             }
         }
