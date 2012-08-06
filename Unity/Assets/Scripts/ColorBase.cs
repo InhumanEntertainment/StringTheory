@@ -12,6 +12,7 @@ public class ColorBase : MonoBehaviour
     public Game Game;
 
     public GameColor Color;
+    public GameObject StringPrefab;
 	
 	//============================================================================================================================================//
     void Awake()
@@ -121,7 +122,7 @@ public class ColorBase : MonoBehaviour
     //============================================================================================================================================//
 	void InstantiateBaseAwareCurve(Vector3 mousePosition)
 	{
-        Curve = (GameObject)Game.Spawn(Resources.Load("ColorCurve"));
+        Curve = (GameObject)Game.Spawn(StringPrefab);
         ColorString stringScript = Curve.GetComponent<ColorString>();
         stringScript.SetColor(this.Color);
 		
