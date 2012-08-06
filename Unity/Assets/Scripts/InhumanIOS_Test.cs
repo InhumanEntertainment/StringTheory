@@ -17,9 +17,11 @@ public class InhumanIOS_Test : MonoBehaviour
 		{
 			Debug.Log ("Compose Email");
 			
+			Application.OpenURL ("itms-apps://userpub.itunes.apple.com/WebObjects/MZUserPublishing.woa/wa/addUserReview?id=337064413&type=Purple+Software");
+			
 			if (Application.platform == RuntimePlatform.IPhonePlayer) 
 			{
-				InhumanIOS.ComposeEmail("ecl3d@hotmail.com", "Subject", "Body");
+				//InhumanIOS.ComposeEmail("ecl3d@hotmail.com", "Subject", "Body");
 			}
 		}
 	}
