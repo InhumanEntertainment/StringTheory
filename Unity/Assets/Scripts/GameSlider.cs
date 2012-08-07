@@ -120,15 +120,15 @@ public class GameSlider : MonoBehaviour
         }
         else
         {
-            if (Game.Instance.CurrentScreen == Game.GameScreen.Menu)
+            if (Game.Instance.CurrentScreen.Name == "Menu")
             {
-                if (startDistance < 10)
+                if (targetDistance < 10)
                 {
-                    Game.Instance.FX.SetEffect("BlackHole");
+                    Game.Instance.FX.SetEffect("About");
                 }
                 else
                 {
-                    Game.Instance.FX.SetEffect("About");
+                    Game.Instance.FX.SetEffect("BlackHole");
                 }
             }
         }

@@ -19,7 +19,8 @@ public class FXStars : MonoBehaviour
 
     // Emitter Timing //
     public float LastEmitTime = 0;
-    public 
+
+    public TargetValue BlackHoleSpring;
 
     //============================================================================================================================================//
     void Awake()
@@ -31,6 +32,7 @@ public class FXStars : MonoBehaviour
         }
 
         particleSystem.Play();
+        BlackHoleSpring = new TargetValue(2, 0, 1f, 0.94f);
 	}
 
     //============================================================================================================================================//
@@ -46,10 +48,34 @@ public class FXStars : MonoBehaviour
     }
 
     //============================================================================================================================================//
+    void FixedUpdate()
+    {
+        if ((Game.Instance == null || !Game.Instance.Paused) && FXIndex == 0)
+        {
+            BlackHoleSpring.Update();
+        }
+    }
+
+    //============================================================================================================================================//
     void Update()
     {
-        if (!Game.Instance.Paused)
+        if (Game.Instance == null || !Game.Instance.Paused)
         {
+            // Fun Black Hole FX //
+            if (FXIndex == 0)
+            {
+                if (Input.GetMouseButton(0))
+                {
+                    Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    mousePos.z = 0;
+
+                    BlackHoleSpring.Target = mousePos.magnitude;                    
+                }
+
+                FX[0].RadialInnerRadius = BlackHoleSpring.Value;                
+            }
+
+
             if (Rate > 0)
             {
                 float emitTime = 1f / Rate;

@@ -11,7 +11,7 @@ public class TestLevel : MonoBehaviour
     public string CurrentLevel;
     public string LastLevel;
 
-    public GamePack[] Packs;
+    public GameScreen[] Packs;
 
 	//=====================================================================================================================================//
 	void Awake () 

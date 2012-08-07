@@ -16,10 +16,9 @@ public partial class Game : MonoBehaviour
     public bool Paused = false;
 
     // UI //
-    public enum GameScreen { Splash, Menu, About, Packs, ChaosPack, VortexPack, BasicPack, Game, Pause, Complete };
-    public GameScreen CurrentScreen = GameScreen.Splash;
-    public GamePack CurrentPack;
-    public GamePack[] Packs;
+    public GameScreen CurrentScreen;
+    public GameScreen LastScreen;
+    public GameScreen[] Screens;
     public FXStars FX;
 
     // Levels //
@@ -42,13 +41,22 @@ public partial class Game : MonoBehaviour
             Game.Instance = this;
             ReconnectBases();
             StartTime = Time.time;
-            Application.targetFrameRate = TargetFrameRate;
+            Application.targetFrameRate = TargetFrameRate;           
         }
         else
         {
             Destroy(this.gameObject);
-        }  		
+        }       
 	}
+
+    //============================================================================================================================================//
+    void Start()
+    {
+        //CurrentScreen = Screens[0];
+
+        SetScreen("Splash"); 
+        SetScreen("Menu");
+    }
 
     //============================================================================================================================================//
 	void Update()
@@ -59,7 +67,7 @@ public partial class Game : MonoBehaviour
 
         if (!Paused)
         {
-            if (CurrentScreen == GameScreen.Game)
+            if (CurrentScreen.Name == "Game")
             {
                 if (PairOfCurvesToConnect() == 0 && !HasLevelBeenCompleted)
                 {
@@ -218,18 +226,28 @@ public partial class Game : MonoBehaviour
     }
 	
     //============================================================================================================================================//
-	public void SetScreen(GameScreen screen)
+    // Transitions between screens //
+    //============================================================================================================================================//
+    public void SetScreen(string screen)
     {
-        if (screen != CurrentScreen)
-        {
-            CurrentScreen = screen;
+        print("Set Screen: " + screen);
 
-            if (screen == GameScreen.Game)
+        for (int i = 0; i < Screens.Length; i++)
+        {
+            if (Screens[i].Name == screen && Screens[i].Name != CurrentScreen.Name)
             {
-                LastLevel = -1;
-                CurrentLevel = -1;
+                CurrentScreen.Close(this);
+                LastScreen = CurrentScreen;
+                CurrentScreen = Screens[i];
+                Screens[i].Open(this);
+
+                if (screen == "Game")
+                {
+                    LastLevel = -1;
+                    CurrentLevel = -1;
+                }
             }
-        }       
+        } 
     }
 
 	//============================================================================================================================================//
