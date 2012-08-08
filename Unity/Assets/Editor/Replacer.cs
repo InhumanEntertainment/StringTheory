@@ -5,18 +5,13 @@ using System.Collections.Generic;
 
 public class Replacer : EditorWindow 
 {
-    string myString = "Hello World";
-    bool groupEnabled; bool myBool = true;
-    float myFloat = 1.23f;
-
     List<Object> Replacements = new List<Object>();
 
     //============================================================================================================================================//
     [MenuItem("Inhuman/Replacer")]
     static void Init () 
     { 
-        // Get existing open window or if none, make a new one:       
-        Replacer window = (Replacer)EditorWindow.GetWindow(typeof(Replacer));
+        EditorWindow.GetWindow(typeof(Replacer));
     }
 
     //============================================================================================================================================//
@@ -85,7 +80,6 @@ public class Replacer : EditorWindow
             Undo.RegisterSceneUndo("Randomly Replaced " + objects.Length + " Ojects with " + Replacements.Count + " New Objects");
 
             // Create list of current sprite id's //
-            List<ColorBase> baseList = new List<ColorBase>();
             ColorBase[] bases = (ColorBase[])GameObject.FindObjectsOfType(typeof(ColorBase));
 
             // Get ID List //

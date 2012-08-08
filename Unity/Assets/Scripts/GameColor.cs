@@ -35,8 +35,9 @@ public class GameColor
         //MaterialLookup.
         return null;
     }
-    
-    public static bool operator == (GameColor x, GameColor y)
+
+    //============================================================================================================================================//
+    public static bool operator ==(GameColor x, GameColor y)
     {
         return (x.ID == y.ID);
     }
@@ -46,4 +47,13 @@ public class GameColor
         return (x.ID != y.ID);
     }
 
-}
+    public override bool Equals(object obj)
+    {
+        return (this.ID == (obj as GameColor).ID);
+    }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
+} 

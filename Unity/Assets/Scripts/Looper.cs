@@ -56,12 +56,9 @@ public class Looper : MonoBehaviour
                     start = i;
                     end = c;
 
-                    Vector3 lastPos = Vector3.zero;
                     for (int x = start; x <= end; x++)
                     {
-                        loop.Add(curve.Tail[x]);
-                        //Debug.DrawLine(lastPos, curve.Tail[x], Color.black);
-                        lastPos = curve.Tail[x];
+                        loop.Add(curve.Tail[x]); 
                     }
                     break;
                 }
@@ -104,18 +101,18 @@ public class Looper : MonoBehaviour
             }          
         }
 
-        Color color = Color.red;
-        if (result)
+        //Color color = Color.red;
+        /*if (result)
         {
             Glow.active = true;
 
-            color = Color.green;
+            //color = Color.green;
 
-            /*for (int i = 0; i < loop.Length - 1; i++)
+            for (int i = 0; i < loop.Length - 1; i++)
             {
                 Debug.DrawLine(loop[i] + new Vector3(0, 0.3f, 0), loop[i + 1] + new Vector3(0, 0.3f, 0), color);
-            }*/
-        }
+            }
+        }*/
         //else
             //Glow.active = false;
 
@@ -137,7 +134,7 @@ public class Looper : MonoBehaviour
         float rotation = -Mathf.Atan2(localEnd.y, localEnd.x);
         //float rotation = -Mathf.Atan(localEnd.y / localEnd.x);
 
-        float x = Mathf.Cos(rotation) * localPoint.x - Mathf.Sin(rotation) * localPoint.y;
+        //float x = Mathf.Cos(rotation) * localPoint.x - Mathf.Sin(rotation) * localPoint.y;
         float y = Mathf.Sin(rotation) * localPoint.x + Mathf.Cos(rotation) * localPoint.y;
         //Game.Log("X: " + x + " Y: " + y + " Rotation: " + (rotation * Mathf.Rad2Deg));
         result = y > 0 ? 1 : -1;

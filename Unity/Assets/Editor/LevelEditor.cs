@@ -345,7 +345,6 @@ public class LevelEditor : Editor
     //======================================================================================================================================//
     ColorBase SelectClosestBase(Vector2 position)
     {
-        Level level = (Level)target;
         ColorBase[] bases = (ColorBase[])GameObject.FindObjectsOfType(typeof(ColorBase));
 
 

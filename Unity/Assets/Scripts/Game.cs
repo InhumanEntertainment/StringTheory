@@ -11,7 +11,6 @@ public partial class Game : MonoBehaviour
     // Logic //
 	float PlayTime;
 	float StartTime;
-	string PlayTimeLabel;
 	bool  HasLevelBeenCompleted = false;
     public bool Paused = false;
 
@@ -73,15 +72,7 @@ public partial class Game : MonoBehaviour
                 {
                     LevelCompleted();
                 }
-                else
-                {
-                    if (!HasLevelBeenCompleted)
-                    {
-                        UpdateStringTime();
-                    }
-                }
 
-                UpdateStringTime();
                 UpdateHud();
             }
         }
@@ -212,16 +203,21 @@ public partial class Game : MonoBehaviour
             totalCurveLength += curves[i].CurveLength;
 		}
 
-        GameObject distanceLabel = GameObject.Find("DistanceLabel");
-        GameObject timeLabel = GameObject.Find("TimeLabel");
+        GameObject timeObject = GameObject.Find("TimeLabel");
 
-        if (timeLabel != null)
+        if (timeObject != null)
         {
-            UILabel time = timeLabel.GetComponent<UILabel>();
-            time.text = PlayTime.ToString("N1") + "sec";
+            PlayTime = Time.time - StartTime;
+            
+  		    int minutes = (int) PlayTime / 60;
+   		    int seconds = (int) PlayTime % 60;
+   		    int fraction = (int) (PlayTime * 100) % 100;
 
-            UILabel distance = distanceLabel.GetComponent<UILabel>();
-            distance.text = (totalCurveLength / 100f).ToString("N1") + "m";
+            bool minutePlus = minutes > 0;
+            string time = (minutePlus ? minutes + ":" : "") + seconds.ToString(minutePlus ? "00" : "") + "." + fraction.ToString("00") + "sec"; 
+
+            UILabel timeLabel = timeObject.GetComponent<UILabel>();
+            timeLabel.text = time;
         }
     }
 	
@@ -255,19 +251,6 @@ public partial class Game : MonoBehaviour
 	{
 		HasLevelBeenCompleted = true;
 	}	
-	
-	//============================================================================================================================================//
-	void UpdateStringTime() 
-	{
-		PlayTime = Time.time - StartTime;
-
-  		int minutes = (int) PlayTime / 60;
-   		int seconds = (int) PlayTime % 60;
-   		int fraction = (int) (PlayTime * 100) % 100;
-
-   		PlayTimeLabel =  minutes + "min " + seconds + "sec " +  fraction + "m"; 
-	}
-	
 	
 	//============================================================================================================================================//
 	int PairOfCurvesToConnect() 

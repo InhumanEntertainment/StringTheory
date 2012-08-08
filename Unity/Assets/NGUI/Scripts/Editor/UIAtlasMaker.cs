@@ -6,6 +6,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using System.IO;
 
 /// <summary>
 /// Atlas maker lets you create atlases from a bunch of small textures. It's an alternative to using the external Texture Packer.
@@ -714,6 +715,34 @@ public class UIAtlasMaker : EditorWindow
 			NGUIEditorTools.DrawHeader("Sprites");
 			GUILayout.Space(-7f);
 
+            // INHUMAN: Select All //
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Select All", GUILayout.Width(100f)))
+            {
+                string[] assets = AssetDatabase.GetAllAssetPaths();
+                List<Object> selectionList = new List<Object>();
+
+                foreach (KeyValuePair<string, int> iter in spriteList)
+                {
+                    for (int i = 0; i < assets.Length; i++)
+                    {
+                        string file = Path.GetFileNameWithoutExtension(assets[i]);
+
+                        if (iter.Key == file)
+                        {
+                            Debug.Log("Found " + file);
+
+                            Object asset = AssetDatabase.LoadAssetAtPath(assets[i], typeof(Texture));
+                            selectionList.Add(asset);                            
+                        }
+                    }                 
+                }
+
+                Selection.objects = selectionList.ToArray();
+            }
+
+            GUILayout.EndHorizontal();
+
 			mScroll = GUILayout.BeginScrollView(mScroll);
 
 			string delSprite = null;
@@ -758,6 +787,29 @@ public class UIAtlasMaker : EditorWindow
 						GUI.backgroundColor = Color.white;
 					}
 				}
+
+                // INHUMAN: Quick Select //
+                if (GUILayout.Button("Select", GUILayout.Width(60f)))
+                {
+                    string[] assets = AssetDatabase.GetAllAssetPaths();
+
+                    for (int i = 0; i < assets.Length; i++)
+                    {
+                        string file = Path.GetFileNameWithoutExtension(assets[i]);
+                        
+                        if (iter.Key == file)
+                        {
+                            Debug.Log("Found " + file);
+
+                            Object asset = AssetDatabase.LoadAssetAtPath(assets[i], typeof(Texture));
+
+                            Object[] selection = new Object[1];
+                            selection[0] = asset;
+                            Selection.objects = selection;
+                        }
+                    }
+                }
+
 				GUILayout.EndHorizontal();
 			}
 			GUILayout.EndScrollView();

@@ -37,7 +37,6 @@ public class ColorString : MonoBehaviour
 	public float TailWidthEnd = 1f;
 	public bool DrawWireframe = true;
 	
-    Vector3 SmoothPosition;
     public float SmoothAmount = 0.9f;
     public int SmoothCount = 5;
     public float CornerShift = 0.2f;
@@ -353,12 +352,9 @@ public class ColorString : MonoBehaviour
                     start = i;
                     end = c;
 
-                    Vector3 lastPos = Vector3.zero;
                     for (int x = start; x <= end; x++)
                     {
                         loop.Add(Tail[x]);
-                        //Debug.DrawLine(lastPos, curve.Tail[x], Color.black);
-                        lastPos = Tail[x];
                     }
                     break;
                 }
@@ -424,9 +420,6 @@ public class ColorString : MonoBehaviour
 	{
 		//put here reactions to this event//
 		HasCurveReachedTarget = true;
-		
-		//add missing points to connect to the base center
-		Vector3 baseScreenPoint = Camera.main.WorldToScreenPoint(colorBase.transform.position);
 		
 		//List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(baseScreenPoint);
 		List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(colorBase.transform.position);
@@ -556,12 +549,7 @@ public class ColorString : MonoBehaviour
 	
 	//============================================================================================================================================//
 	public void InitializeCurveToResumeDrawingAtPosition(Vector3 position)
-	{
-        if (Tail.Count == 0)
-            SmoothPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        else
-            SmoothPosition = Tail[Tail.Count - 1];
-       
+	{     
 		IsCurveBeingDrawn = true;
 		HasCurveReachedTarget = false;
 	}
@@ -752,12 +740,6 @@ public class ColorString : MonoBehaviour
     }
     
     //============================================================================================================================================//
-	float UVScroll = 0;
-    Vector3 LastLeft;
-    Vector3 LastRight;
-    Vector3 LastLeftIntersection;
-    Vector3 LastRightIntersection;
-
     void BuildMesh()
     {
         if (Tail.Count > 1)
@@ -803,65 +785,12 @@ public class ColorString : MonoBehaviour
 
                 // from 0 to 1 along the length of the tail //
                 float v = 1 - ((float)i / (Tail.Count - 1));
-                float tailwidth = Mathf.Lerp(TailWidthStart, TailWidthEnd, v);
-                //vertices[i * 2] = Tail[i] + left * tailwidth;
-                //vertices[i * 2 + 1] = Tail[i] + right * tailwidth;
-
-                // Shorten inner width when big angle //
-                /*float angle = Mathf.Atan2(prevVector.y, prevVector.x);
-                float x = Mathf.Cos(angle) * vector.x + Mathf.Sin(angle) * vector.y;
-                float y = -Mathf.Sin(angle) * vector.x + Mathf.Cos(angle) * vector.y;
-                y *= CornerShift;
-
-                float shortener =  (Vector3.Dot(vector, prevVector) + 1) * 0.5f;
-                shortener = Mathf.Pow(shortener, 1) * 0.4f;
-                prevVector = vector;*/
-
-
-                /*===================================================
-                Vector3 bufferLeft, BufferRight;
-                if (LastLeftIntersection != Vector3.zero)
-                {
-                    bufferLeft = LastLeftIntersection;
-                    GetIntersectionPoint(smoothTail, i, left, LastLeft);
-                    //LastLeftIntersection = (LastLeftIntersection + GetIntersectionPoint(smoothTail, i, left, LastLeft)) * 0.5f;  
-                }
-                else
-                {
-                    bufferLeft = GetIntersectionPoint(smoothTail, i, left, LastLeft);
-                }
-
-                if (intersection) LastLeftIntersection = bufferLeft;
-                else LastLeftIntersection = Vector3.zero;
-
-                if (LastRightIntersection != Vector3.zero)
-                {
-                    BufferRight = (LastRightIntersection + GetIntersectionPoint(smoothTail, i, right, LastRight)) * 0.5f;
-                }
-                else
-                {
-                    BufferRight = GetIntersectionPoint(smoothTail, i, right, LastRight);
-                }
-
-                if (intersection) LastRightIntersection = BufferRight;
-                else LastRightIntersection = Vector3.zero;                
-                
-                vertices[i * 2] = bufferLeft;
-                vertices[i * 2 + 1] = BufferRight;
-                 =====================================================*/
 
                 vertices[i * 2] = smoothTail[i] + left * TailWidth[i];
                 vertices[i * 2 + 1] = smoothTail[i] + right * TailWidth[i];
 
-
-                LastLeft = left;
-                LastRight = right;
-
-                UVScroll += Time.deltaTime * 0.0f;
-                uv[i * 2] = new Vector2(0, v * 1 + UVScroll);
-                uv[i * 2 + 1] = new Vector2(1, v * 1 + UVScroll);
-
-                //Debug.DrawLine(Tail[i] + left, Tail[i] + right, Color.blue);
+                uv[i * 2] = new Vector2(0, v * 1);
+                uv[i * 2 + 1] = new Vector2(1, v * 1);
             }
 
             // Generate Triangles //
@@ -937,7 +866,7 @@ public class ColorString : MonoBehaviour
 
     //============================================================================================================================================//
     bool intersection = false;
-    bool coincident = false;
+    //bool coincident = false;
     Vector2 intersectionPoint;
     void Intersect(Vector2 point1, Vector2 point2, Vector2 point3, Vector2 point4)
     {
@@ -945,13 +874,15 @@ public class ColorString : MonoBehaviour
         float ub = (point2.x - point1.x) * (point1.y - point3.y) - (point2.y - point1.y) * (point1.x - point3.x);
         float denominator = (point4.y - point3.y) * (point2.x - point1.x) - (point4.x - point3.x) * (point2.y - point1.y);
 
-        intersection = coincident = false;
+        intersection  = false;
+        //coincident = false;
 
         if (Mathf.Abs(denominator) <= 0.00001f)
         {
             if (Mathf.Abs(ua) <= 0.00001f && Mathf.Abs(ub) <= 0.00001f)
             {
-                intersection = coincident = true;
+                intersection = true;
+                //coincident = true;
                 intersectionPoint = (point1 + point2) / 2;
             }
         }

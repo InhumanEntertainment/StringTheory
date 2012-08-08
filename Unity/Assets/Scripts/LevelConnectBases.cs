@@ -3,8 +3,6 @@ using System.Collections;
 
 public partial class Game : MonoBehaviour 
 {	
-	bool hadBeenConnected = false;
-
     //=====================================================================================================================================//
     void ReconnectBases() 
     {		

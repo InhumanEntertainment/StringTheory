@@ -30,7 +30,6 @@ public class ColorBar : MonoBehaviour
 
         // Calculate Bar Ratio //
         float BarLength = BarMax;
-        float ratio = BarMax / TotalLength;
         if (TotalLength > BarMax)
         {
             BarLength = TotalLength;
@@ -59,7 +58,7 @@ public class ColorBar : MonoBehaviour
 
         // Update Labels //        
         float labelX = Length / BarLength * ScreenWidth;
-        labelX = Mathf.Clamp(labelX, 64f, ScreenWidth - 64f);
+        labelX = Mathf.Clamp(labelX, 90f, ScreenWidth - 90f);
 
         CurrentDistanceLabel.transform.localPosition = new Vector3(labelX, -8, 0);
         CurrentDistanceLabel.text = TotalLength.ToString("N1") +"m";
@@ -68,7 +67,7 @@ public class ColorBar : MonoBehaviour
         if (strings.Length > 0)
             label.color = strings[0].Color.ProgressColor;
         else
-            label.color = Color.white;
+            label.color = Color.grey;
     
     }
 

@@ -253,9 +253,6 @@ public class CurveBuilder : MonoBehaviour {
 
                 // from 0 to 1 along the length of the tail //
                 float v = 1 - ((float)i / (Tail.Count - 1));
-                float tailwidth = Mathf.Lerp(TailWidthStart, TailWidthEnd, v);
-                //vertices[i * 2] = Tail[i] + left * tailwidth;
-                //vertices[i * 2 + 1] = Tail[i] + right * tailwidth;
 
                 vertices[i * 2] = Tail[i] + left * TailWidth[i];
                 vertices[i * 2 + 1] = Tail[i] + right * TailWidth[i];
@@ -300,8 +297,6 @@ public class CurveBuilder : MonoBehaviour {
             mesh.uv = uv;
             mesh.triangles = triangles;
 
-            MeshFilter m = GetComponent<MeshFilter>();
-			//m.mesh = mesh;
             Graphics.DrawMesh(mesh, Matrix4x4.identity, renderer.material, 0);
         }
     }

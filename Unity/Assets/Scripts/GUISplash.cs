@@ -16,7 +16,7 @@ public class GUISplash : MonoBehaviour
     {
         if (Time.timeSinceLevelLoad - StartTime > MinLoadTime)
         {
-            Application.LoadLevel(1);
+            Application.LoadLevel("Game");
         }        
     }
 
