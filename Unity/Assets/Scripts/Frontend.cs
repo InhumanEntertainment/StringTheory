@@ -19,6 +19,8 @@ public class Frontend : MonoBehaviour
     //=======================================================================================================================================================================//
     void OnClick()
     {
+        Debug.Log("Frontend Command: " + Command);
+
         // Level Buttons //============================================================================//
         if (Command == "About_Open")
         {
@@ -63,7 +65,6 @@ public class Frontend : MonoBehaviour
             Game.SetScreen("Game");
         }
         
-
         // Level Buttons //============================================================================//
         else if (Game.LevelList.Contains(Command))
         {           
@@ -87,19 +88,13 @@ public class Frontend : MonoBehaviour
         // Game Buttons //============================================================================//
         else if (Command == "Next")
         {
-            if (Game.CurrentLevel + 1 < Game.LevelList.Count)
-            {
-                ResetPauseSlider();
-                Game.LoadLevel(Game.CurrentLevel + 1);
-            }
+            Game.NextLevel();
+            ResetPauseSlider();
         }
         else if (Command == "Prev")
         {
-            if (Game.CurrentLevel > 0)
-            {
-                ResetPauseSlider();
-                Game.LoadLevel(Game.CurrentLevel - 1);
-            }
+            Game.PrevLevel();
+            ResetPauseSlider();
         }
         else if (Command == "Retry")
         {
@@ -115,8 +110,22 @@ public class Frontend : MonoBehaviour
         else if (Command == "Game_Close")
         {
             ResetPauseSlider();
-            Game.SetScreen(Game.LastScreen.Name);
             Game.DestroyLevel(Game.CurrentLevel);
+            Game.SetScreen(Game.LastScreen.Name);          
+        }
+
+        // Level Completed //============================================================================//
+        else if (Command == "Completed_Next")
+        {
+            Game.NextLevel();
+            ResetPauseSlider();
+            Game.FX.SetEffect("Game");
+        }
+        else if (Command == "Completed_Retry")
+        {
+            Game.Retry();
+            ResetPauseSlider();
+            Game.FX.SetEffect("Game");
         }
 
         // Menus //============================================================================//
@@ -135,9 +144,7 @@ public class Frontend : MonoBehaviour
         else if (Command == "Rate")
         {
             
-        }
-
-        Game.Log("Frontend Command: " + Command);
+        }     
 	}
 
     //=======================================================================================================================================================================//

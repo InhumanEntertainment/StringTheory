@@ -106,7 +106,7 @@ public class GameSlider : MonoBehaviour
                 if (Game.Instance.Paused)
                 {
                     Game.Instance.Resume();
-                    Game.Log("Resume");
+                    Debug.Log("Resume");
                 }
             }
             else
@@ -114,7 +114,7 @@ public class GameSlider : MonoBehaviour
                 if (!Game.Instance.Paused)
                 {
                     Game.Instance.Pause();
-                    Game.Log("Pause");
+                    Debug.Log("Pause");
                 }
             }
         }

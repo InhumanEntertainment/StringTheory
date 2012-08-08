@@ -11,14 +11,16 @@ public partial class Game : MonoBehaviour
     // Logic //
 	float PlayTime;
 	float StartTime;
-	bool  HasLevelBeenCompleted = false;
-    public bool Paused = false;
+	public bool Paused = false;
 
     // UI //
     public GameScreen CurrentScreen;
     public GameScreen LastScreen;
     public GameScreen[] Screens;
     public FXStars FX;
+
+    public UILabel TimeLabel;
+    public UILabel DistanceLabel;
 
     // Levels //
     AsyncOperation Async;
@@ -28,6 +30,9 @@ public partial class Game : MonoBehaviour
     public List<int> LevelIndexList;
     public List<string> LevelIgnoreList;
 
+    public bool LevelIsLoading = false;
+    public bool LevelHasCompleted = false;
+    
     // Colors //
     public GameColor[] Colors;
 
@@ -64,16 +69,20 @@ public partial class Game : MonoBehaviour
         if(Application.targetFrameRate != TargetFrameRate)
             Application.targetFrameRate = TargetFrameRate;
 
-        if (!Paused)
+        if (!Paused && !LevelIsLoading && !LevelHasCompleted)
         {
             if (CurrentScreen.Name == "Game")
             {
-                if (PairOfCurvesToConnect() == 0 && !HasLevelBeenCompleted)
+                if (PairOfCurvesToConnect() == 0)
                 {
                     LevelCompleted();
+                    TimeLabel.gameObject.active = false;
+                    DistanceLabel.gameObject.active = false;
                 }
-
-                UpdateHud();
+                else
+                {
+                    UpdateHud();
+                }               
             }
         }
 
@@ -99,6 +108,7 @@ public partial class Game : MonoBehaviour
                 bar.ResetColorBar();
 
                 Async = null;
+                LevelIsLoading = false;
             }
         }
 	}
@@ -120,8 +130,27 @@ public partial class Game : MonoBehaviour
     //============================================================================================================================================//
     public void Retry()
     {
+        CleanupScene();   
+    }
+
+    //============================================================================================================================================//
+    public void PrevLevel()
+    {
         CleanupScene();
-        StartTime = Time.time;
+        if (CurrentLevel > 0)
+        {
+            LoadLevel(CurrentLevel - 1);
+        }
+    }
+
+    //============================================================================================================================================//
+    public void NextLevel()
+    {
+        CleanupScene();
+        if (CurrentLevel + 1 < LevelList.Count)
+        {
+            LoadLevel(CurrentLevel + 1);
+        }
     }
 
     //============================================================================================================================================//
@@ -179,6 +208,12 @@ public partial class Game : MonoBehaviour
     //============================================================================================================================================//
     public void CleanupScene()
     {
+        // Hide Completed //
+        if (LevelHasCompleted)
+        {
+            CloseScreen("Completed");
+        }
+
         // Destroy All Curves //
         ColorString[] curves = (ColorString[])GameObject.FindObjectsOfType(typeof(ColorString));
         for (int i = 0; i < curves.Length; i++)
@@ -186,10 +221,22 @@ public partial class Game : MonoBehaviour
             Destroy(curves[i].gameObject);
         }
 
+        // Remove Curve Refs on Bases //
+        ColorBase[] bases = (ColorBase[])GameObject.FindObjectsOfType(typeof(ColorBase));
+        for (int i = 0; i < bases.Length; i++)
+        {
+            bases[i].Curve = null;
+        }
+
         // Reset Detector //
         GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
         CurveColliderDetector detector = curveManager.GetComponent<CurveColliderDetector>();
         detector.Curves.Clear();
+
+        StartTime = Time.time;
+        LevelHasCompleted = false;
+        TimeLabel.gameObject.active = true;
+        DistanceLabel.gameObject.active = true;
     }
 
     //============================================================================================================================================//
@@ -197,27 +244,24 @@ public partial class Game : MonoBehaviour
     {
         // Update Hud Labels //
         ColorString[] curves = GameObject.FindObjectsOfType(typeof(ColorString)) as ColorString[];
-		float totalCurveLength = 0;
-		for (int i=0; i<curves.Length;i++) 
-		{
+        float totalCurveLength = 0;
+        for (int i = 0; i < curves.Length; i++)
+        {
             totalCurveLength += curves[i].CurveLength;
-		}
+        }
 
-        GameObject timeObject = GameObject.Find("TimeLabel");
-
-        if (timeObject != null)
+        if (TimeLabel != null)
         {
             PlayTime = Time.time - StartTime;
-            
-  		    int minutes = (int) PlayTime / 60;
-   		    int seconds = (int) PlayTime % 60;
-   		    int fraction = (int) (PlayTime * 100) % 100;
+
+            int minutes = (int)PlayTime / 60;
+            int seconds = (int)PlayTime % 60;
+            int fraction = (int)(PlayTime * 100) % 100;
 
             bool minutePlus = minutes > 0;
-            string time = (minutePlus ? minutes + ":" : "") + seconds.ToString(minutePlus ? "00" : "") + "." + fraction.ToString("00") + "sec"; 
+            string time = (minutePlus ? minutes + ":" : "") + seconds.ToString(minutePlus ? "00" : "") + "." + fraction.ToString("00") + "sec";
 
-            UILabel timeLabel = timeObject.GetComponent<UILabel>();
-            timeLabel.text = time;
+            TimeLabel.text = time;
         }
     }
 	
@@ -246,10 +290,46 @@ public partial class Game : MonoBehaviour
         } 
     }
 
+    //============================================================================================================================================//
+    public void OpenScreen(string screen)
+    {
+        print("Open Screen: " + screen);
+
+        for (int i = 0; i < Screens.Length; i++)
+        {
+            if (Screens[i].Name == screen)
+            {
+                Screens[i].Open(this);
+            }
+        }
+    }
+
+    //============================================================================================================================================//
+    public void CloseScreen(string screen)
+    {
+        print("Close Screen: " + screen);
+
+        for (int i = 0; i < Screens.Length; i++)
+        {
+            if (Screens[i].Name == screen)
+            {
+                Screens[i].Close(this);
+            }
+        }
+    }
+
 	//============================================================================================================================================//
 	void LevelCompleted()
 	{
-		HasLevelBeenCompleted = true;
+		LevelHasCompleted = true;
+
+        // Open Level Completed Panel //
+        OpenScreen("Completed");
+
+        // Hide Pause menu //
+
+        // Explode Stars or border stars //
+        // 
 	}	
 	
 	//============================================================================================================================================//
@@ -270,9 +350,12 @@ public partial class Game : MonoBehaviour
 				{
 					shouldCountTheBase = false;
 				}
-			}else{
+			}
+            else
+            {
 				GameObject expectedCurve = bases[i].ExpectedCurve;
-				if (expectedCurve) {
+				if (expectedCurve) 
+                {
 					ColorString expectedColorString = expectedCurve.GetComponent<ColorString>();	
 					if (expectedColorString.HasCurveReachedTarget) 
 					{
@@ -286,6 +369,7 @@ public partial class Game : MonoBehaviour
 				total ++;
 			}
 		}
+
 		return (int) total/2;
 	}
 	
@@ -317,8 +401,9 @@ public partial class Game : MonoBehaviour
 
         LastLevel = CurrentLevel;
         CurrentLevel = index;
-        if (CurrentLevel != LastLevel)
+        if (CurrentLevel != LastLevel && !LevelIsLoading)
         {
+            LevelIsLoading = true;
             Async = Application.LoadLevelAdditiveAsync(LevelIndexList[index]);
         }
     }
@@ -332,7 +417,7 @@ public partial class Game : MonoBehaviour
         }
         else
         {
-            Game.Log("Level '" + level + "' Not Found");
+            Debug.Log("Level '" + level + "' Not Found");
         }
     }
 

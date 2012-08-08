@@ -93,7 +93,7 @@ public class UIButtonColor : MonoBehaviour
 				}
 				else
 				{
-					Debug.LogWarning(NGUITools.GetHierarchy(gameObject) + " has nothing for UIButtonColor to color", this);
+					//Debug.LogWarning(NGUITools.GetHierarchy(gameObject) + " has nothing for UIButtonColor to color", this);
 					enabled = false;
 				}
 			}

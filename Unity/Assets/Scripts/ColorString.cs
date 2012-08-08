@@ -88,7 +88,7 @@ public class ColorString : MonoBehaviour
     //============================================================================================================================================//
 	void Update () 
 	{
-        if (!Game.Paused)
+        if (!Game.Paused && !Game.LevelHasCompleted)
         {
             bool hasTouchStarted = (Input.GetMouseButtonDown(0));
             bool isTouchUpdated = Input.GetMouseButton(0);
@@ -105,7 +105,7 @@ public class ColorString : MonoBehaviour
                         /*
                         if (HasCurveBeenHitAtPosition(Input.mousePosition))
                         {
-                            //Game.Log("Curve has been Hit");
+                            //Debug.Log("Curve has been Hit");
                             CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
                             InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
                         }*/
@@ -209,7 +209,7 @@ public class ColorString : MonoBehaviour
                     }
                     else
                     {
-                        //Game.Log("No touch");	
+                        //Debug.Log("No touch");	
                     }
                 }
                 BuildMesh();
@@ -234,7 +234,7 @@ public class ColorString : MonoBehaviour
 	{
 		if (HasCurveBeenHitAtPosition(Input.mousePosition))
 		{
-			Game.Log("Curve has been Hit");
+			//Debug.Log("Curve has been Hit");
 			CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
 			InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
 		}	
@@ -245,7 +245,7 @@ public class ColorString : MonoBehaviour
 	{
 		if (HasCurveBeenHitAtPosition(Input.mousePosition))
 		{
-			Game.Log("Curve has been Hit");
+			//Debug.Log("Curve has been Hit");
 			CutCurveIfLastPointDoesNotMatchPosition(Input.mousePosition);
 			if (!IsAnotherCurveBeingDrawnExists()) 
 			{
@@ -369,7 +369,7 @@ public class ColorString : MonoBehaviour
     {
         // Remove FX //
         Destroy(FXDrawObject);
-        Game.Log("Destroyed FX");
+        //Debug.Log("Destroyed FX");
 
         // Remove Mesh //
         Destroy(CurveMesh);
@@ -447,7 +447,7 @@ public class ColorString : MonoBehaviour
 	//============================================================================================================================================//
 	void curveDidConnectWithWrongBase(ColorBase colorBase) 
 	{
-		//Game.Log("Did connect with wrong base");
+		//Debug.Log("Did connect with wrong base");
 		Tail = new List<Vector3>();
 		
 		if (colorBase != BaseStart) {
@@ -489,7 +489,7 @@ public class ColorString : MonoBehaviour
 		//code to manage colorBase encounter//
 		foreach (ColorBase colorBase in BasesExpected)
 		{
-			//Game.Log("Check if collide with base named: " + colorBase.baseName);
+			//Debug.Log("Check if collide with base named: " + colorBase.baseName);
 			if (isLastPointCollidingWithBase(colorBase))
 			{
 				curveDidConnectWithMatchingBase(colorBase);
@@ -579,7 +579,7 @@ public class ColorString : MonoBehaviour
 	public void RemoveAllItemsFromTailAfterPoint(Vector3 position) 
 	{
 		int indexPosition = Tail.IndexOf(position);
-		//Game.Log("Index Position for vector " + position + "is " + indexPosition);
+		//Debug.Log("Index Position for vector " + position + "is " + indexPosition);
 
         // Emit Cut Particles //
         ParticleSystem FXCutObject = (ParticleSystem)Game.Spawn(FXCut, transform.position, Quaternion.identity);
@@ -630,11 +630,11 @@ public class ColorString : MonoBehaviour
 			
 			Vector3 closestCurvePoint = GetClosestPoint(touchPosition2D);
 			
-			//Game.Log("Closest point found is point with X: " + closestCurvePoint.x + " Y: " + closestCurvePoint.y + " Z: " + closestCurvePoint.z);
-			//Game.Log("World touch position has X " + touchPosition2D.x + "Y: " + touchPosition2D.y + " Z: " + touchPosition2D.z);
+			//Debug.Log("Closest point found is point with X: " + closestCurvePoint.x + " Y: " + closestCurvePoint.y + " Z: " + closestCurvePoint.z);
+			//Debug.Log("World touch position has X " + touchPosition2D.x + "Y: " + touchPosition2D.y + " Z: " + touchPosition2D.z);
 			
 			float distance = Vector3.Distance(touchPosition2D,closestCurvePoint);
-			//Game.Log("Distance between closest and touch is: " + distance + " and width of curve is: " + Width);
+			//Debug.Log("Distance between closest and touch is: " + distance + " and width of curve is: " + Width);
 			
 			bool hasCurveBeenTouched = (distance < Width * 2) ;
 			if (hasCurveBeenTouched) {
