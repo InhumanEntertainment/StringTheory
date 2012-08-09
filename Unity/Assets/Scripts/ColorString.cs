@@ -63,6 +63,13 @@ public class ColorString : MonoBehaviour
     public Color[] fxColors = new Color[] { new Color(0, 1, 0), new Color(1, 1f, 0f), new Color(0.2f, 0, 1f), new Color(0f, 1f, 1), new Color(0.7f, 1, 0), new Color(0.5f, 0, 1f) };
 
     Mesh CurveMesh;
+
+    // Sound Effects //
+    public AudioClip DrawStartSound;
+    public AudioClip DrawSound;
+    public AudioClip StringCompletedSound;
+    public AudioClip StringCutSound;
+    public AudioSource SoundFX;
 	
 	//============================================================================================================================================//
     void Awake()
@@ -75,7 +82,14 @@ public class ColorString : MonoBehaviour
         Game = (Game)GameObject.FindObjectOfType(typeof(Game));
 
         FXDrawObject = (ParticleSystem)Game.Spawn(FXDraw, transform.position, Quaternion.identity);
-        FXDrawObject.emissionRate = 0;          
+        FXDrawObject.emissionRate = 0;
+
+
+        GameObject aud = GameObject.Find("Audio");
+        if (aud != null)
+        {
+            SoundFX = audio;
+        }       
     }
     
 	//============================================================================================================================================//
@@ -92,13 +106,19 @@ public class ColorString : MonoBehaviour
         {
             bool hasTouchStarted = (Input.GetMouseButtonDown(0));
             bool isTouchUpdated = Input.GetMouseButton(0);
-
+            bool hasTouchStopped = (Input.GetMouseButtonUp(0));
+            
             if (Input.touches.Length <= 1)
             {
+                // Mouse Up //
+                if (hasTouchStopped && IsCurveBeingDrawn)
+                {
+                    audio.loop = false;     
+                }
 
+                // Mouse Down //
                 if (hasTouchStarted)
                 {
-
                     if (!IsCurveBeingDrawn)
                     {
                         CutAndResumeDrawingIfNecessary();
@@ -121,6 +141,9 @@ public class ColorString : MonoBehaviour
                     if (Tail.Count == 0)
                     {
                         InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
+                        SoundFX.PlayOneShot(DrawStartSound);
+                        audio.loop = true;
+                        audio.Play();
                     }
 
                     if (IsCurveBeingDrawn && !HasCurveReachedTarget)
@@ -130,55 +153,59 @@ public class ColorString : MonoBehaviour
                             IsCurveBeingDrawn = false;
                         }
                         else
-                        {
-                            
-							
-					Vector3 mousePosition =  Camera.main.ScreenToWorldPoint( Input.mousePosition);
+                        {                           						
+					        Vector3 mousePosition =  Camera.main.ScreenToWorldPoint( Input.mousePosition);
 						
-					if (mousePosition.y <= -4.9f) 
-						{
-							mousePosition.y = -4.9f;	
-						}
+					        if (mousePosition.y <= -4.9f) 
+					        {
+						        mousePosition.y = -4.9f;	
+					        }
 						
-					if (mousePosition.y >= 4.9f) 
-						{
-							mousePosition.y = 4.9f;	
-						}	
+					        if (mousePosition.y >= 4.9f) 
+					        {
+						        mousePosition.y = 4.9f;	
+					        }	
 					
-						if (mousePosition.x <= -4.9f) 
-						{
-							mousePosition.x = -4.9f;	
-						}
+					        if (mousePosition.x <= -4.9f) 
+					        {
+						        mousePosition.x = -4.9f;	
+					        }
 						
-					if (mousePosition.x >= 4.9f) 
-						{
-							mousePosition.x = 4.9f;	
-						}	
+					        if (mousePosition.x >= 4.9f) 
+					        {
+						        mousePosition.x = 4.9f;	
+					        }
 
+                            // Change Pitch Based On Drag Speed //
+                            float distanceMouse = Vector3.Distance(Input.mousePosition, LastPoint);
+                            LastPoint = Input.mousePosition;
+                            //print(distance / Time.deltaTime);
+                            float pitch = Mathf.Clamp((distanceMouse / Time.deltaTime), 0f, 500f) / 500f;
+                            LastPitch = LastPitch * 0.8f + pitch * 0.2f;
+                            audio.pitch = Mathf.Lerp(-1, -3, LastPitch);
+                            //audio.volume = Mathf.Lerp(0, 1, Mathf.Pow(LastPitch, 1f));
 							
-							//List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(Input.mousePosition);
+					        //List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(Input.mousePosition);
                             
-							List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(mousePosition);
+					        List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(mousePosition);
 							
-							foreach (Vector3 point in pointsToAdd)
+					        foreach (Vector3 point in pointsToAdd)
                             {
                                 AddScreenPointToTail(point);
                                 GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
                                 CurveColliderDetector detector = curveManager.GetComponent<CurveColliderDetector>();
                                 detector.CheckPositionForCurve(this);
 								
-								if (Tail.Count > 2)
-                            	{
-                                	StopDrawingIfLastScreenPointEncouterBaseOrSelf(Input.mousePosition);
-									if (HasCurveReachedTarget)
-									{
-										break;
-									}
-                            	}
+						        if (Tail.Count > 2)
+                                {
+                                    StopDrawingIfLastScreenPointEncouterBaseOrSelf(Input.mousePosition);
+							        if (HasCurveReachedTarget)
+							        {
+								        break;
+							        }
+                                }
 								
-                            }
-
-                            
+                            }          
                         }
                     }
                     else
@@ -187,6 +214,7 @@ public class ColorString : MonoBehaviour
                         {
                             //CutAndResumeDrawingIfNecessary();		
                             CutWithoutResumeDrawingIfNecessary();
+                            audio.Stop();
                         }
                     }
 
@@ -400,7 +428,8 @@ public class ColorString : MonoBehaviour
 		
 		float distance = Vector3.Distance(worldTouchPosition2D,lastPoint);
 		int intermediatePointsToAdd = (int) (distance / Stepper );
-		
+		        
+
 		if (distance > Stepper) 
 		{
 			Vector3 differenceVector = worldTouchPosition2D - lastPoint;
@@ -414,6 +443,9 @@ public class ColorString : MonoBehaviour
 		}
 		return res;
 	}
+
+    float LastPitch;
+    Vector3 LastPoint;
 	
 	//============================================================================================================================================//
 	void curveDidConnectWithMatchingBase(ColorBase colorBase) 
@@ -441,7 +473,10 @@ public class ColorString : MonoBehaviour
         Vector3 posStart = BaseStart.transform.position;
         posStart.z = -1;
 
-        Game.Spawn(FXComplete, posStart, Quaternion.identity);        
+        Game.Spawn(FXComplete, posStart, Quaternion.identity);
+
+        audio.loop = false;
+        SoundFX.PlayOneShot(StringCompletedSound);       
 	}
 	
 	//============================================================================================================================================//

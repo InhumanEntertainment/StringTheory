@@ -19,20 +19,26 @@ public class GameScreen
     //============================================================================================================================================//
     public void Open(Game game)
     {
-        Game.Instance.FX.SetEffect(FXMode);
-        
-        for (int i = 0; i < AnimationsOpen.Length; i++)
+        if (Game.Instance.FX != null)
         {
-            AnimationsOpen[i].Play();
-        }
+            Game.Instance.FX.SetEffect(FXMode);
+
+            for (int i = 0; i < AnimationsOpen.Length; i++)
+            {
+                AnimationsOpen[i].Play();
+            }
+        } 
     }
 
     //============================================================================================================================================//
     public void Close(Game game)
     {
-        for (int i = 0; i < AnimationsOpen.Length; i++)
+        if (Game.Instance.FX != null)
         {
-            AnimationsClose[i].Play();
+            for (int i = 0; i < AnimationsOpen.Length; i++)
+            {
+                AnimationsClose[i].Play();
+            }
         }
     }
 }

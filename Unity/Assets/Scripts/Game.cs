@@ -8,6 +8,10 @@ public partial class Game : MonoBehaviour
     public bool Logging = true;
     public int TargetFrameRate = 60;
     
+    // Storage //
+    public StringTheoryData Data;
+    string FileName = "C:/Users/Erik/Desktop/LT/SVN/Projects/StringTheory/StringTheory.xml";
+     
     // Logic //
 	float PlayTime;
 	float StartTime;
@@ -21,6 +25,7 @@ public partial class Game : MonoBehaviour
 
     public UILabel TimeLabel;
     public UILabel DistanceLabel;
+    public UILabel LevelNameLabel;
 
     // Levels //
     AsyncOperation Async;
@@ -43,6 +48,7 @@ public partial class Game : MonoBehaviour
         if (Game.Instance == null)
         {
             Game.Instance = this;
+            Data = StringTheoryData.Load(FileName);
             ReconnectBases();
             StartTime = Time.time;
             Application.targetFrameRate = TargetFrameRate;           
@@ -65,6 +71,13 @@ public partial class Game : MonoBehaviour
     //============================================================================================================================================//
 	void Update()
 	{
+        // Reload Data //
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            Data = StringTheoryData.Load(FileName);
+            print("Data Reloaded");
+        }
+
         DebugMode = Logging;
         if(Application.targetFrameRate != TargetFrameRate)
             Application.targetFrameRate = TargetFrameRate;
@@ -106,6 +119,9 @@ public partial class Game : MonoBehaviour
 
                 ColorBar bar = (ColorBar)GameObject.FindObjectOfType(typeof(ColorBar));
                 bar.ResetColorBar();
+
+                // Load in Level Name and Best Scores //
+                LevelNameLabel.text = Data.Levels[CurrentLevel].Name;
 
                 Async = null;
                 LevelIsLoading = false;
@@ -325,6 +341,23 @@ public partial class Game : MonoBehaviour
 
         // Open Level Completed Panel //
         OpenScreen("Completed");
+
+        float finishTime = Time.timeSinceLevelLoad - StartTime;
+
+        Data.Levels[CurrentLevel].Completed = true;
+
+        print("Best Time:" + Data.Levels[CurrentLevel].BestTime);
+        print("Best Length:" + Data.Levels[CurrentLevel].BestLength);
+        print("Current Time: " + finishTime);
+         
+        if (Data.Levels[CurrentLevel].BestTime == 0 || finishTime < Data.Levels[CurrentLevel].BestTime)
+        {
+            print("New Best Time: " + finishTime.ToString("N2"));
+            Data.Levels[CurrentLevel].BestTime = finishTime;
+        }
+        
+
+        Data.Save(FileName);
 
         // Hide Pause menu //
 
