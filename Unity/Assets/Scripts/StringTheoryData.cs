@@ -58,7 +58,16 @@ public class StringTheoryData
     public static StringTheoryData Load(string path)
     {
         var serializer = new XmlSerializer(typeof(StringTheoryData));
-        using (var stream = new FileStream(path, FileMode.Open))
+        string file = path;
+
+        // First Load //
+        if (!File.Exists(path))
+        {
+            file = Application.dataPath + "/StringTheory.xml";            
+        }
+        Debug.Log(file);
+
+        using (var stream = new FileStream(file, FileMode.Open))
         {
             return serializer.Deserialize(stream) as StringTheoryData;
         }

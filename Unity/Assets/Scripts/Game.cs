@@ -10,7 +10,7 @@ public partial class Game : MonoBehaviour
     
     // Storage //
     public StringTheoryData Data;
-    string FileName = "C:/Users/Erik/Desktop/LT/SVN/Projects/StringTheory/StringTheory.xml";
+    string DataPath = "C:/Users/Erik/Desktop/LT/SVN/Projects/StringTheory/StringTheory.xml";
      
     // Logic //
 	float PlayTime;
@@ -48,7 +48,9 @@ public partial class Game : MonoBehaviour
         if (Game.Instance == null)
         {
             Game.Instance = this;
-            Data = StringTheoryData.Load(FileName);
+            DataPath = Application.persistentDataPath + "/StringTheory.xml";
+            print(DataPath);
+            Data = StringTheoryData.Load(DataPath);
             ReconnectBases();
             StartTime = Time.time;
             Application.targetFrameRate = TargetFrameRate;           
@@ -74,7 +76,7 @@ public partial class Game : MonoBehaviour
         // Reload Data //
         if (Input.GetKeyDown(KeyCode.D))
         {
-            Data = StringTheoryData.Load(FileName);
+            Data = StringTheoryData.Load(DataPath);
             print("Data Reloaded");
         }
 
@@ -357,7 +359,7 @@ public partial class Game : MonoBehaviour
         }
         
 
-        Data.Save(FileName);
+        Data.Save(DataPath);
 
         // Hide Pause menu //
 
