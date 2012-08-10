@@ -11,6 +11,7 @@ public partial class Game : MonoBehaviour
     // Storage //
     public StringTheoryData Data;
     string DataPath = "C:/Users/Erik/Desktop/LT/SVN/Projects/StringTheory/StringTheory.xml";
+    public TextAsset DataFile;
      
     // Logic //
 	float PlayTime;
@@ -49,8 +50,7 @@ public partial class Game : MonoBehaviour
         {
             Game.Instance = this;
             DataPath = Application.persistentDataPath + "/StringTheory.xml";
-            print(DataPath);
-            Data = StringTheoryData.Load(DataPath);
+            Data = StringTheoryData.Load(DataPath, DataFile);
             ReconnectBases();
             StartTime = Time.time;
             Application.targetFrameRate = TargetFrameRate;           

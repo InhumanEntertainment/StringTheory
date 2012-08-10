@@ -55,6 +55,27 @@ public class StringTheoryData
     }
 
     //=====================================================================================================================================//
+    public static StringTheoryData Load(string path, TextAsset text)
+    {        
+        var serializer = new XmlSerializer(typeof(StringTheoryData));
+        
+        if (File.Exists(path))
+        {
+            Debug.Log("Loaded from File: " + path);
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                return serializer.Deserialize(stream) as StringTheoryData;
+            }
+        }
+        else
+        {
+            MemoryStream stream = new MemoryStream(text.bytes);
+            Debug.Log("Loaded from Memory");
+
+            return serializer.Deserialize(stream) as StringTheoryData;
+        }       
+    }
+    //=====================================================================================================================================//
     public static StringTheoryData Load(string path)
     {
         var serializer = new XmlSerializer(typeof(StringTheoryData));
