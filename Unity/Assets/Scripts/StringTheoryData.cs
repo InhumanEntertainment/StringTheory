@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
@@ -62,6 +61,8 @@ public class StringTheoryData
         if (File.Exists(path))
         {
             Debug.Log("Loaded from File: " + path);
+			InhumanIOS.Popup ("Loaded Data", "From File: " + path, "OK");
+        
             using (var stream = new FileStream(path, FileMode.Open))
             {
                 return serializer.Deserialize(stream) as StringTheoryData;
@@ -71,7 +72,8 @@ public class StringTheoryData
         {
             MemoryStream stream = new MemoryStream(text.bytes);
             Debug.Log("Loaded from Memory");
-
+			InhumanIOS.Popup ("Loaded Data", "From Memory", "OK");
+        
             return serializer.Deserialize(stream) as StringTheoryData;
         }       
     }

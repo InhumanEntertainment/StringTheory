@@ -8,7 +8,7 @@
     UIViewController * currentViewController;  
 }
 
-- (void)Popup: (const char *) text;
+- (void)Popup: Popup: (const char *) title: (const char *) message: (const char *) buttonTitle;
 - (void)ComposeEmail: (UIViewController *)viewController :(const char *)to: (const char *)subject: (const char *)body;
 
 @end

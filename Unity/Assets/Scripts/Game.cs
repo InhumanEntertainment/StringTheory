@@ -351,12 +351,19 @@ public partial class Game : MonoBehaviour
         print("Best Time:" + Data.Levels[CurrentLevel].BestTime);
         print("Best Length:" + Data.Levels[CurrentLevel].BestLength);
         print("Current Time: " + finishTime);
-         
+		
+		string buffer = "Best Time:" + Data.Levels[CurrentLevel].BestTime + "\n";
+		buffer += "Current Time: " + finishTime + "\n";
+		
+		 
         if (Data.Levels[CurrentLevel].BestTime == 0 || finishTime < Data.Levels[CurrentLevel].BestTime)
         {
             print("New Best Time: " + finishTime.ToString("N2"));
             Data.Levels[CurrentLevel].BestTime = finishTime;
+			buffer += "New Best Time: " + finishTime.ToString("N2");
         }
+        
+		InhumanIOS.Popup ("Completed!", buffer, "OK");
         
 
         Data.Save(DataPath);
