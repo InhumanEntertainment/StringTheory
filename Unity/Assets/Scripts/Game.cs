@@ -118,6 +118,7 @@ public partial class Game : MonoBehaviour
                 LevelNameLabel.text = Data.Levels[CurrentLevel].Name;
 
                 Async = null;
+                LevelIsTransitioning = false;
             }
         }
         else
@@ -251,9 +252,7 @@ public partial class Game : MonoBehaviour
         {
             GameObject root = GameObject.Find(LevelList[levelIndex]);
             if (root != null)
-            {
-                LevelIsTransitioning = true;   
-
+            {                
                 // Play Transition //
                 Animation anim = root.transform.FindChild("Nodes").animation;
                 root.transform.position = new Vector3(0, 0, -5);
@@ -482,6 +481,7 @@ public partial class Game : MonoBehaviour
             StartTime = Time.time;
             LastLevel = CurrentLevel;
             CurrentLevel = index;
+            LevelIsTransitioning = true;   
         
             Async = Application.LoadLevelAdditiveAsync(LevelIndexList[index]);
         }
