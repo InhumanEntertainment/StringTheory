@@ -10,7 +10,7 @@ public partial class Game : MonoBehaviour
     
     // Storage //
     public StringTheoryData Data;
-    string DataPath = "C:/Users/Erik/Desktop/LT/SVN/Projects/StringTheory/StringTheory.xml";
+    string DataPath;
     public TextAsset DataFile;
      
     // Logic //
@@ -28,6 +28,15 @@ public partial class Game : MonoBehaviour
     public UILabel DistanceLabel;
     public UILabel LevelNameLabel;
 
+    // Complete //
+    public UILabel CompleteTimeLabel;
+    public UILabel CompleteBestTimeLabel;
+    public UILabel CompleteLengthLabel;
+    public UILabel CompleteBestLengthLabel;
+    public UILabel CompleteHighTimeLabel;
+    public UILabel CompleteHighLengthLabel;
+    public ColorBar ColorBar;
+
     // Levels //
     AsyncOperation Async;
     public int CurrentLevel;
@@ -36,7 +45,7 @@ public partial class Game : MonoBehaviour
     public List<int> LevelIndexList;
     public List<string> LevelIgnoreList;
 
-    public bool LevelIsLoading = false;
+    public bool LevelIsTransitioning = false;
     public bool LevelHasCompleted = false;
     
     // Colors //
@@ -84,23 +93,6 @@ public partial class Game : MonoBehaviour
         if(Application.targetFrameRate != TargetFrameRate)
             Application.targetFrameRate = TargetFrameRate;
 
-        if (!Paused && !LevelIsLoading && !LevelHasCompleted)
-        {
-            if (CurrentScreen.Name == "Game")
-            {
-                if (PairOfCurvesToConnect() == 0)
-                {
-                    LevelCompleted();
-                    TimeLabel.gameObject.active = false;
-                    DistanceLabel.gameObject.active = false;
-                }
-                else
-                {
-                    UpdateHud();
-                }               
-            }
-        }
-
         // Handle Async Level Loading //
         if (Async != null)
         {
@@ -126,10 +118,60 @@ public partial class Game : MonoBehaviour
                 LevelNameLabel.text = Data.Levels[CurrentLevel].Name;
 
                 Async = null;
-                LevelIsLoading = false;
+            }
+        }
+        else
+        {
+            if (!Paused && !LevelHasCompleted && CurrentLevel > -1)
+            {
+                if (CurrentScreen.Name == "Game")
+                {
+                    if (PairOfCurvesToConnect() == 0)
+                    {
+                        LevelCompleted();
+                        TimeLabel.gameObject.active = false;
+                        DistanceLabel.gameObject.active = false;
+                    }
+                    else
+                    {
+                        UpdateHud();
+                    }
+                }
             }
         }
 	}
+
+    //============================================================================================================================================//
+    void UpdateLevelCompleted()
+    {
+        // Count Up to current score, if best score then play sound and effect //
+    }
+
+    //============================================================================================================================================//
+    void UpdateHud()
+    {
+        // Update Hud Labels //
+        ColorString[] curves = GameObject.FindObjectsOfType(typeof(ColorString)) as ColorString[];
+        float totalCurveLength = 0;
+        for (int i = 0; i < curves.Length; i++)
+        {
+            totalCurveLength += curves[i].CurveLength;
+        }
+
+        if (TimeLabel != null)
+        {
+            PlayTime = Time.time - StartTime;
+
+            int minutes = (int)PlayTime / 60;
+            int seconds = (int)PlayTime % 60;
+            int fraction = (int)(PlayTime * 100) % 100;
+
+            bool minutePlus = minutes > 0;
+            string time = (minutePlus ? minutes + ":" : "") + seconds.ToString(minutePlus ? "00" : "") + "." + fraction.ToString("00") + "sec";
+
+            TimeLabel.text = time;
+        }
+    }
 
     //============================================================================================================================================//
     public void Pause()
@@ -210,6 +252,8 @@ public partial class Game : MonoBehaviour
             GameObject root = GameObject.Find(LevelList[levelIndex]);
             if (root != null)
             {
+                LevelIsTransitioning = true;   
+
                 // Play Transition //
                 Animation anim = root.transform.FindChild("Nodes").animation;
                 root.transform.position = new Vector3(0, 0, -5);
@@ -255,32 +299,6 @@ public partial class Game : MonoBehaviour
         LevelHasCompleted = false;
         TimeLabel.gameObject.active = true;
         DistanceLabel.gameObject.active = true;
-    }
-
-    //============================================================================================================================================//
-	void UpdateHud()
-    {
-        // Update Hud Labels //
-        ColorString[] curves = GameObject.FindObjectsOfType(typeof(ColorString)) as ColorString[];
-        float totalCurveLength = 0;
-        for (int i = 0; i < curves.Length; i++)
-        {
-            totalCurveLength += curves[i].CurveLength;
-        }
-
-        if (TimeLabel != null)
-        {
-            PlayTime = Time.time - StartTime;
-
-            int minutes = (int)PlayTime / 60;
-            int seconds = (int)PlayTime % 60;
-            int fraction = (int)(PlayTime * 100) % 100;
-
-            bool minutePlus = minutes > 0;
-            string time = (minutePlus ? minutes + ":" : "") + seconds.ToString(minutePlus ? "00" : "") + "." + fraction.ToString("00") + "sec";
-
-            TimeLabel.text = time;
-        }
     }
 	
     //============================================================================================================================================//
@@ -339,39 +357,59 @@ public partial class Game : MonoBehaviour
 	//============================================================================================================================================//
 	void LevelCompleted()
 	{
-		LevelHasCompleted = true;
-
-        // Open Level Completed Panel //
-        OpenScreen("Completed");
-
+		LevelHasCompleted = true;      
         float finishTime = Time.timeSinceLevelLoad - StartTime;
-
+        float finishLength = ColorBar.TotalLength;
+        print(CurrentLevel);
         Data.Levels[CurrentLevel].Completed = true;
 
-        print("Best Time:" + Data.Levels[CurrentLevel].BestTime);
-        print("Best Length:" + Data.Levels[CurrentLevel].BestLength);
-        print("Current Time: " + finishTime);
-		
-		string buffer = "Best Time:" + Data.Levels[CurrentLevel].BestTime + "\n";
-		buffer += "Current Time: " + finishTime + "\n";
-		
-		 
-        if (Data.Levels[CurrentLevel].BestTime == 0 || finishTime < Data.Levels[CurrentLevel].BestTime)
+        // Best Time //
+        CompleteTimeLabel.text = "Time: " + finishTime.ToString("N2") + "sec";
+        if (Data.Levels[CurrentLevel].BestTime == 0)
         {
-            print("New Best Time: " + finishTime.ToString("N2"));
+            CompleteBestTimeLabel.text = "Best: " + finishTime.ToString("N2") + "sec";        
+            CompleteHighTimeLabel.text = "New Best Time!";
             Data.Levels[CurrentLevel].BestTime = finishTime;
-			buffer += "New Best Time: " + finishTime.ToString("N2");
+        }
+        else if (finishTime < Data.Levels[CurrentLevel].BestTime)
+        {
+            CompleteBestTimeLabel.text = "Previous Best: " + Data.Levels[CurrentLevel].BestTime.ToString("N2") + "sec";
+            CompleteHighTimeLabel.text = "New Best Time!";
+            Data.Levels[CurrentLevel].BestTime = finishTime;
+        }
+        else
+        {
+            CompleteBestTimeLabel.text = "Best: " + Data.Levels[CurrentLevel].BestTime.ToString("N2") + "sec";        
+            CompleteHighTimeLabel.text = "";          
+        }
+
+        // Best Length //
+        CompleteLengthLabel.text = "Length: " + finishLength.ToString("N2") + "m";
+        if (Data.Levels[CurrentLevel].BestLength == 0)
+        {
+            CompleteBestLengthLabel.text = "Best: " + finishLength.ToString("N2") + "m";
+            CompleteHighLengthLabel.text = "New Best Length!";
+            Data.Levels[CurrentLevel].BestLength = finishLength;
+        }
+        else if (finishLength < Data.Levels[CurrentLevel].BestLength)
+        {
+            CompleteBestLengthLabel.text = "Previous Best: " + Data.Levels[CurrentLevel].BestLength.ToString("N2") + "m";
+            CompleteHighLengthLabel.text = "New Best Length!";
+            Data.Levels[CurrentLevel].BestLength = finishLength;
+        }
+        else
+        {
+            CompleteBestLengthLabel.text = "Best: " + Data.Levels[CurrentLevel].BestLength.ToString("N2") + "m";
+            CompleteHighLengthLabel.text = "";
         }
         
-		InhumanIOS.Popup ("Completed!", buffer, "OK");
-        
-
         Data.Save(DataPath);
 
         // Hide Pause menu //
-
         // Explode Stars or border stars //
-        // 
+
+        // Open Level Completed Panel //
+        OpenScreen("Completed");
 	}	
 	
 	//============================================================================================================================================//
@@ -438,14 +476,13 @@ public partial class Game : MonoBehaviour
 
     //=====================================================================================================================================//
     public void LoadLevel(int index)
-    {
-        StartTime = Time.time;
-
-        LastLevel = CurrentLevel;
-        CurrentLevel = index;
-        if (CurrentLevel != LastLevel && !LevelIsLoading)
+    {      
+        if (!LevelIsTransitioning)
         {
-            LevelIsLoading = true;
+            StartTime = Time.time;
+            LastLevel = CurrentLevel;
+            CurrentLevel = index;
+        
             Async = Application.LoadLevelAdditiveAsync(LevelIndexList[index]);
         }
     }

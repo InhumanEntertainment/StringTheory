@@ -5,20 +5,26 @@ public class GameStats : MonoBehaviour
 {
     float SmoothFPS = 0;
     public float Smoothness = 0.99f;
+    UILabel Label;
 
     //============================================================================================================================================//
-    void OnGUI()
+    void Awake()
+    {
+        Label = GetComponent<UILabel>();
+    }
+
+    //============================================================================================================================================//
+    void Update()
     {
         if (!Game.Instance.Paused)
         {
-            // Framerate //
             float fps = 1f / Time.deltaTime;
             SmoothFPS = SmoothFPS * Smoothness + fps * (1f - Smoothness);
             if (float.IsInfinity(SmoothFPS))
             {
                 SmoothFPS = fps;
             }
-            GUI.Label(new Rect(0, Screen.height - 20, 200, 20), "FPS: " + (int)SmoothFPS);
+            Label.text = SmoothFPS.ToString("N0");// +"fps";
         }  
 	}
 }

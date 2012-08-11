@@ -88,9 +88,8 @@ public class StringTheoryData
         {
             file = Application.dataPath + "/StringTheory.xml";            
         }
-        Debug.Log(file);
 
-        using (var stream = new FileStream(file, FileMode.Open))
+        using (var stream = new FileStream(file, FileMode.Open)) 
         {
             return serializer.Deserialize(stream) as StringTheoryData;
         }

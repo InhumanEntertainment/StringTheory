@@ -6,6 +6,7 @@ public class AnimEvents : MonoBehaviour
     //=====================================================================================================================================//
     void Destroy() 
     {
-        Destroy(transform.parent.gameObject);
+        Game.Instance.LevelIsTransitioning = false;
+        Destroy(transform.parent.gameObject);       
 	}
 }

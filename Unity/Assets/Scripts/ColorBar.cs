@@ -10,11 +10,13 @@ public class ColorBar : MonoBehaviour
     public UILabel LastDistanceLabel;
     
     GameObject[] BarSegments = new GameObject[0];
-    public float BarSegmentScale = 0.1f;
+    public float BarSegmentScale = 1f;
     public float BarSegmentHeight = 16f;
     public float BarMax = 45;    
     public float ScreenWidth = 1536;
     public float GlobalScale = 100;
+
+    public float TotalLength;
 
     //============================================================================================================================================//
     void Update()
@@ -22,7 +24,7 @@ public class ColorBar : MonoBehaviour
         ColorString[] strings = (ColorString[])GameObject.FindObjectsOfType(typeof(ColorString));
 
         // Find Total Length //
-        float TotalLength = 0;
+        TotalLength = 0;
         for (int i = 0; i < strings.Length; i++)
         {
             TotalLength += strings[i].CurveLength / GlobalScale;
@@ -48,10 +50,12 @@ public class ColorBar : MonoBehaviour
             float x = Length / BarLength * ScreenWidth;
             float width = (strings[i].CurveLength / GlobalScale) / BarLength * ScreenWidth;
 
-            BarSegments[i].transform.localPosition = new Vector3(x + width * 0.5f, BarSegmentHeight * 0.5f, 0);
+            BarSegments[i].transform.localPosition = new Vector3(x, 0, 0);
             BarSegments[i].transform.localScale = new Vector3(width, BarSegmentHeight, BarSegmentHeight) * BarSegmentScale;
 
-            BarSegments[i].renderer.material.color = strings[i].Color.ProgressColor;
+            UIFilledSprite nguiSprite = BarSegments[i].GetComponent<UIFilledSprite>();
+            nguiSprite.color = strings[i].Color.ProgressColor;
+            //BarSegments[i].renderer.material.color = strings[i].Color.ProgressColor;
 
             Length += strings[i].CurveLength / GlobalScale;
         }
