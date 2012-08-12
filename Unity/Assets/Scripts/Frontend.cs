@@ -139,7 +139,8 @@ public class Frontend : MonoBehaviour
         }
         else if (Command == "Email")
         {
-            Application.OpenURL("email:ecl3d@hotmail.com");
+            //Application.OpenURL("email:ecl3d@hotmail.com");
+            InhumanIOS.ComposeEmail("ecl3d@hotmail.com", "String Theory Support", "");
         }
         else if (Command == "Rate")
         {
