@@ -10,7 +10,7 @@ public partial class Game : MonoBehaviour
     
     // Storage //
     public StringTheoryData Data;
-    string DataPath;
+    public string DataPath;
     public TextAsset DataFile;
      
     // Logic //
@@ -186,6 +186,18 @@ public partial class Game : MonoBehaviour
     {
         Time.timeScale = 1;
         Paused = false;
+    }
+
+    //============================================================================================================================================//
+    public void Reset()
+    {
+        // Are you sure dialog //
+
+        // Reload Base Scores but Not Game Settings //
+        StringTheorySettings settings = Data.Settings;
+        Data = StringTheoryData.Load(DataFile);
+        Data.Settings = settings;
+        Data.Save(DataPath);
     }
 
     //============================================================================================================================================//
@@ -500,6 +512,24 @@ public partial class Game : MonoBehaviour
         }
     }
 
+    //============================================================================================================================================//
+    void OnApplicationPause(bool paused)
+    {
+        if (paused)
+        {
+            print("Paused");
+            Data.Save(DataPath);
+        }        
+        else
+            print("Unpaused");
+    }
+
+    //============================================================================================================================================//
+    void OnApplicationQuit()
+    {
+        print("Quit");
+        Data.Save(DataPath);
+    }
 
 //============================================================================================================================================//
 // Editor Tools //

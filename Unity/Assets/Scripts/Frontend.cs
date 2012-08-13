@@ -129,7 +129,7 @@ public class Frontend : MonoBehaviour
         }
 
         // Menus //============================================================================//
-        else if (Command == "InhumanEntertainment")
+        else if (Command == "Inhuman")
         {
             Application.OpenURL("http://www.inhumanentertainment.com");
         }
@@ -137,16 +137,60 @@ public class Frontend : MonoBehaviour
         {
             Application.OpenURL("http://www.sompon.com");
         }
-        else if (Command == "Email")
+        else if (Command == "Reset")
         {
-            //Application.OpenURL("email:ecl3d@hotmail.com");
-            InhumanIOS.ComposeEmail("ecl3d@hotmail.com", "String Theory Support", "");
+            Game.Reset();
+        }
+        else if (Command == "Email")
+        { 
+            if (Application.platform == RuntimePlatform.IPhonePlayer)
+            {
+                InhumanIOS.ComposeEmail("ecl3d@hotmail.com", "String Theory Support", "");
+            }
+            else
+            { 
+                
+            }
+            
         }
         else if (Command == "Rate")
         {
-            
-        }     
+            Application.OpenURL("https://userpub.itunes.apple.com/WebObjects/MZUserPublishing.woa/wa/addUserReview?id=337064413&type=Purple+Software");
+        }
+        else if (Command == "SoundMute")
+        {
+            Audio.SoundMute = !Audio.SoundMute;
+        }
+        else if (Command == "MusicMute")
+        {
+            Audio.MusicMute = !Audio.MusicMute;
+        } 
+
 	}
+
+
+    //=======================================================================================================================================================================//
+    void OnSliderChange()
+    {
+        if (Command == "Music")
+        {
+            //GameObject music = GameObject.Find("Music");
+            //music.audio.volume = GetComponent<UISlider>().sliderValue;
+            Audio.MusicVolume = GetComponent<UISlider>().sliderValue;
+        }
+        else if (Command == "Sound")
+        {
+            Audio.SoundVolume = GetComponent<UISlider>().sliderValue;
+            //Audio.Play();
+            // Play Sound Effect //
+        }
+    }
+
+    //=======================================================================================================================================================================//
+    void OnSliderUp()
+    {
+        print("Up");
+    }
 
     //=======================================================================================================================================================================//
     public void ResetPauseSlider()

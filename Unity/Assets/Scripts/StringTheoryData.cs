@@ -5,7 +5,6 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
 
-
 //=====================================================================================================================================//
 //=====================================================================================================================================//
 //=====================================================================================================================================//
@@ -34,9 +33,23 @@ public class StringTheoryPack
 //=====================================================================================================================================//
 //=====================================================================================================================================//
 //=====================================================================================================================================//
-[XmlRoot("StringTheory")]
+[System.Serializable]
+public class StringTheorySettings
+{
+    public float MusicVolume = 1;
+    public bool MusicMute = false;
+    public float SoundVolume = 1;
+    public bool SoundMute = false;
+}
+
+//=====================================================================================================================================//
+//=====================================================================================================================================//
+//=====================================================================================================================================//
+[XmlRoot("StringTheory"), System.Serializable]
 public class StringTheoryData
 {
+    public StringTheorySettings Settings = new StringTheorySettings();
+
     [XmlArray("Levels"), XmlArrayItem("Level")]
     public List<StringTheoryLevel> Levels = new List<StringTheoryLevel>();
 
@@ -46,7 +59,7 @@ public class StringTheoryData
     //=====================================================================================================================================//
     public void Save(string path)
     {
-        var serializer = new XmlSerializer(typeof(StringTheoryData));
+        XmlSerializer serializer = new XmlSerializer(typeof(StringTheoryData));
         using (var stream = new FileStream(path, FileMode.Create))
         {
             serializer.Serialize(stream, this);
@@ -55,41 +68,38 @@ public class StringTheoryData
 
     //=====================================================================================================================================//
     public static StringTheoryData Load(string path, TextAsset text)
-    {        
-        var serializer = new XmlSerializer(typeof(StringTheoryData));
-        
+    {
         if (File.Exists(path))
         {
-            Debug.Log("Loaded from File: " + path);
-			InhumanIOS.Popup ("Loaded Data", "From File: " + path, "OK");
-        
-            using (var stream = new FileStream(path, FileMode.Open))
-            {
-                return serializer.Deserialize(stream) as StringTheoryData;
-            }
+            return Load(path);
         }
         else
         {
-            MemoryStream stream = new MemoryStream(text.bytes);
-            Debug.Log("Loaded from Memory");
-			InhumanIOS.Popup ("Loaded Data", "From Memory", "OK");
-        
-            return serializer.Deserialize(stream) as StringTheoryData;
+            return Load(text);
         }       
     }
+
+    //=====================================================================================================================================//
+    public static StringTheoryData Load(TextAsset text)
+    {
+        Debug.Log("Loaded from Memory");
+        InhumanIOS.Popup("Loaded Data", "From Memory", "OK"); 
+        
+        XmlSerializer serializer = new XmlSerializer(typeof(StringTheoryData));
+        MemoryStream stream = new MemoryStream(text.bytes);       
+
+        return serializer.Deserialize(stream) as StringTheoryData;
+    }
+
     //=====================================================================================================================================//
     public static StringTheoryData Load(string path)
     {
-        var serializer = new XmlSerializer(typeof(StringTheoryData));
-        string file = path;
+        Debug.Log("Loaded from File: " + path);
+        InhumanIOS.Popup("Loaded Data", "From File: " + path, "OK");
 
-        // First Load //
-        if (!File.Exists(path))
-        {
-            file = Application.dataPath + "/StringTheory.xml";            
-        }
+        XmlSerializer serializer = new XmlSerializer(typeof(StringTheoryData));
 
-        using (var stream = new FileStream(file, FileMode.Open)) 
+        using (var stream = new FileStream(path, FileMode.Open))
         {
             return serializer.Deserialize(stream) as StringTheoryData;
         }

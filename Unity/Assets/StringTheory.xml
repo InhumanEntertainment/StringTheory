@@ -5,24 +5,24 @@
       <Name>noobie</Name>
       <Scene>Assets/Scenes/Levels/Starter001.unity</Scene>
       <Index>2</Index>
-      <Completed>true</Completed>
-      <BestTime>5</BestTime>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
       <BestLength>0</BestLength>
     </Level>
     <Level>
       <Name>hey now</Name>
       <Scene>Assets/Scenes/Levels/Level001.unity</Scene>
       <Index>3</Index>
-      <Completed>true</Completed>
-      <BestTime>4.55368042</BestTime>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
       <BestLength>0</BestLength>
     </Level>
     <Level>
       <Name>centrifuge</Name>
       <Scene>Assets/Scenes/Levels/Level002.unity</Scene>
       <Index>4</Index>
-      <Completed>true</Completed>
-      <BestTime>11.9590073</BestTime>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
       <BestLength>0</BestLength>
     </Level>
     <Level>
@@ -37,16 +37,16 @@
       <Name>shuffle</Name>
       <Scene>Assets/Scenes/Levels/Level004.unity</Scene>
       <Index>6</Index>
-      <Completed>true</Completed>
-      <BestTime>14.4737244</BestTime>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
       <BestLength>0</BestLength>
     </Level>
     <Level>
       <Name>ziggy</Name>
       <Scene>Assets/Scenes/Levels/Level005.unity</Scene>
       <Index>7</Index>
-      <Completed>true</Completed>
-      <BestTime>17.812027</BestTime>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
       <BestLength>0</BestLength>
     </Level>
     <Level>

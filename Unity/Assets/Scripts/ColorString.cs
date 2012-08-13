@@ -141,9 +141,11 @@ public class ColorString : MonoBehaviour
                     if (Tail.Count == 0)
                     {
                         InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
-                        SoundFX.PlayOneShot(DrawStartSound);
-                        audio.loop = true;
-                        audio.Play();
+
+                        Audio.Play(DrawStartSound);
+
+                        //audio.loop = true;
+                        //audio.Play();
                     }
 
                     if (IsCurveBeingDrawn && !HasCurveReachedTarget)
@@ -475,8 +477,8 @@ public class ColorString : MonoBehaviour
 
         Game.Spawn(FXComplete, posStart, Quaternion.identity);
 
-        audio.loop = false;
-        SoundFX.PlayOneShot(StringCompletedSound);       
+        //audio.loop = false;
+        Audio.Play(StringCompletedSound);
 	}
 	
 	//============================================================================================================================================//
