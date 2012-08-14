@@ -91,11 +91,27 @@ extern "C"
 	}
     
     //============================================================================================================================================//
-	void _ComposeEmail (const char * to, const char * subject, const char * body)
+	void _ComposeEmail(const char * to, const char * subject, const char * body)
 	{
         InhumanIOS * inhuman = [InhumanIOS alloc];
         [inhuman ComposeEmail: UnityGetGLViewController(): to: subject: body];
 	}
+	
+	//============================================================================================================================================//
+	bool _IsMusicPlaying() 
+	{
+        BOOL isPlaying = NO;
+        MPMusicPlayerController * iPodMusicPlayer = [MPMusicPlayerController iPodMusicPlayer];
+		
+        if (iPodMusicPlayer.playbackState == MPMusicPlaybackStatePlaying) 
+		{
+            isPlaying = YES;
+        }
+        NSLog(@"Music is %@.", isPlaying ? @"on" : @"off");
+		
+        return isPlaying;
+    }   
+
 }
 #endif
 

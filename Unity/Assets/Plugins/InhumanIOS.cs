@@ -4,14 +4,16 @@ using System.Runtime.InteropServices;
 
 public class InhumanIOS
 {
-
 	//============================================================================================================================================//
     [DllImport ("__Internal")]
 	private static extern void _Popup (string title, string message, string buttonText);
 	
 	[DllImport ("__Internal")]
 	private static extern void _ComposeEmail (string to, string subject, string body);
-	
+
+    [DllImport ("__Internal")]
+    private static extern bool _IsMusicPlaying();
+
 	//============================================================================================================================================//
     public static void Popup(string title, string message, string buttonText)
 	{
@@ -25,4 +27,18 @@ public class InhumanIOS
 		if (Application.platform == RuntimePlatform.IPhonePlayer)
 			_ComposeEmail(to, subject, body);
 	}
+
+    //============================================================================================================================================//
+    public static bool IsMusicPlaying()
+    {
+        if (Application.platform == RuntimePlatform.IPhonePlayer)
+        {
+            return _IsMusicPlaying();
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 }

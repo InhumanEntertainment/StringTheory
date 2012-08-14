@@ -62,7 +62,11 @@ public partial class Game : MonoBehaviour
             Data = StringTheoryData.Load(DataPath, DataFile);
             ReconnectBases();
             StartTime = Time.time;
-            Application.targetFrameRate = TargetFrameRate;           
+            Application.targetFrameRate = TargetFrameRate;
+
+            // Mute Music if Ipod is playing already //
+            if (InhumanIOS.IsMusicPlaying())
+                Audio.MusicMute = true;
         }
         else
         {
