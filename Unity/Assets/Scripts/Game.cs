@@ -351,7 +351,7 @@ public partial class Game : MonoBehaviour
     }
 
     //============================================================================================================================================//
-    StringTheoryLevel FindLevel(string name)
+    public StringTheoryLevel FindLevel(string name)
     {
         for (int i = 0; i < Data.Levels.Count; i++)
         {
@@ -369,6 +369,7 @@ public partial class Game : MonoBehaviour
     {
         print("Set Pack: " + pack);
 
+        // Setup Labels //
         for (int i = 0; i < Data.Packs.Count; i++)
         {            
             if (Data.Packs[i].Name == pack)
@@ -393,6 +394,19 @@ public partial class Game : MonoBehaviour
 
                 PackLevelsLabel.text = CompletedLevels + "/" + CurrentPack.Levels.Count + " Completed";
             }
+        }
+
+        UpdateButtons();
+    }
+
+    //============================================================================================================================================//
+    public void UpdateButtons()
+    {
+        LevelButton[] buttons = GameObject.FindObjectsOfType(typeof(LevelButton)) as LevelButton[];
+
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            buttons[i].UpdateButton();
         }
     }
 

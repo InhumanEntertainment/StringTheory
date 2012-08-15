@@ -39,6 +39,32 @@ public class StringED : EditorWindow
     }
 
     //============================================================================================================================================//
+    void SaveToBase()
+    {
+        if (Data != null)
+        {
+            string basePath = Application.dataPath + "/StringTheory.xml";
+            Data.Save(basePath);
+        }
+    }
+
+    //============================================================================================================================================//
+    void ResetScores()
+    {
+        if (Data != null)
+        {
+            Debug.Log("Reset All Scores");
+
+            for (int i = 0; i < Data.Levels.Count; i++)
+            {
+                Data.Levels[i].Completed = false;
+                Data.Levels[i].BestTime = 0;
+                Data.Levels[i].BestLength = 0;
+            }
+        }
+    }
+
+    //============================================================================================================================================//
     void OnGUI() 
     {
         GUI.backgroundColor = Color.grey;
@@ -54,6 +80,16 @@ public class StringED : EditorWindow
         if (GUILayout.Button("Save"))
         {
             Save();
+        }
+
+        if (GUILayout.Button("Save To Base"))
+        {
+            SaveToBase();
+            
+        }
+        if (GUILayout.Button("Reset Scores"))
+        {
+            ResetScores();
         }
 
         SearchText = GUILayout.TextArea(SearchText);
@@ -212,9 +248,9 @@ public class StringED : EditorWindow
                 SortLevels();
             }
 
-            // Packs //====================================================================================//
+            // Packs //====================================================================================//           
             GUI.backgroundColor = Color.cyan;
-            GUILayout.Label("Packs", EditorStyles.boldLabel);
+            GUILayout.Label("Packs", EditorStyles.boldLabel);         
 
             for (int i = 0; i < Data.Packs.Count; i++)
             {
@@ -296,6 +332,41 @@ public class StringED : EditorWindow
                             }
                         }
                         GUILayout.EndHorizontal();
+                        Rect packRect = GUILayoutUtility.GetLastRect();
+
+                        // Drag and Drop ==============================================================//
+                        if (Event.current.type == EventType.DragUpdated)
+                        {
+                            if (packRect.Contains(Event.current.mousePosition))
+                            {
+                                DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+                            }
+                        }
+                        if (Event.current.type == EventType.DragPerform)
+                        {
+                            if (packRect.Contains(Event.current.mousePosition))
+                            {
+                                List<string> newPacks = new List<string>();
+                                for (int x = DragAndDrop.objectReferences.Length - 1; x >= 0; x--)
+                                {
+                                    string assetPath = AssetDatabase.GetAssetPath(DragAndDrop.objectReferences[x]);
+
+                                    if (Path.GetExtension(assetPath) == ".unity")
+                                    {
+                                        string sceneName = Path.GetFileNameWithoutExtension(assetPath);
+                                        newPacks.Add(sceneName);
+                                    }
+                                }
+                                newPacks.Sort();
+
+                                int offset = 0;
+                                for (int x = 0; x < newPacks.Count; x++)
+                                {
+                                    Data.Packs[i].Levels.Insert(c + offset, newPacks[x]);
+                                    offset++;
+                                }
+                            }
+                        }
                     }
 
                     if (GUILayout.Button("Add Level"))

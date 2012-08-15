@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <StringTheory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Settings>
+    <MusicVolume>0.358247817</MusicVolume>
+    <MusicMute>false</MusicMute>
+    <SoundVolume>0.8752599</SoundVolume>
+    <SoundMute>false</SoundMute>
+    <CurrentTrack>0</CurrentTrack>
+  </Settings>
   <Levels>
     <Level>
       <Name>noobie</Name>
@@ -438,20 +445,102 @@
     <Pack>
       <Name>Starter</Name>
       <Levels>
-        <string />
-        <string />
-        <string />
-        <string />
+        <string>Starter001</string>
+        <string>Level001</string>
+        <string>Level002</string>
+        <string>Level003</string>
+        <string>Level004</string>
+        <string>Level005</string>
+        <string>Level006</string>
+        <string>Level007</string>
+        <string>Level008</string>
+        <string>Level009</string>
+        <string>Level010</string>
+        <string>Level011</string>
+        <string>Level012</string>
+        <string>Level013</string>
+        <string>Level014</string>
+        <string>Level015</string>
+      </Levels>
+    </Pack>
+    <Pack>
+      <Name>Vortex</Name>
+      <Levels>
+        <string>Vortex001</string>
+        <string>Level001</string>
+        <string>Level002</string>
+        <string>Level003</string>
+        <string>Level004</string>
+        <string>Level005</string>
+        <string>Level006</string>
+        <string>Level007</string>
+        <string>Level008</string>
+        <string>Level009</string>
+        <string>Level010</string>
+        <string>Level011</string>
+        <string>Level012</string>
+        <string>Level013</string>
+        <string>Level014</string>
+        <string>Level015</string>
+        <string>Level016</string>
+        <string>Level017</string>
       </Levels>
     </Pack>
     <Pack>
       <Name>Chaos</Name>
       <Levels>
-        <string />
-        <string />
-        <string />
-        <string />
-        <string />
+        <string>Level001</string>
+        <string>Level002</string>
+        <string>Level003</string>
+        <string>Level004</string>
+        <string>Level005</string>
+        <string>Level006</string>
+        <string>Level007</string>
+        <string>Level008</string>
+        <string>Level009</string>
+        <string>Level010</string>
+        <string>Level011</string>
+        <string>Level012</string>
+        <string>Level013</string>
+        <string>Level014</string>
+        <string>Level015</string>
+        <string>Level016</string>
+        <string>Level017</string>
+      </Levels>
+    </Pack>
+    <Pack>
+      <Name>Letters</Name>
+      <Levels>
+        <string>Level100A</string>
+        <string>Level100B</string>
+        <string>Level100C</string>
+        <string>Level100D</string>
+        <string>Level100E</string>
+        <string>Level100F</string>
+        <string>Level100G</string>
+        <string>Level100H</string>
+        <string>Level100I</string>
+        <string>Level100J</string>
+        <string>Level100K</string>
+        <string>Level100L</string>
+        <string>Level100M</string>
+        <string>Level100N</string>
+        <string>Level100O</string>
+        <string>Level100P</string>
+        <string>Level100Q</string>
+        <string>Level100R</string>
+        <string>Level100T</string>
+        <string>Level100U</string>
+        <string>Level100V</string>
+        <string>Level100W</string>
+      </Levels>
+    </Pack>
+    <Pack>
+      <Name>Gnarkill</Name>
+      <Levels>
+        <string>Level001</string>
+        <string>Level002</string>
+        <string>Level003</string>
       </Levels>
     </Pack>
   </Packs>

@@ -68,16 +68,6 @@ public class Frontend : MonoBehaviour
             Game.SetScreen("Game");
         }
         
-        // Level Buttons //============================================================================//
-        else if (Game.LevelList.Contains(Command))
-        {           
-            if (Game != null)
-            {
-                Game.SetScreen("Game");
-                Game.LoadLevel(Command);
-            }  
-        }
-
         // Social Buttons //============================================================================//
         else if (Command == "Facebook")
         {
@@ -113,6 +103,7 @@ public class Frontend : MonoBehaviour
         else if (Command == "Game_Close")
         {
             ResetPauseSlider();
+            Game.Instance.UpdateButtons();
             Game.DestroyLevel(Game.CurrentLevel);
             Game.SetScreen(Game.LastScreen.Name);          
         }
@@ -158,7 +149,7 @@ public class Frontend : MonoBehaviour
         }
         else if (Command == "Rate")
         {
-            Application.OpenURL("https://userpub.itunes.apple.com/WebObjects/MZUserPublishing.woa/wa/addUserReview?id=337064413&type=Purple+Software");
+            Application.OpenURL("itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=337064413");
         }
         else if (Command == "SoundMute")
         {
