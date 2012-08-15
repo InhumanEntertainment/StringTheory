@@ -2,6 +2,7 @@
 #import <Foundation/Foundation.h>
 #import <MessageUI/MessageUI.h>
 #import <MessageUI/MFMailComposeViewController.h>
+#import <MediaPlayer/MediaPlayer.h>
 
 @interface InhumanIOS : NSObject <MFMailComposeViewControllerDelegate>
 {

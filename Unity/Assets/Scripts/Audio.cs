@@ -112,16 +112,16 @@ public class Audio : MonoBehaviour
             Instance = this;
 
             DontDestroyOnLoad(this.gameObject);
+			
+			// Mute Music if Ipod is playing already //
+            if (InhumanIOS.IsMusicPlaying())
+                Game.Instance.Data.Settings.MusicMute = true;
+			
+			MusicVolume = Game.Instance.Data.Settings.MusicVolume;
+	        SoundVolume = Game.Instance.Data.Settings.SoundVolume;
+	        MusicMute = Game.Instance.Data.Settings.MusicMute;
+	        SoundMute = Game.Instance.Data.Settings.SoundMute;			
         }       
-    }
-
-    //============================================================================================================================================//
-    void Start()
-    {
-        MusicVolume = Game.Instance.Data.Settings.MusicVolume;
-        SoundVolume = Game.Instance.Data.Settings.SoundVolume;
-        MusicMute = Game.Instance.Data.Settings.MusicMute;
-        SoundMute = Game.Instance.Data.Settings.SoundMute;
     }
 
     //============================================================================================================================================//
