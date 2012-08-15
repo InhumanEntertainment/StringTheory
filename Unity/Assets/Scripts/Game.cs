@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 public partial class Game : MonoBehaviour
 {
@@ -28,7 +29,11 @@ public partial class Game : MonoBehaviour
     public UILabel DistanceLabel;
     public UILabel LevelNameLabel;
 
+    public UILabel PackNameLabel;
+    public UILabel PackLevelsLabel;
+
     // Complete //
+    public AudioClip CompletedSound;   
     public UILabel CompleteTimeLabel;
     public UILabel CompleteBestTimeLabel;
     public UILabel CompleteLengthLabel;
@@ -36,6 +41,9 @@ public partial class Game : MonoBehaviour
     public UILabel CompleteHighTimeLabel;
     public UILabel CompleteHighLengthLabel;
     public ColorBar ColorBar;
+
+    // Packs //
+    public StringTheoryPack CurrentPack;
 
     // Levels //
     AsyncOperation Async;
@@ -196,6 +204,7 @@ public partial class Game : MonoBehaviour
     public void Reset()
     {
         // Are you sure dialog //
+        Debug.Log("Reset");
 
         // Reload Base Scores but Not Game Settings //
         StringTheorySettings settings = Data.Settings;
@@ -342,6 +351,52 @@ public partial class Game : MonoBehaviour
     }
 
     //============================================================================================================================================//
+    StringTheoryLevel FindLevel(string name)
+    {
+        for (int i = 0; i < Data.Levels.Count; i++)
+        {
+            string levelName = Path.GetFileNameWithoutExtension(Data.Levels[i].Scene);
+
+            if (levelName == name)
+                return Data.Levels[i];
+        }
+
+        return null;
+    }
+
+    //============================================================================================================================================//
+    public void SetPack(string pack)
+    {
+        print("Set Pack: " + pack);
+
+        for (int i = 0; i < Data.Packs.Count; i++)
+        {            
+            if (Data.Packs[i].Name == pack)
+            {
+                CurrentPack = Data.Packs[i];
+
+                // Set Packs Label //
+                PackNameLabel.text = CurrentPack.Name;
+
+                // Set Levels Completed Total //
+                int CompletedLevels = 0;
+                for (int c = 0; c < CurrentPack.Levels.Count; c++)
+			    {
+                    StringTheoryLevel level = FindLevel(CurrentPack.Levels[c]);
+
+                    if (level == null)
+                        Debug.LogError("Missing Level: " + CurrentPack.Levels[c]);
+
+                    if (level != null && level.Completed)
+                        CompletedLevels++;
+			    }
+
+                PackLevelsLabel.text = CompletedLevels + "/" + CurrentPack.Levels.Count + " Completed";
+            }
+        }
+    }
+
+    //============================================================================================================================================//
     public void OpenScreen(string screen)
     {
         print("Open Screen: " + screen);
@@ -369,9 +424,11 @@ public partial class Game : MonoBehaviour
         }
     }
 
-	//============================================================================================================================================//
-	void LevelCompleted()
+	//============================================================================================================================================//   
+    void LevelCompleted()
 	{
+        Audio.Play(CompletedSound);
+
 		LevelHasCompleted = true;      
         float finishTime = Time.timeSinceLevelLoad - StartTime;
         float finishLength = ColorBar.TotalLength;

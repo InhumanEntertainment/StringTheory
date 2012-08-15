@@ -40,6 +40,7 @@ public class StringTheorySettings
     public bool MusicMute = false;
     public float SoundVolume = 1;
     public bool SoundMute = false;
+    public int CurrentTrack = 0;
 }
 
 //=====================================================================================================================================//
@@ -59,6 +60,8 @@ public class StringTheoryData
     //=====================================================================================================================================//
     public void Save(string path)
     {
+        Debug.Log("Saved to File: " + path);
+        
         XmlSerializer serializer = new XmlSerializer(typeof(StringTheoryData));
         using (var stream = new FileStream(path, FileMode.Create))
         {

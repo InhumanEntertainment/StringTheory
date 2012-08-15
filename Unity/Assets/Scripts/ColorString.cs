@@ -618,6 +618,8 @@ public class ColorString : MonoBehaviour
 		int indexPosition = Tail.IndexOf(position);
 		//Debug.Log("Index Position for vector " + position + "is " + indexPosition);
 
+        Audio.Play(StringCutSound);
+
         // Emit Cut Particles //
         ParticleSystem FXCutObject = (ParticleSystem)Game.Spawn(FXCut, transform.position, Quaternion.identity);
         FXCutObject.startColor = Color.FXColor;

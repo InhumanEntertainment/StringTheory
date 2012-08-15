@@ -14,7 +14,7 @@ public class StringED : EditorWindow
     Vector2 ScrollPos = Vector2.zero;
     bool[] Foldouts = new bool[1000];
     bool[] PackFoldouts = new bool[1000];
-    string SearchText = "Search...";
+    string SearchText = "";
 
     //============================================================================================================================================//
     [MenuItem("Inhuman/StringED")]
@@ -70,12 +70,8 @@ public class StringED : EditorWindow
 
             for (int i = 0; i < Data.Levels.Count; i++)
             {
-                if (SearchText != "Search..." && Data.Levels[i].Name.Contains(SearchText))
+                if (Data.Levels[i].Name.Contains(SearchText))
                 {
-
-
-
-
                     GUI.backgroundColor = (Data.Levels[i].Index > -1) ? Color.white : Color.red;
 
                     GUILayout.BeginHorizontal();

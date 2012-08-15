@@ -45,14 +45,17 @@ public class Frontend : MonoBehaviour
         // Level Packs //============================================================================//
         else if (Command == "Starter_Open")
         {
+            Game.SetPack("Starter");
             Game.SetScreen("Starter");
         }
         else if (Command == "Vortex_Open")
         {
+            Game.SetPack("Vortex");
             Game.SetScreen("Vortex");
         }
         else if (Command == "Chaos_Open")
         {
+            Game.SetPack("Chaos");
             Game.SetScreen("Chaos");
         }
         else if (Command == "Pack_Close" || Command == "Starter_Close" || Command == "Vortex_Close" || Command == "Chaos_Close")
@@ -167,30 +170,6 @@ public class Frontend : MonoBehaviour
         } 
 
 	}
-
-
-    //=======================================================================================================================================================================//
-    void OnSliderChange()
-    {
-        if (Command == "Music")
-        {
-            //GameObject music = GameObject.Find("Music");
-            //music.audio.volume = GetComponent<UISlider>().sliderValue;
-            Audio.MusicVolume = GetComponent<UISlider>().sliderValue;
-        }
-        else if (Command == "Sound")
-        {
-            Audio.SoundVolume = GetComponent<UISlider>().sliderValue;
-            //Audio.Play();
-            // Play Sound Effect //
-        }
-    }
-
-    //=======================================================================================================================================================================//
-    void OnSliderUp()
-    {
-        print("Up");
-    }
 
     //=======================================================================================================================================================================//
     public void ResetPauseSlider()

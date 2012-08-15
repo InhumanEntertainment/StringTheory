@@ -52,11 +52,13 @@ public class Audio : MonoBehaviour
 
             if (value)
             {
+                Music.Stop();
                 Instance.MusicSlider.sliderValue = 0;
                 Instance.MusicSlider.collider.enabled = false;
             }
             else
             {
+                Instance.NextTrack();
                 Instance.MusicSlider.sliderValue = Music.volume;
                 Instance.MusicSlider.collider.enabled = true;
             }
@@ -95,12 +97,23 @@ public class Audio : MonoBehaviour
         }
     }
     public AudioClip[] Tracks;
-    public int CurrentTrack = 0;
+
+    public int _CurrentTrack = 0;
+    public int CurrentTrack
+    {
+        get { return _CurrentTrack; }
+        set
+        {
+            print("Current Track Set: " + value.ToString());
+            _CurrentTrack = value;
+            Game.Instance.Data.Settings.CurrentTrack = value;
+        }
+    }
 
     //============================================================================================================================================//
     void Awake()
     {
-        if (Music != null && Music != this)
+        if (Instance != null && Music != this)
         {           
             Destroy(this.gameObject);
         }
@@ -112,16 +125,13 @@ public class Audio : MonoBehaviour
             Instance = this;
 
             DontDestroyOnLoad(this.gameObject);
-        }       
-    }
 
-    //============================================================================================================================================//
-    void Start()
-    {
-        MusicVolume = Game.Instance.Data.Settings.MusicVolume;
-        SoundVolume = Game.Instance.Data.Settings.SoundVolume;
-        MusicMute = Game.Instance.Data.Settings.MusicMute;
-        SoundMute = Game.Instance.Data.Settings.SoundMute;
+            CurrentTrack = Game.Instance.Data.Settings.CurrentTrack; 
+            MusicVolume = Game.Instance.Data.Settings.MusicVolume;
+            SoundVolume = Game.Instance.Data.Settings.SoundVolume;
+            MusicMute = Game.Instance.Data.Settings.MusicMute;
+            SoundMute = Game.Instance.Data.Settings.SoundMute;           
+        }
     }
 
     //============================================================================================================================================//
@@ -144,13 +154,31 @@ public class Audio : MonoBehaviour
     public void Update()
     {
         // Switch tracks //
-        if (Music.time >= Music.clip.length || !Music.isPlaying)
+        if (!MusicMute && !Paused && (Music.time >= Music.clip.length || !Music.isPlaying))
         {
             print("Audio: Next Track");
 
-            CurrentTrack = (CurrentTrack < Tracks.Length - 1) ? CurrentTrack + 1 : 0;
-            Music.clip = Tracks[CurrentTrack];
-            Music.Play();
+            NextTrack();
         }
+    }
+
+    //============================================================================================================================================//
+    bool Paused = false;
+    void OnApplicationPause(bool paused)
+    {
+        Paused = paused;
+    }
+
+    //============================================================================================================================================//
+    bool FirstLoad = true;
+    public void NextTrack()
+    {
+        if (!FirstLoad)
+            CurrentTrack = (CurrentTrack < Tracks.Length - 1) ? CurrentTrack + 1 : 0;
+
+        FirstLoad = false;
+
+        Music.clip = Tracks[CurrentTrack];
+        Music.Play();
     }
 }
