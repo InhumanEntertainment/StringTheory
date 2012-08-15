@@ -86,7 +86,7 @@ public class StringTheoryData
     public static StringTheoryData Load(TextAsset text)
     {
         Debug.Log("Loaded from Memory");
-        InhumanIOS.Popup("Loaded Data", "From Memory", "OK"); 
+        //InhumanIOS.Popup("Loaded Data", "From Memory", "OK"); 
         
         XmlSerializer serializer = new XmlSerializer(typeof(StringTheoryData));
         MemoryStream stream = new MemoryStream(text.bytes);       
@@ -98,7 +98,7 @@ public class StringTheoryData
     public static StringTheoryData Load(string path)
     {
         Debug.Log("Loaded from File: " + path);
-        InhumanIOS.Popup("Loaded Data", "From File: " + path, "OK");
+        //InhumanIOS.Popup("Loaded Data", "From File: " + path, "OK");
 
         XmlSerializer serializer = new XmlSerializer(typeof(StringTheoryData));
 
