@@ -100,6 +100,24 @@ public partial class Game : MonoBehaviour
             Data = StringTheoryData.Load(DataPath);
             print("Data Reloaded");
         }
+        // Save Screenshot //
+        else if (Input.GetKeyDown(KeyCode.S))
+        {
+            for (int i = 1; i < 1000; i++)
+            {
+                string temp = Application.dataPath + "Screenshot_" + i + ".png";
+                temp = temp.Replace("Assets", "");
+                if (!File.Exists(temp))
+                {
+                    string file = "Screenshot_" + i + ".png";
+                    print("Saved Screenshot: " + temp);
+
+                    Application.CaptureScreenshot(file, 2);
+                    break;
+                }
+            }          
+        }
+
 
         DebugMode = Logging;
         if(Application.targetFrameRate != TargetFrameRate)

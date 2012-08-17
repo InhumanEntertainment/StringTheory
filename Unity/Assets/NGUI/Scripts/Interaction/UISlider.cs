@@ -128,8 +128,6 @@ public class UISlider : IgnoreTimeScale
 		Init();
 
         UIEventListener clickListener = UIEventListener.Get(gameObject);
-        print("Click Listener");
-        clickListener.onClick += OnClick;
 
 		if (Application.isPlaying && thumb != null && thumb.collider != null)
 		{
@@ -145,11 +143,6 @@ public class UISlider : IgnoreTimeScale
 	/// </summary>
 
 	void OnPress (bool pressed) { if (pressed) UpdateDrag(); }
-    void OnClick(GameObject go) 
-    {
-        print("OnClick");
-        eventReceiver.SendMessage("OnSliderUp", SendMessageOptions.DontRequireReceiver);
-    }
 
 	/// <summary>
 	/// When dragged, figure out where the mouse is and calculate the updated value of the slider.

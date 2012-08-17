@@ -14,6 +14,11 @@ public class Audio : MonoBehaviour
     public UILabel MusicLabel;
     public UISlider SoundSlider;
     public UILabel SoundLabel;
+
+    public UISlider PauseMusicSlider;
+    public UILabel PauseMusicLabel;
+    public UISlider PauseSoundSlider;
+    public UILabel PauseSoundLabel;
    
     public static bool _SoundMute = false;
     public static bool SoundMute
@@ -25,16 +30,23 @@ public class Audio : MonoBehaviour
             Sound.mute = value;
             Game.Instance.Data.Settings.SoundMute = value;
             Instance.SoundLabel.color = value ? Instance.ColorDisabled : Instance.ColorEnabled;
+            Instance.PauseSoundLabel.color = value ? Instance.ColorDisabled : Instance.ColorEnabled;
 
             if (value)
             {
                 Instance.SoundSlider.sliderValue = 0;
                 Instance.SoundSlider.collider.enabled = false;
+
+                Instance.PauseSoundSlider.sliderValue = 0;
+                Instance.PauseSoundSlider.collider.enabled = false;
             }
             else
             {
                 Instance.SoundSlider.sliderValue = Sound.volume;
                 Instance.SoundSlider.collider.enabled = true;
+
+                Instance.PauseSoundSlider.sliderValue = Sound.volume;
+                Instance.PauseSoundSlider.collider.enabled = true;
             }
         }
     }
@@ -49,18 +61,25 @@ public class Audio : MonoBehaviour
             Music.mute = value;
             Game.Instance.Data.Settings.MusicMute = value;
             Instance.MusicLabel.color = value ? Instance.ColorDisabled : Instance.ColorEnabled;
+            Instance.PauseMusicLabel.color = value ? Instance.ColorDisabled : Instance.ColorEnabled;
 
             if (value)
             {
                 Music.Stop();
                 Instance.MusicSlider.sliderValue = 0;
                 Instance.MusicSlider.collider.enabled = false;
+
+                Instance.PauseMusicSlider.sliderValue = 0;
+                Instance.PauseMusicSlider.collider.enabled = false;
             }
             else
             {
                 Instance.NextTrack();
                 Instance.MusicSlider.sliderValue = Music.volume;
                 Instance.MusicSlider.collider.enabled = true;
+
+                Instance.PauseMusicSlider.sliderValue = Music.volume;
+                Instance.PauseMusicSlider.collider.enabled = true;
             }
         }
     }
@@ -76,7 +95,9 @@ public class Audio : MonoBehaviour
                 _SoundVolume = value;
                 Sound.volume = value;
                 Game.Instance.Data.Settings.SoundVolume = value;
+
                 Instance.SoundSlider.sliderValue = value;
+                Instance.PauseSoundSlider.sliderValue = value;
             }          
         }
     }
@@ -92,7 +113,9 @@ public class Audio : MonoBehaviour
                 _MusicVolume = value;
                 Music.volume = value;
                 Game.Instance.Data.Settings.MusicVolume = value;
+
                 Instance.MusicSlider.sliderValue = value;
+                Instance.PauseMusicSlider.sliderValue = value;
             }
         }
     }
@@ -104,7 +127,6 @@ public class Audio : MonoBehaviour
         get { return _CurrentTrack; }
         set
         {
-            print("Current Track Set: " + value.ToString());
             _CurrentTrack = value;
             Game.Instance.Data.Settings.CurrentTrack = value;
         }

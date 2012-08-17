@@ -11,15 +11,11 @@ public class FrontendSliders : MonoBehaviour
     {
         if (Command == "Music")
         {
-            //GameObject music = GameObject.Find("Music");
-            //music.audio.volume = GetComponent<UISlider>().sliderValue;
             Audio.MusicVolume = GetComponent<UISlider>().sliderValue;
         }
         else if (Command == "Sound")
         {
             Audio.SoundVolume = GetComponent<UISlider>().sliderValue;
-            //Audio.Play();
-            // Play Sound Effect //
         }
     }
 
