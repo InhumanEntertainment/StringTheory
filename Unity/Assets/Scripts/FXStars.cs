@@ -121,6 +121,8 @@ public class FXStars : MonoBehaviour
                     {
                         Vector3 radiusPoint = p.position.normalized * FX[FXIndex].RadialInnerRadius;
                         Vector3 dir = radiusPoint - p.position;
+                        dir.z = 0;
+
                         float distance = Vector3.Distance(p.position, radiusPoint);
 
                         float strength = Mathf.Pow(1 - (distance / FX[FXIndex].RadialOuterRadius), 2);
@@ -140,6 +142,14 @@ public class FXStars : MonoBehaviour
                     
                     p.position += (p.velocity * Time.deltaTime);
                     p.velocity *= 1f - (FX[FXIndex].Drag * Time.deltaTime);
+
+                    
+                    // Crazy Star Errors //
+                    if (float.IsInfinity(p.position.z) || p.position.magnitude > 1000)
+                    {
+                        print("Out of Range Star: " + p.position);
+                        p.position = Vector3.zero;
+                    }
 
                     ParticleList[i] = p;
                 }
