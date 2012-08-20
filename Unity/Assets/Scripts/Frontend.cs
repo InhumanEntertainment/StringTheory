@@ -84,18 +84,19 @@ public class Frontend : MonoBehaviour
         {
             Game.NextLevel();
             ResetPauseSlider();
+            Game.FX.SetEffect("Game");
         }
         else if (Command == "Prev")
         {
             Game.PrevLevel();
             ResetPauseSlider();
+            Game.FX.SetEffect("Game");
         }
         else if (Command == "Retry")
         {
             Game.Retry();
             ResetPauseSlider();
-
-            // Destroy Curves // 
+            Game.FX.SetEffect("Game");
         }
         else if (Command == "Resume")
         {
@@ -108,20 +109,6 @@ public class Frontend : MonoBehaviour
             Game.SetPack(Game.Instance.CurrentPack.Name);          
             Game.DestroyLevel(Game.CurrentLevel);
             Game.SetScreen(Game.LastScreen.Name);          
-        }
-
-        // Level Completed //============================================================================//
-        else if (Command == "Completed_Next")
-        {
-            Game.NextLevel();
-            ResetPauseSlider();
-            Game.FX.SetEffect("Game");
-        }
-        else if (Command == "Completed_Retry")
-        {
-            Game.Retry();
-            ResetPauseSlider();
-            Game.FX.SetEffect("Game");
         }
 
         // Menus //============================================================================//

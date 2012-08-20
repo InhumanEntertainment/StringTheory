@@ -7,12 +7,12 @@ public class ColorBase : MonoBehaviour
 	public List<ColorBase> colorBasePeers;
 	public string baseName;
 		
-	public GameObject Curve;	
-	public GameObject ExpectedCurve;
+	public ColorString Curve;
+    public ColorString ExpectedCurve;
     public Game Game;
 
     public GameColor Color;
-    public GameObject StringPrefab;
+    public ColorString StringPrefab;
 	
 	//============================================================================================================================================//
     void Awake()
@@ -63,8 +63,7 @@ public class ColorBase : MonoBehaviour
                             }
                             else
                             {
-                                ColorString colorString = ExpectedCurve.GetComponent<ColorString>();
-                                if (!colorString.IsCurveBeingDrawn)
+                                if (!ExpectedCurve.IsCurveBeingDrawn)
                                 {
                                     KillCurve(ExpectedCurve);
                                     InstantiateBaseAwareCurve(Input.mousePosition);
@@ -90,11 +89,9 @@ public class ColorBase : MonoBehaviour
                 }
                 else
                 {
-
                     if (Curve)
                     {
-                        ColorString colorString = Curve.GetComponent<ColorString>();
-                        if (colorString.Tail.Count == 0)
+                        if (Curve.Tail.Count == 0)
                         {
                             KillCurve(Curve);
                         }
@@ -122,18 +119,18 @@ public class ColorBase : MonoBehaviour
     //============================================================================================================================================//
 	void InstantiateBaseAwareCurve(Vector3 mousePosition)
 	{
-        Curve = (GameObject)Game.Spawn(StringPrefab);
-        ColorString stringScript = Curve.GetComponent<ColorString>();
-        stringScript.SetColor(this.Color);
+        Curve = (ColorString)Game.Spawn(StringPrefab);
+        ColorBar.Instance.ResetColorBar();
+
+        Curve.SetColor(Color);
 		
 		//set up original base and peeers base//
-		ColorBase currentBase = GetComponent<ColorBase> ();
-		stringScript.BaseStart = currentBase;
-		stringScript.InitializeTouchTrackerWithPosition(currentBase.transform.position);
+		Curve.BaseStart = this;
+		Curve.InitializeTouchTrackerWithPosition(transform.position);
 		
 		foreach (ColorBase colorBase in colorBasePeers) 
 		{
-			stringScript.BasesExpected.Add(colorBase);
+			Curve.BasesExpected.Add(colorBase);
 		}
 		
 		//set up bases of other colors//
@@ -141,22 +138,21 @@ public class ColorBase : MonoBehaviour
 		for (int i = 0;i<bases.Length;i++) 
 		{
 			ColorBase gameBase = bases[i];
-			if (! stringScript.BasesExpected.Contains(gameBase)) 
+			if (! Curve.BasesExpected.Contains(gameBase)) 
 			{
-				stringScript.BasesToAvoid.Add(gameBase);
+				Curve.BasesToAvoid.Add(gameBase);
 			}
 			
 		}
+
+        CurveColliderDetector.Instance.AddCurveToControl(Curve);
 		
-		GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
-		curveManager.SendMessage ("AddCurveToControl", stringScript);
-		
-		//Debug.Log ("Attention curve with " + stringScript.BasesExpected.Count + " bases to detect");
-		//Debug.Log ("Attention curve with " + stringScript.BasesToAvoid.Count + " bases to avoid");       
+		//Debug.Log ("Attention curve with " + Curve.BasesExpected.Count + " bases to detect");
+		//Debug.Log ("Attention curve with " + Curve.BasesToAvoid.Count + " bases to avoid");       
 	}
 	
 	//============================================================================================================================================//
-	void InformPeersToExpectCurve(GameObject curve)
+	void InformPeersToExpectCurve(ColorString curve)
 	{
 		//Debug.Log("Dispatch Peers Expect Curve Information");
 		foreach (ColorBase colorBase in colorBasePeers)
@@ -166,22 +162,17 @@ public class ColorBase : MonoBehaviour
 	}
 	
 	//============================================================================================================================================//
-	void ExpectCurve(GameObject curveToSet) 
+	void ExpectCurve(ColorString curveToSet) 
 	{
 		//Debug.Log("Node: " + name + " has received a curve to set");
 		ExpectedCurve = curveToSet;
 	}
 	
 	//============================================================================================================================================//
-	void KillCurve(GameObject curveToKill)
+	void KillCurve(ColorString curveToKill)
 	{
-		GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
-		
-		
-		ColorString colorString = curveToKill.GetComponent<ColorString>();
-		
-		curveManager.SendMessage ("RemoveCurveFromMonitoring", colorString);
-		Destroy(curveToKill);
+        CurveColliderDetector.Instance.RemoveCurveFromMonitoring(curveToKill);
+		Destroy(curveToKill.gameObject);
 	}
 	
 	//============================================================================================================================================//

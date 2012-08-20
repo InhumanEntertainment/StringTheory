@@ -5,17 +5,24 @@ public class FrontendSliders : MonoBehaviour
 {
     public string Command;
     public AudioClip SoundTest;
+    UISlider Slider;
+
+    //=======================================================================================================================================================================//
+    void Awake()
+    {
+        Slider = GetComponent<UISlider>();
+    }
 
     //=======================================================================================================================================================================//
     void OnSliderChange()
     {
-        if (Command == "Music")
+        if (Command == "Music" && Slider)
         {
-            Audio.MusicVolume = GetComponent<UISlider>().sliderValue;
+            Audio.MusicVolume = Slider.sliderValue;
         }
-        else if (Command == "Sound")
+        else if (Command == "Sound" && Slider)
         {
-            Audio.SoundVolume = GetComponent<UISlider>().sliderValue;
+            Audio.SoundVolume = Slider.sliderValue;
         }
     }
 

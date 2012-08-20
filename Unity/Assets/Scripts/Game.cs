@@ -377,9 +377,7 @@ public partial class Game : MonoBehaviour
         }
 
         // Reset Detector //
-        GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
-        CurveColliderDetector detector = curveManager.GetComponent<CurveColliderDetector>();
-        detector.Curves.Clear();
+        CurveColliderDetector.Instance.Curves.Clear();
 
         StartTime = Time.time;
         LevelHasCompleted = false;
@@ -508,7 +506,7 @@ public partial class Game : MonoBehaviour
 		LevelHasCompleted = true;      
         float finishTime = Time.timeSinceLevelLoad - StartTime;
         float finishLength = ColorBar.TotalLength;
-        print(CurrentLevel);
+
         Data.Levels[CurrentLevel].Completed = true;
 
         // Best Time //
@@ -570,22 +568,20 @@ public partial class Game : MonoBehaviour
 		{
 			bool shouldCountTheBase = true;
 			
-			GameObject curve = bases[i].Curve;
+			ColorString curve = bases[i].Curve;
 			if (curve) 
-			{	
-				ColorString baseColorString = curve.GetComponent<ColorString>();	
-				 if ( baseColorString.HasCurveReachedTarget ) 
+			{
+				if ( curve.HasCurveReachedTarget ) 
 				{
 					shouldCountTheBase = false;
 				}
 			}
             else
             {
-				GameObject expectedCurve = bases[i].ExpectedCurve;
+				ColorString expectedCurve = bases[i].ExpectedCurve;
 				if (expectedCurve) 
                 {
-					ColorString expectedColorString = expectedCurve.GetComponent<ColorString>();	
-					if (expectedColorString.HasCurveReachedTarget) 
+                    if (expectedCurve.HasCurveReachedTarget) 
 					{
 						shouldCountTheBase = false;
 					}	

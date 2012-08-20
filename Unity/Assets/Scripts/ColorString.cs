@@ -19,9 +19,9 @@ public class ColorString : MonoBehaviour
 	public List<ColorBase> BasesToAvoid = new List<ColorBase>();
 	
 	//ending management
-	public GameObject TouchTracker;
-	public GameObject ArrowTracker;
-	GameObject CurrentTracker;
+    public tk2dSprite TouchTracker;
+    public tk2dSprite ArrowTracker;
+    tk2dSprite CurrentTracker;
 	
 	
 	//drawing//
@@ -62,22 +62,24 @@ public class ColorString : MonoBehaviour
 
     public Color[] fxColors = new Color[] { new Color(0, 1, 0), new Color(1, 1f, 0f), new Color(0.2f, 0, 1f), new Color(0f, 1f, 1), new Color(0.7f, 1, 0), new Color(0.5f, 0, 1f) };
 
-    Mesh CurveMesh;
-
+    
     // Sound Effects //
     public AudioClip DrawStartSound;
     public AudioClip DrawSound;
     public AudioClip StringCompletedSound;
     public AudioClip StringCutSound;
     public AudioSource SoundFX;
+
+    Mesh CurveMesh;
+    MeshFilter MeshFilter;
 	
 	//============================================================================================================================================//
     void Awake()
     {
         // Does this cause memory leak?? //
-        MeshFilter m = GetComponent<MeshFilter>();
+        MeshFilter = GetComponent<MeshFilter>();
         CurveMesh = new Mesh();
-        m.mesh = CurveMesh;
+        MeshFilter.mesh = CurveMesh;
 
         Game = (Game)GameObject.FindObjectOfType(typeof(Game));
 
@@ -194,9 +196,7 @@ public class ColorString : MonoBehaviour
 					        foreach (Vector3 point in pointsToAdd)
                             {
                                 AddScreenPointToTail(point);
-                                GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
-                                CurveColliderDetector detector = curveManager.GetComponent<CurveColliderDetector>();
-                                detector.CheckPositionForCurve(this);
+                                CurveColliderDetector.Instance.CheckPositionForCurve(this);
 								
 						        if (Tail.Count > 2)
                                 {
@@ -336,9 +336,8 @@ public class ColorString : MonoBehaviour
 	//============================================================================================================================================//
 	public bool IsAnotherCurveBeingDrawnExists () 
     {
-		GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
-		CurveColliderDetector curveColliderDetector = curveManager.GetComponent<CurveColliderDetector> ();
-		int res = curveColliderDetector.GetNumberOfCurvesBeingDrawn();
+        int res = CurveColliderDetector.Instance.GetNumberOfCurvesBeingDrawn();
+
 		if (res <= 0) 
 		{
 			return false;
@@ -352,9 +351,8 @@ public class ColorString : MonoBehaviour
 	//============================================================================================================================================//
 	public bool HasFoundAnotherCurveDrawing() 
     {
-		GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
-		CurveColliderDetector curveColliderDetector = curveManager.GetComponent<CurveColliderDetector> ();
-		int res = curveColliderDetector.GetNumberOfCurvesBeingDrawn();
+        int res = CurveColliderDetector.Instance.GetNumberOfCurvesBeingDrawn();
+
 		if (res <= 1) 
 		{
 			return false;
@@ -503,19 +501,16 @@ public class ColorString : MonoBehaviour
     //============================================================================================================================================//
 	public void SetTouchTracker(int trackerIndex) 
 	{
-		tk2dSprite sprite = TouchTracker.GetComponent<tk2dSprite>();
-        sprite.spriteId = trackerIndex;
+        TouchTracker.spriteId = trackerIndex;
 	}
 	
 	//============================================================================================================================================//
 	public void SetArrowTracker(int trackerIndex) 
 	{
-		tk2dSprite sprite = ArrowTracker.GetComponent<tk2dSprite>();
         //sprite.spriteId = trackerIndex;
 		//ArrowTracker.transform.localScale += new Vector3(-0.5f, -0.5f, 0);
-		
-		//temp code
-		sprite.spriteId = 14;
+
+        ArrowTracker.spriteId = 14;
 		ArrowTracker.transform.localScale += new Vector3(+0.5f, +0.5f, 0);
 	}	
 
@@ -564,9 +559,9 @@ public class ColorString : MonoBehaviour
 	//============================================================================================================================================//
 	void KillCurve() 
 	{
-		GameObject curveManager = GameObject.FindGameObjectWithTag("CurveManager");
-		CurveColliderDetector colliderDetector = curveManager.GetComponent<CurveColliderDetector>();
-		colliderDetector.RemoveCurveFromMonitoring(this);
+
+
+        CurveColliderDetector.Instance.RemoveCurveFromMonitoring(this);
         Destroy(FXDrawObject);
 		Destroy(gameObject);
 	}
@@ -644,6 +639,8 @@ public class ColorString : MonoBehaviour
 		Tail.RemoveRange (indexPosition,Tail.Count - indexPosition);
         TailWidth.RemoveRange(indexPosition, Tail.Count - indexPosition);
 		UpdateCurveLength();
+
+        HasCurveReachedTarget = false;
 		
 		UpdateTouchTrackerWithPosition(position);
 	}	
@@ -849,22 +846,20 @@ public class ColorString : MonoBehaviour
                 triangles[i * 6 + 5] = t4;
 
                 // Draw Wireframe //
-                if (DrawWireframe)
+                /*if (DrawWireframe)
                 {
                     Debug.DrawLine(vertices[t1], vertices[t2], UnityEngine.Color.black);
                     Debug.DrawLine(vertices[t3], vertices[t4], UnityEngine.Color.black);
                     Debug.DrawLine(vertices[t1], vertices[t3], UnityEngine.Color.black);
                     Debug.DrawLine(vertices[t2], vertices[t4], UnityEngine.Color.black);
-                }
+                }*/
             }
 
             // Draw Tail Mesh //            
-			MeshFilter m = GetComponent<MeshFilter>();
-			
-            m.mesh.Clear();
-            m.mesh.vertices = vertices;
-            m.mesh.uv = uv;
-            m.mesh.triangles = triangles;
+            MeshFilter.mesh.Clear();
+            MeshFilter.mesh.vertices = vertices;
+            MeshFilter.mesh.uv = uv;
+            MeshFilter.mesh.triangles = triangles;
         }
     }
 

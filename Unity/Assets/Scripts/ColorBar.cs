@@ -4,12 +4,13 @@ using System.Collections.Generic;
 
 public class ColorBar : MonoBehaviour
 {
+    public static ColorBar Instance;
     public GameObject BarSegment;
     public UILabel DistanceLabel;
     public UILabel CurrentDistanceLabel;
     public UILabel LastDistanceLabel;
-    
-    GameObject[] BarSegments = new GameObject[0];
+
+    UIFilledSprite[] BarSegments = new UIFilledSprite[0];
     public float BarSegmentScale = 1f;
     public float BarSegmentHeight = 16f;
     public float BarMax = 45;    
@@ -18,16 +19,23 @@ public class ColorBar : MonoBehaviour
 
     public float TotalLength;
 
+    ColorString[] Strings;
+
+    //============================================================================================================================================//
+    void Awake()
+    {
+        Instance = this;
+        ResetColorBar();
+    }
+
     //============================================================================================================================================//
     void Update()
-    {    
-        ColorString[] strings = (ColorString[])GameObject.FindObjectsOfType(typeof(ColorString));
-
+    {        
         // Find Total Length //
         TotalLength = 0;
-        for (int i = 0; i < strings.Length; i++)
+        for (int i = 0; i < Strings.Length; i++)
         {
-            TotalLength += strings[i].CurveLength / GlobalScale;
+            TotalLength += Strings[i].CurveLength / GlobalScale;
         }
 
         // Calculate Bar Ratio //
@@ -45,19 +53,18 @@ public class ColorBar : MonoBehaviour
 
         // Update Segments //
         float Length = 0;
-        for (int i = strings.Length - 1; i >= 0; i--)
+        for (int i = Strings.Length - 1; i >= 0; i--)
         {            
             float x = Length / BarLength * ScreenWidth;
-            float width = (strings[i].CurveLength / GlobalScale) / BarLength * ScreenWidth;
+            float width = (Strings[i].CurveLength / GlobalScale) / BarLength * ScreenWidth;
 
             BarSegments[i].transform.localPosition = new Vector3(x, 0, 0);
             BarSegments[i].transform.localScale = new Vector3(width, BarSegmentHeight, BarSegmentHeight) * BarSegmentScale;
 
-            UIFilledSprite nguiSprite = BarSegments[i].GetComponent<UIFilledSprite>();
-            nguiSprite.color = strings[i].Color.ProgressColor;
+            BarSegments[i].color = Strings[i].Color.ProgressColor;
             //BarSegments[i].renderer.material.color = strings[i].Color.ProgressColor;
 
-            Length += strings[i].CurveLength / GlobalScale;
+            Length += Strings[i].CurveLength / GlobalScale;
         }
 
         // Update Labels //        
@@ -67,17 +74,17 @@ public class ColorBar : MonoBehaviour
         CurrentDistanceLabel.transform.localPosition = new Vector3(labelX, -8, 0);
         CurrentDistanceLabel.text = TotalLength.ToString("N1") +"m";
 
-        UILabel label = CurrentDistanceLabel.GetComponent<UILabel>();
-        if (strings.Length > 0)
-            label.color = strings[0].Color.ProgressColor;
+        if (Strings.Length > 0)
+            CurrentDistanceLabel.color = Strings[0].Color.ProgressColor;
         else
-            label.color = Color.grey;
-    
+            CurrentDistanceLabel.color = Color.grey;   
     }
 
     //============================================================================================================================================//
     public void ResetColorBar()
     {
+        Strings = (ColorString[])GameObject.FindObjectsOfType(typeof(ColorString));
+
         // Setup Segment Meshes //
         ColorBase[] bases = (ColorBase[])GameObject.FindObjectsOfType(typeof(ColorBase));
         int numColors = bases.Length / 2;
@@ -85,13 +92,14 @@ public class ColorBar : MonoBehaviour
         for (int i = 0; i < BarSegments.Length; i++)
         {
             Destroy(BarSegments[i].gameObject);
-        }     
+        }
 
-        BarSegments = new GameObject[numColors];
+        BarSegments = new UIFilledSprite[numColors];
 
         for (int i = 0; i < numColors; i++)
         {
-            BarSegments[i] = (GameObject)Instantiate(BarSegment);
+            GameObject obj = (GameObject)Instantiate(BarSegment);
+            BarSegments[i] = obj.GetComponent<UIFilledSprite>();
             BarSegments[i].name = "BarSegment_" + i;
             BarSegments[i].transform.parent = this.transform;
             BarSegments[i].transform.localScale = Vector3.zero;

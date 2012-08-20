@@ -3,28 +3,40 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class CurveColliderDetector : MonoBehaviour 
-{	
+{
+    public static CurveColliderDetector Instance;
 	public float DistanceMaxAllowed = 0.1f;
 	public List<ColorString> Curves = new List<ColorString> ();
-	
-	//============================================================================================================================================//
-	public void AddCurveToControl (ColorString curve) {
-		Curves.Add(curve);
+
+    //============================================================================================================================================//
+    void Awake()
+    {
+        Instance = this;
+    }
+    
+    //============================================================================================================================================//
+	public void AddCurveToControl (ColorString curve) 
+    {
+        Curves.Add(curve);
+        print("AddCurveToControl: " + Curves.Count);
 	}
 	
 	//============================================================================================================================================//
 	public void RemoveCurveFromMonitoring (ColorString curve) 
 	{
 		Curves.Remove(curve);
+        print("RemoveCurveFromMonitoring: " + Curves.Count);
 	}
 	
 	//============================================================================================================================================//
 	public int GetNumberOfCurvesBeingDrawn() 
 	{
 		int res = 0;
-		foreach (ColorString curve in Curves)
+
+        foreach (ColorString curve in Curves)
 		{
-			if (curve.IsCurveBeingDrawn) {
+            if (curve.IsCurveBeingDrawn) 
+            {
 				res ++;
 			}
 		}
@@ -63,15 +75,12 @@ public class CurveColliderDetector : MonoBehaviour
 		}
 	}
 	
-	
 	//============================================================================================================================================//
 	void PeformCutOnCurve(ColorString curve,Vector3 collisionPoint)
 	{	
 		curve.RemoveAllItemsFromTailAfterPoint(collisionPoint);
 	}
-	
-	
-	
+		
 	//============================================================================================================================================//
 	public Vector3 GetIntersectionPointIfExistsForCurve(ColorString curve1, ColorString curve2) 
 	{
@@ -92,6 +101,5 @@ public class CurveColliderDetector : MonoBehaviour
 			}
 		}
 		return new Vector3(0,0,-100);
-	}
-	
+	}	
 }

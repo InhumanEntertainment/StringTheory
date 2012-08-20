@@ -132,5 +132,12 @@ public class GameSlider : MonoBehaviour
                 }
             }
         }
+
+        // Itween Fix //
+        float dist = Mathf.Abs(Target.y - transform.localPosition.y);
+        if (!Input.GetMouseButton(0) && dist < 10 && dist > 0.1f)
+        {
+            transform.localPosition = Target;
+        }
 	}
 }
