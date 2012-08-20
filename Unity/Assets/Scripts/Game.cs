@@ -10,6 +10,7 @@ public partial class Game : MonoBehaviour
     static public Game Instance;
     public bool Logging = true;
     public int TargetFrameRate = 60;
+    public GameObject[] DisabledObjects;
     
     // Storage //
     public StringTheoryData Data;
@@ -80,6 +81,12 @@ public partial class Game : MonoBehaviour
 			
 			// GameCenter //
 			Social.localUser.Authenticate(AuthenticateCallback);
+
+            // Disable Objects //
+            for (int i = 0; i < DisabledObjects.Length; i++)
+			{
+                DisabledObjects[i].SetActiveRecursively(false);
+			}
         }
         else
         {

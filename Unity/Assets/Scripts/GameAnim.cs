@@ -11,6 +11,7 @@ public class GameAnim
     //============================================================================================================================================//
     public void Play()
     {
+        Target.gameObject.SetActiveRecursively(true);
         Target.PlayQueued(Animation);
     }
 }

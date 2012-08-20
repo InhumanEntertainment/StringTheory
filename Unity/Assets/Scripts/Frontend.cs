@@ -45,19 +45,19 @@ public class Frontend : MonoBehaviour
 
         // Level Packs //============================================================================//
         else if (Command == "Starter_Open")
-        {
-            Game.SetPack("Starter");
+        {           
             Game.SetScreen("Starter");
+            Game.SetPack("Starter");
         }
         else if (Command == "Vortex_Open")
         {
-            Game.SetPack("Vortex");
             Game.SetScreen("Vortex");
+            Game.SetPack("Vortex");           
         }
         else if (Command == "Chaos_Open")
         {
-            Game.SetPack("Chaos");
             Game.SetScreen("Chaos");
+            Game.SetPack("Chaos");
         }
         else if (Command == "Pack_Close" || Command == "Starter_Close" || Command == "Vortex_Close" || Command == "Chaos_Close")
         {
@@ -105,6 +105,7 @@ public class Frontend : MonoBehaviour
         {
             ResetPauseSlider();
             Game.Instance.UpdateButtons();
+            Game.SetPack(Game.Instance.CurrentPack.Name);          
             Game.DestroyLevel(Game.CurrentLevel);
             Game.SetScreen(Game.LastScreen.Name);          
         }
