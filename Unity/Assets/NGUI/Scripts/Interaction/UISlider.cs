@@ -127,8 +127,6 @@ public class UISlider : IgnoreTimeScale
 	{
 		Init();
 
-        UIEventListener clickListener = UIEventListener.Get(gameObject);
-
 		if (Application.isPlaying && thumb != null && thumb.collider != null)
 		{
 			UIEventListener listener = UIEventListener.Get(thumb.gameObject);

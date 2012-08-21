@@ -119,9 +119,7 @@ public class ColorBase : MonoBehaviour
     //============================================================================================================================================//
 	void InstantiateBaseAwareCurve(Vector3 mousePosition)
 	{
-        Curve = (ColorString)Game.Spawn(StringPrefab);
-        ColorBar.Instance.ResetColorBar();
-
+        Curve = (ColorString)Game.Spawn(StringPrefab);        
         Curve.SetColor(Color);
 		
 		//set up original base and peeers base//
@@ -141,12 +139,12 @@ public class ColorBase : MonoBehaviour
 			if (! Curve.BasesExpected.Contains(gameBase)) 
 			{
 				Curve.BasesToAvoid.Add(gameBase);
-			}
-			
+			}			
 		}
 
         CurveColliderDetector.Instance.AddCurveToControl(Curve);
-		
+        //ColorBar.Instance.ResetColorBar();
+
 		//Debug.Log ("Attention curve with " + Curve.BasesExpected.Count + " bases to detect");
 		//Debug.Log ("Attention curve with " + Curve.BasesToAvoid.Count + " bases to avoid");       
 	}

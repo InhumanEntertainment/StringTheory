@@ -448,17 +448,30 @@ public class ColorString : MonoBehaviour
     Vector3 LastPoint;
 	
 	//============================================================================================================================================//
-	void curveDidConnectWithMatchingBase(ColorBase colorBase) 
+    void curveDidConnectWithMatchingBase(ColorBase colorBase) 
 	{
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePosition.z = 0;
+                        
 		//put here reactions to this event//
 		HasCurveReachedTarget = true;
 		
-		//List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(baseScreenPoint);
-		List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(colorBase.transform.position);
-		foreach (Vector3 point in pointsToAdd) 
-		{
-			AddScreenPointToTail(point);
-		}
+        // Create Last Point At Hard Coded Radius inside the base to prevent big jump at the end //
+        float minDistance = 0.5f;
+        float distance = Vector3.Distance(colorBase.transform.position, mousePosition);
+        print(distance);
+        if (distance > minDistance)
+        {
+            Vector3 diff = colorBase.transform.position - mousePosition;
+            Vector3 vec = mousePosition + (diff.normalized * 0.25f);
+
+            //List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(baseScreenPoint);
+            List<Vector3> pointsToAdd = GetPointsToAddIfTouchPositionMatchDistanceRequirement(vec);
+            foreach (Vector3 point in pointsToAdd)
+            {
+                AddScreenPointToTail(point);
+            }
+        }		
 		
 		//remove the trackers
 		ArrowTracker.transform.position = new Vector3(CurrentTracker.transform.position.x,CurrentTracker.transform.position.y,-200);
@@ -524,7 +537,7 @@ public class ColorString : MonoBehaviour
 			//Debug.Log("Check if collide with base named: " + colorBase.baseName);
 			if (isLastPointCollidingWithBase(colorBase))
 			{
-				curveDidConnectWithMatchingBase(colorBase);
+                curveDidConnectWithMatchingBase(colorBase);
 			}
 		}
 		
@@ -774,6 +787,34 @@ public class ColorString : MonoBehaviour
 
         return result;
     }
+
+    //============================================================================================================================================//
+    Vector3 SmoothBothSides(int startIndex, int count)
+    {
+        Vector3 result = Tail[startIndex];
+        int min = 0;
+        int max = 0;
+        int actualCount = 0;
+
+        for (int i = 1; i <= count; i++)
+        {
+            if (startIndex - i < 0) 
+                break;
+            else min = startIndex - i;
+
+            if (startIndex + i >= Tail.Count) 
+                break;
+            else max = startIndex + i;
+
+            result += Tail[min];
+            result += Tail[max];
+            actualCount++;
+        }
+
+        result = result / (actualCount * 2 + 1);
+
+        return result;
+    }
     
     //============================================================================================================================================//
     void BuildMesh()
@@ -789,7 +830,7 @@ public class ColorString : MonoBehaviour
             Vector3[] smoothTail = new Vector3[Tail.Count];
             for (int i = 0; i < Tail.Count; i++)
             {
-                smoothTail[i] = SmoothAverage(i, SmoothCount);
+                smoothTail[i] = SmoothBothSides(i, SmoothCount);
                 //smoothTail[i] = Tail[i];
             }
 
