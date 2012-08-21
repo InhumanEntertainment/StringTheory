@@ -86,14 +86,23 @@ public partial class Game : MonoBehaviour
             for (int i = 0; i < DisabledObjects.Length; i++)
 			{
                 DisabledObjects[i].SetActiveRecursively(false);
-			}
+			}						
         }
         else
         {
             Destroy(this.gameObject);
         }       
 	}
-	
+	//============================================================================================================================================//
+    void PopupCallback(string label)
+    {
+		if (label == "Yes") 
+		{
+			// Reset Game //
+			Reset ();
+		}		
+	}
+    
 	//============================================================================================================================================//
     void AuthenticateCallback(bool success)
     {

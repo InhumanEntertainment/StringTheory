@@ -9,6 +9,9 @@ public class InhumanIOS
 	private static extern void _Popup (string title, string message, string buttonText);
 	
 	[DllImport ("__Internal")]
+	private static extern void _PopupYesNo (string title, string message);
+	
+	[DllImport ("__Internal")]
 	private static extern void _ComposeEmail (string to, string subject, string body);
 
     [DllImport ("__Internal")]
@@ -19,6 +22,13 @@ public class InhumanIOS
 	{
 		if (Application.platform == RuntimePlatform.IPhonePlayer)
 			_Popup(title, message, buttonText);
+	}
+	
+	//============================================================================================================================================//
+    public static void PopupYesNo(string title, string message)
+	{
+		if (Application.platform == RuntimePlatform.IPhonePlayer)
+			_PopupYesNo(title, message);
 	}
 	
 	//============================================================================================================================================//

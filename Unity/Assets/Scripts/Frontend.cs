@@ -122,7 +122,7 @@ public class Frontend : MonoBehaviour
         }
         else if (Command == "Reset")
         {
-            Game.Reset();
+			InhumanIOS.PopupYesNo("Confirm", "Are you sure you want to reset all game scores?");
         }
         else if (Command == "Email")
         { 

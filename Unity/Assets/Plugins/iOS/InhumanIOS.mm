@@ -1,5 +1,7 @@
 #import "InhumanIOS.h"
 
+extern void UnitySendMessage(const char * obj, const char * method, const char * message);
+
 @implementation InhumanIOS
 
 //============================================================================================================================================//
@@ -19,9 +21,20 @@
 {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:CreateNSString(title) 
                                                     message:CreateNSString(message)
-                                                   delegate:nil 
+                                                   delegate:nil                                                             
                                           cancelButtonTitle:CreateNSString(buttonTitle)
                                           otherButtonTitles:nil];
+    [alert show];
+}
+
+//============================================================================================================================================//
+- (void)PopupYesNo: (const char *) title: (const char *) message
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:CreateNSString(title) 
+                                                    message:CreateNSString(message)
+                                                   delegate:self                                                             
+                                          cancelButtonTitle:@"No"
+                                          otherButtonTitles:@"Yes", nil];
     [alert show];
 }
 
@@ -43,6 +56,18 @@
 	    
 	    [currentViewController presentModalViewController:picker animated:YES];        
     }
+}
+
+//============================================================================================================================================//
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSString * title = [alertView buttonTitleAtIndex:buttonIndex];
+    NSLog(@"Button Pressed: %@", title);
+    
+#ifndef TEST
+    // Send Message Back To Unity //
+    UnitySendMessage("Game", "PopupCallback", MakeStringCopy([title UTF8String]));
+#endif    
 }
 
 //============================================================================================================================================//
@@ -91,27 +116,34 @@ extern "C"
 	}
     
     //============================================================================================================================================//
-	void _ComposeEmail(const char * to, const char * subject, const char * body)
+	void _PopupYesNo(const char * title, const char * message)
+	{
+        InhumanIOS * inhuman = [InhumanIOS alloc];
+        [inhuman PopupYesNo: title: message];
+	}
+    
+    //============================================================================================================================================//
+	void _ComposeEmail (const char * to, const char * subject, const char * body)
 	{
         InhumanIOS * inhuman = [InhumanIOS alloc];
         [inhuman ComposeEmail: UnityGetGLViewController(): to: subject: body];
 	}
-	
-	//============================================================================================================================================//
-	bool _IsMusicPlaying() 
-	{
+    
+    	
+    //===========================================================================================================================================//
+    bool _IsMusicPlaying() 
+    {
         BOOL isPlaying = NO;
         MPMusicPlayerController * iPodMusicPlayer = [MPMusicPlayerController iPodMusicPlayer];
-		
+            
         if (iPodMusicPlayer.playbackState == MPMusicPlaybackStatePlaying) 
-		{
+        {
             isPlaying = YES;
         }
         NSLog(@"Music is %@.", isPlaying ? @"on" : @"off");
-		
+            
         return isPlaying;
     }   
-
 }
 #endif
 
