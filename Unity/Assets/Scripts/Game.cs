@@ -85,7 +85,10 @@ public partial class Game : MonoBehaviour
             // Disable Objects //
             for (int i = 0; i < DisabledObjects.Length; i++)
 			{
-                DisabledObjects[i].SetActiveRecursively(false);
+                if (DisabledObjects[i])
+                {
+                    DisabledObjects[i].SetActiveRecursively(false);
+                }           
 			}						
         }
         else

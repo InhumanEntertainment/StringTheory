@@ -18,14 +18,12 @@ public class CurveColliderDetector : MonoBehaviour
 	public void AddCurveToControl (ColorString curve) 
     {
         Curves.Add(curve);
-        print("AddCurveToControl: " + Curves.Count);
 	}
 	
 	//============================================================================================================================================//
 	public void RemoveCurveFromMonitoring (ColorString curve) 
 	{
 		Curves.Remove(curve);
-        print("RemoveCurveFromMonitoring: " + Curves.Count);
 	}
 	
 	//============================================================================================================================================//

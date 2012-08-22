@@ -459,7 +459,6 @@ public class ColorString : MonoBehaviour
         // Create Last Point At Hard Coded Radius inside the base to prevent big jump at the end //
         float minDistance = 0.5f;
         float distance = Vector3.Distance(colorBase.transform.position, mousePosition);
-        print(distance);
         if (distance > minDistance)
         {
             Vector3 diff = colorBase.transform.position - mousePosition;
