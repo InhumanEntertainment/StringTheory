@@ -10,7 +10,7 @@
   <Levels>
     <Level>
       <Name>noob</Name>
-      <Scene>Assets/Scenes/Levels/Starter001.unity</Scene>
+      <Scene>Assets/Scenes/Levels/Starter/noob.unity</Scene>
       <Index>2</Index>
       <Difficulty>1</Difficulty>
       <GUID>6d92f1088e950b6469d6837a416dfe76</GUID>
@@ -20,7 +20,7 @@
     </Level>
     <Level>
       <Name>vector</Name>
-      <Scene>Assets/Scenes/Levels/Level001.unity</Scene>
+      <Scene>Assets/Scenes/Levels/Starter/vector.unity</Scene>
       <Index>3</Index>
       <Difficulty>1</Difficulty>
       <GUID>0edbc8d3287c86745ab8341c01acf6ba</GUID>
@@ -30,7 +30,7 @@
     </Level>
     <Level>
       <Name>centrifuge</Name>
-      <Scene>Assets/Scenes/Levels/Level002.unity</Scene>
+      <Scene>Assets/Scenes/Levels/Starter/centrifuge.unity</Scene>
       <Index>4</Index>
       <Difficulty>1</Difficulty>
       <GUID>31efd85a423ccf9489036a1fd4183100</GUID>
@@ -40,7 +40,7 @@
     </Level>
     <Level>
       <Name>truffle</Name>
-      <Scene>Assets/Scenes/Levels/Level003.unity</Scene>
+      <Scene>Assets/Scenes/Levels/truffle.unity</Scene>
       <Index>5</Index>
       <Difficulty>6</Difficulty>
       <GUID>05d37d368aa39294dbae4b78f943091f</GUID>
@@ -50,7 +50,7 @@
     </Level>
     <Level>
       <Name>shuffle</Name>
-      <Scene>Assets/Scenes/Levels/Level004.unity</Scene>
+      <Scene>Assets/Scenes/Levels/shuffle.unity</Scene>
       <Index>6</Index>
       <Difficulty>3</Difficulty>
       <GUID>59b2403c854a0d346bbe62ae8c80bad8</GUID>
@@ -60,7 +60,7 @@
     </Level>
     <Level>
       <Name>ziggy</Name>
-      <Scene>Assets/Scenes/Levels/Level005.unity</Scene>
+      <Scene>Assets/Scenes/Levels/ziggy.unity</Scene>
       <Index>7</Index>
       <Difficulty>2</Difficulty>
       <GUID>78c4c0f64a19883448ef5887416f3192</GUID>
@@ -70,7 +70,7 @@
     </Level>
     <Level>
       <Name>lovetron</Name>
-      <Scene>Assets/Scenes/Levels/Level006.unity</Scene>
+      <Scene>Assets/Scenes/Levels/lovetron.unity</Scene>
       <Index>8</Index>
       <Difficulty>4</Difficulty>
       <GUID>b88a923dda301d54981fb15985b2525d</GUID>
@@ -80,7 +80,7 @@
     </Level>
     <Level>
       <Name>cluster</Name>
-      <Scene>Assets/Scenes/Levels/Level007.unity</Scene>
+      <Scene>Assets/Scenes/Levels/cluster.unity</Scene>
       <Index>9</Index>
       <Difficulty>3</Difficulty>
       <GUID>8e050a1a1ffdd954aae11d09498e09b7</GUID>
@@ -90,7 +90,7 @@
     </Level>
     <Level>
       <Name>silicon</Name>
-      <Scene>Assets/Scenes/Levels/Level008.unity</Scene>
+      <Scene>Assets/Scenes/Levels/silicon.unity</Scene>
       <Index>10</Index>
       <Difficulty>4</Difficulty>
       <GUID>307eb53cffb99494f98980245c7c5b82</GUID>
@@ -100,7 +100,7 @@
     </Level>
     <Level>
       <Name>force field</Name>
-      <Scene>Assets/Scenes/Levels/Level009.unity</Scene>
+      <Scene>Assets/Scenes/Levels/force field.unity</Scene>
       <Index>11</Index>
       <Difficulty>3</Difficulty>
       <GUID>851abf44d3ef698448467f404523baa7</GUID>
@@ -110,7 +110,7 @@
     </Level>
     <Level>
       <Name>linear</Name>
-      <Scene>Assets/Scenes/Levels/Level010.unity</Scene>
+      <Scene>Assets/Scenes/Levels/linear.unity</Scene>
       <Index>12</Index>
       <Difficulty>5</Difficulty>
       <GUID>f56aaf6b05d55594982a56376f1e1118</GUID>
@@ -120,7 +120,7 @@
     </Level>
     <Level>
       <Name>vertex</Name>
-      <Scene>Assets/Scenes/Levels/Level011.unity</Scene>
+      <Scene>Assets/Scenes/Levels/vertex.unity</Scene>
       <Index>13</Index>
       <Difficulty>2</Difficulty>
       <GUID>c0452ffd711c99e40a73833687a157f3</GUID>
@@ -130,7 +130,7 @@
     </Level>
     <Level>
       <Name>cube</Name>
-      <Scene>Assets/Scenes/Levels/Level012.unity</Scene>
+      <Scene>Assets/Scenes/Levels/cube.unity</Scene>
       <Index>14</Index>
       <Difficulty>3</Difficulty>
       <GUID>978a44fe29e21a14dbdd20862e0e60d0</GUID>
@@ -140,7 +140,7 @@
     </Level>
     <Level>
       <Name>elsewhere</Name>
-      <Scene>Assets/Scenes/Levels/Level013.unity</Scene>
+      <Scene>Assets/Scenes/Levels/elsewhere.unity</Scene>
       <Index>15</Index>
       <Difficulty>5</Difficulty>
       <GUID>ca127c560255d244bb3a00297eb58d04</GUID>
@@ -150,7 +150,7 @@
     </Level>
     <Level>
       <Name>octogon</Name>
-      <Scene>Assets/Scenes/Levels/Level014.unity</Scene>
+      <Scene>Assets/Scenes/Levels/octogon.unity</Scene>
       <Index>16</Index>
       <Difficulty>2</Difficulty>
       <GUID>5f9bd56540036544cb6bba205dbe15e2</GUID>
@@ -160,7 +160,7 @@
     </Level>
     <Level>
       <Name>double rainbow</Name>
-      <Scene>Assets/Scenes/Levels/Level015.unity</Scene>
+      <Scene>Assets/Scenes/Levels/double rainbow.unity</Scene>
       <Index>17</Index>
       <Difficulty>5</Difficulty>
       <GUID>60409ea2e43c935428f5157237eeed98</GUID>
@@ -170,7 +170,7 @@
     </Level>
     <Level>
       <Name>omg</Name>
-      <Scene>Assets/Scenes/Levels/Level016.unity</Scene>
+      <Scene>Assets/Scenes/Levels/omg.unity</Scene>
       <Index>18</Index>
       <Difficulty>2</Difficulty>
       <GUID>b54171da8844cce49a336fa2148d1481</GUID>
@@ -180,7 +180,7 @@
     </Level>
     <Level>
       <Name>proton</Name>
-      <Scene>Assets/Scenes/Levels/Level017.unity</Scene>
+      <Scene>Assets/Scenes/Levels/proton.unity</Scene>
       <Index>19</Index>
       <Difficulty>3</Difficulty>
       <GUID>46fa1524dc4a4f945aa2fc5d43255c3e</GUID>
@@ -190,7 +190,7 @@
     </Level>
     <Level>
       <Name>flatline</Name>
-      <Scene>Assets/Scenes/Levels/Level018.unity</Scene>
+      <Scene>Assets/Scenes/Levels/flatline.unity</Scene>
       <Index>20</Index>
       <Difficulty>2</Difficulty>
       <GUID>754489827233e194482e6ae42dd59906</GUID>
@@ -200,7 +200,7 @@
     </Level>
     <Level>
       <Name>inverse</Name>
-      <Scene>Assets/Scenes/Levels/Level019.unity</Scene>
+      <Scene>Assets/Scenes/Levels/inverse.unity</Scene>
       <Index>21</Index>
       <Difficulty>2</Difficulty>
       <GUID>e18ff3fee4667234aa30d096dbdf08a9</GUID>
@@ -210,7 +210,7 @@
     </Level>
     <Level>
       <Name>magnitude</Name>
-      <Scene>Assets/Scenes/Levels/Level020.unity</Scene>
+      <Scene>Assets/Scenes/Levels/magnitude.unity</Scene>
       <Index>22</Index>
       <Difficulty>3</Difficulty>
       <GUID>6263855ea0ea2724faf6e29dd3538943</GUID>
@@ -220,7 +220,7 @@
     </Level>
     <Level>
       <Name>curvature</Name>
-      <Scene>Assets/Scenes/Levels/Level021.unity</Scene>
+      <Scene>Assets/Scenes/Levels/curvature.unity</Scene>
       <Index>23</Index>
       <Difficulty>4</Difficulty>
       <GUID>75f00bb6c7809694995dff67c3e8c992</GUID>
@@ -230,7 +230,7 @@
     </Level>
     <Level>
       <Name>another way</Name>
-      <Scene>Assets/Scenes/Levels/Level022.unity</Scene>
+      <Scene>Assets/Scenes/Levels/another way.unity</Scene>
       <Index>24</Index>
       <Difficulty>5</Difficulty>
       <GUID>cf28eefcbfc5bbd4aa95321c0cfeef65</GUID>
@@ -240,7 +240,7 @@
     </Level>
     <Level>
       <Name>mind bender</Name>
-      <Scene>Assets/Scenes/Levels/Level023.unity</Scene>
+      <Scene>Assets/Scenes/Levels/mind bender.unity</Scene>
       <Index>25</Index>
       <Difficulty>4</Difficulty>
       <GUID>b4c21aca704b8d245a4e7dd0d0db895e</GUID>
@@ -250,7 +250,7 @@
     </Level>
     <Level>
       <Name>angles</Name>
-      <Scene>Assets/Scenes/Levels/Level024.unity</Scene>
+      <Scene>Assets/Scenes/Levels/angles.unity</Scene>
       <Index>26</Index>
       <Difficulty>4</Difficulty>
       <GUID>420b348588abd974aa2bd97dd2aec95d</GUID>
@@ -260,7 +260,7 @@
     </Level>
     <Level>
       <Name>banana yellow</Name>
-      <Scene>Assets/Scenes/Levels/Level025.unity</Scene>
+      <Scene>Assets/Scenes/Levels/banana yellow.unity</Scene>
       <Index>27</Index>
       <Difficulty>4</Difficulty>
       <GUID>2eade216b73744649ae7ea41f6bf4282</GUID>
@@ -270,7 +270,7 @@
     </Level>
     <Level>
       <Name>speedos</Name>
-      <Scene>Assets/Scenes/Levels/Level026.unity</Scene>
+      <Scene>Assets/Scenes/Levels/speedos.unity</Scene>
       <Index>28</Index>
       <Difficulty>5</Difficulty>
       <GUID>2063561f9a496894aa17bf81b188c686</GUID>
@@ -280,7 +280,7 @@
     </Level>
     <Level>
       <Name>offset</Name>
-      <Scene>Assets/Scenes/Levels/Level027.unity</Scene>
+      <Scene>Assets/Scenes/Levels/offset.unity</Scene>
       <Index>29</Index>
       <Difficulty>2</Difficulty>
       <GUID>cda00ce38ec0b1043b41aa8092dc0450</GUID>
@@ -290,7 +290,7 @@
     </Level>
     <Level>
       <Name>pressure</Name>
-      <Scene>Assets/Scenes/Levels/Level028.unity</Scene>
+      <Scene>Assets/Scenes/Levels/pressure.unity</Scene>
       <Index>30</Index>
       <Difficulty>3</Difficulty>
       <GUID>13fd9330f8cfd2841a5fbe56b905e2e1</GUID>
@@ -300,7 +300,7 @@
     </Level>
     <Level>
       <Name>inline</Name>
-      <Scene>Assets/Scenes/Levels/Level029.unity</Scene>
+      <Scene>Assets/Scenes/Levels/inline.unity</Scene>
       <Index>31</Index>
       <Difficulty>2</Difficulty>
       <GUID>4d56dd1b0381cd741883de7de3b588dc</GUID>
@@ -310,7 +310,7 @@
     </Level>
     <Level>
       <Name>three dorks</Name>
-      <Scene>Assets/Scenes/Levels/Level030.unity</Scene>
+      <Scene>Assets/Scenes/Levels/three dorks.unity</Scene>
       <Index>32</Index>
       <Difficulty>2</Difficulty>
       <GUID>7903b636857e7104398be8367d349ddf</GUID>
@@ -320,7 +320,7 @@
     </Level>
     <Level>
       <Name>hexidecimal</Name>
-      <Scene>Assets/Scenes/Levels/Level031.unity</Scene>
+      <Scene>Assets/Scenes/Levels/hexidecimal.unity</Scene>
       <Index>33</Index>
       <Difficulty>2</Difficulty>
       <GUID>9133871dc2b067b419e5a54caba24e82</GUID>
@@ -330,7 +330,7 @@
     </Level>
     <Level>
       <Name>strands</Name>
-      <Scene>Assets/Scenes/Levels/Level032.unity</Scene>
+      <Scene>Assets/Scenes/Levels/strands.unity</Scene>
       <Index>34</Index>
       <Difficulty>1</Difficulty>
       <GUID>1a6f056ef36e3624c9d2235d1c679c5c</GUID>
@@ -340,7 +340,7 @@
     </Level>
     <Level>
       <Name>twirly</Name>
-      <Scene>Assets/Scenes/Levels/Level033.unity</Scene>
+      <Scene>Assets/Scenes/Levels/twirly.unity</Scene>
       <Index>35</Index>
       <Difficulty>4</Difficulty>
       <GUID>609d089bbffa17a41a33dce3c0d0df6c</GUID>
@@ -350,7 +350,7 @@
     </Level>
     <Level>
       <Name>random</Name>
-      <Scene>Assets/Scenes/Levels/Level034.unity</Scene>
+      <Scene>Assets/Scenes/Levels/random.unity</Scene>
       <Index>36</Index>
       <Difficulty>2</Difficulty>
       <GUID>c593ab2d105e0dd42aee338baf22e238</GUID>
@@ -360,7 +360,7 @@
     </Level>
     <Level>
       <Name>capsule</Name>
-      <Scene>Assets/Scenes/Levels/Level035.unity</Scene>
+      <Scene>Assets/Scenes/Levels/capsule.unity</Scene>
       <Index>37</Index>
       <Difficulty>3</Difficulty>
       <GUID>a27f25b1149cb084cb0a11b4a5f80031</GUID>
@@ -370,7 +370,7 @@
     </Level>
     <Level>
       <Name>drako</Name>
-      <Scene>Assets/Scenes/Levels/Level036.unity</Scene>
+      <Scene>Assets/Scenes/Levels/drako.unity</Scene>
       <Index>38</Index>
       <Difficulty>5</Difficulty>
       <GUID>26a82449f76b3b343b3242178a9eb220</GUID>
@@ -380,7 +380,7 @@
     </Level>
     <Level>
       <Name>slingshot</Name>
-      <Scene>Assets/Scenes/Levels/Level037.unity</Scene>
+      <Scene>Assets/Scenes/Levels/slingshot.unity</Scene>
       <Index>39</Index>
       <Difficulty>2</Difficulty>
       <GUID>d19ad109619da3d49b90eaeb219b46d3</GUID>
@@ -390,7 +390,7 @@
     </Level>
     <Level>
       <Name>invader</Name>
-      <Scene>Assets/Scenes/Levels/Level038.unity</Scene>
+      <Scene>Assets/Scenes/Levels/invader.unity</Scene>
       <Index>40</Index>
       <Difficulty>2</Difficulty>
       <GUID>9378d50aab631ff47b42a3f030869f82</GUID>
@@ -400,7 +400,7 @@
     </Level>
     <Level>
       <Name>one eyed willy</Name>
-      <Scene>Assets/Scenes/Levels/Level039.unity</Scene>
+      <Scene>Assets/Scenes/Levels/one eyed willy.unity</Scene>
       <Index>41</Index>
       <Difficulty>3</Difficulty>
       <GUID>997ee086b7c1b9f418cfeade78bed103</GUID>
@@ -410,7 +410,7 @@
     </Level>
     <Level>
       <Name>inferno</Name>
-      <Scene>Assets/Scenes/Levels/Level040.unity</Scene>
+      <Scene>Assets/Scenes/Levels/inferno.unity</Scene>
       <Index>42</Index>
       <Difficulty>3</Difficulty>
       <GUID>61f0b509396734c44b7149ba0659b64e</GUID>
@@ -620,7 +620,7 @@
     </Level>
     <Level>
       <Name>vortex</Name>
-      <Scene>Assets/Scenes/Levels/Vortex001.unity</Scene>
+      <Scene>Assets/Scenes/Levels/vortex.unity</Scene>
       <Index>63</Index>
       <Difficulty>0</Difficulty>
       <GUID>2874c8f121d24094490e242c8671aafd</GUID>
@@ -633,31 +633,9 @@
     <Pack>
       <Name>Starter</Name>
       <Levels>
-        <string>Starter001</string>
-        <string>Level001</string>
-        <string>Level002</string>
-        <string>Level003</string>
-        <string>Level004</string>
-        <string>Level005</string>
-        <string>Level006</string>
-        <string>Level007</string>
-        <string>Level008</string>
-        <string>Level009</string>
-        <string>Level010</string>
-        <string>Level011</string>
-        <string>Level012</string>
-        <string>Level013</string>
-        <string>Level014</string>
-        <string>Level015</string>
-        <string>Level016</string>
-        <string>Level017</string>
-        <string>Level018</string>
-        <string>Level019</string>
-        <string>Level020</string>
-        <string>Level021</string>
-        <string>Level022</string>
-        <string>Level023</string>
-        <string>Level024</string>
+        <string>6d92f1088e950b6469d6837a416dfe76</string>
+        <string>0edbc8d3287c86745ab8341c01acf6ba</string>
+        <string>31efd85a423ccf9489036a1fd4183100</string>
       </Levels>
     </Pack>
     <Pack>
@@ -734,11 +712,10 @@
     <Pack>
       <Name>Gnarkill</Name>
       <Levels>
-        <string>Level001</string>
-        <string>Level002</string>
-        <string>Level001</string>
-        <string>Level007</string>
-        <string>Level003</string>
+        <string>0edbc8d3287c86745ab8341c01acf6ba</string>
+        <string>31efd85a423ccf9489036a1fd4183100</string>
+        <string>8e050a1a1ffdd954aae11d09498e09b7</string>
+        <string>978a44fe29e21a14dbdd20862e0e60d0</string>
       </Levels>
     </Pack>
   </Packs>

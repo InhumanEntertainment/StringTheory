@@ -6,7 +6,7 @@ public class LevelButton : MonoBehaviour
     public int Index = 0;   
     public UILabel Label;
     public UISlicedSprite Background;
-    string LevelName;
+    StringTheoryLevel Level;
 
     public Color LabelColor = Color.white;
     public Color CompletedColor = Color.red;
@@ -23,7 +23,7 @@ public class LevelButton : MonoBehaviour
         if (pressed && Index < Game.Instance.CurrentPack.Levels.Count)
         {
             Game.Instance.SetScreen("Game");
-            Game.Instance.LoadLevel(LevelName);
+            Game.Instance.LoadLevel(Level);
         }       
     }
 
@@ -33,8 +33,7 @@ public class LevelButton : MonoBehaviour
         Color color = Color.white;
         if (Index < Game.Instance.CurrentPack.Levels.Count)
         {
-            LevelName = Game.Instance.CurrentPack.Levels[Index];
-            StringTheoryLevel Level = Game.Instance.FindLevel(LevelName);
+            Level = Game.FindLevel(Game.Instance.CurrentPack.Levels[Index]);
 
             if (Level.Completed)
                 color = CompletedColor;
@@ -45,5 +44,5 @@ public class LevelButton : MonoBehaviour
 
         Background.color = color;
         Label.color = color * LabelColor;
-    }    
+    }
 }

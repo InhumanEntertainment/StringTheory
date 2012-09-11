@@ -14,6 +14,8 @@ public class StringTheoryLevel
     public string Name = "";
     public string Scene = "";
     public int Index;
+    public int Difficulty = 0;
+    public string GUID;
 
     public bool Completed;
     public float BestTime;

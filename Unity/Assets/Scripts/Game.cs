@@ -423,14 +423,14 @@ public partial class Game : MonoBehaviour
     }
 
     //============================================================================================================================================//
-    public StringTheoryLevel FindLevel(string name)
+    public static StringTheoryLevel FindLevel(string guid)
     {
-        for (int i = 0; i < Data.Levels.Count; i++)
+        foreach (StringTheoryLevel level in Game.Instance.Data.Levels)
         {
-            string levelName = Path.GetFileNameWithoutExtension(Data.Levels[i].Scene);
-
-            if (levelName == name)
-                return Data.Levels[i];
+            if (level.GUID == guid)
+            {
+                return level;
+            }
         }
 
         return null;
@@ -655,6 +655,12 @@ public partial class Game : MonoBehaviour
         {
             Debug.Log("Level '" + level + "' Not Found");
         }
+    }
+    public void LoadLevel(StringTheoryLevel level)
+    {
+        // Get Scene name //
+        string path = Path.GetFileNameWithoutExtension(level.Scene);
+        LoadLevel(path);
     }
 
     //============================================================================================================================================//

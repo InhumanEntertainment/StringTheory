@@ -91,7 +91,42 @@ public class StringED : EditorWindow
         {
             ResetScores();
         }
+        if (GUILayout.Button("Set All GUIDs"))
+        {
+            SetAllGUIDs();
+        }
+        if (GUILayout.Button("Check Current Level"))
+        {
+            // Get Root Object //
+            GameObject rootObject = (GameObject)UnityEngine.Object.FindObjectOfType(typeof(GameObject));
+            rootObject = rootObject.transform.root.gameObject;
+            string currentScene = Path.GetFileNameWithoutExtension(EditorApplication.currentScene);
 
+            if (currentScene != rootObject.name)
+            {
+                rootObject.name = currentScene;
+            }
+
+
+            // Check if Nodes Exist //
+        }
+        if (GUILayout.Button("Rename All Levels"))
+        {
+            foreach (StringTheoryLevel level in Data.Levels)
+            {
+                string assetPath = AssetDatabase.GUIDToAssetPath(level.GUID);
+                string file = level.Name + ".unity";
+                if (Path.GetFileNameWithoutExtension(assetPath) != level.Name)
+                {
+                    Debug.Log("Renamed: " + assetPath + " to " + file);
+                    AssetDatabase.RenameAsset(assetPath, level.Name);                   
+                }
+
+                string assetPathAfter = AssetDatabase.GUIDToAssetPath(level.GUID);
+                level.Scene = assetPathAfter;
+            }     
+        }
+        
         SearchText = GUILayout.TextArea(SearchText);
 
         if (Data == null)
@@ -117,7 +152,8 @@ public class StringED : EditorWindow
 
                     if (GUILayout.Button("Open"))
                     {
-                        EditorApplication.OpenScene(Data.Levels[i].Scene);
+                        string assetPath = AssetDatabase.GUIDToAssetPath(Data.Levels[i].GUID);
+                        EditorApplication.OpenScene(assetPath);
                     }
 
                     if (GUILayout.Button("X"))
@@ -157,20 +193,20 @@ public class StringED : EditorWindow
 
                     if (Foldouts[i])
                     {
-
                         Data.Levels[i].Name = EditorGUILayout.TextField("Name:", Data.Levels[i].Name);
                         Data.Levels[i].Scene = EditorGUILayout.TextField("Scene:", Data.Levels[i].Scene);
-                        Data.Levels[i].Index = EditorGUILayout.IntField("Index:", Data.Levels[i].Index);
+                        //Data.Levels[i].GUID = EditorGUILayout.TextField("GUID:", Data.Levels[i].GUID);
+                        
+                        //Data.Levels[i].Index = EditorGUILayout.IntField("Index:", Data.Levels[i].Index);
+                        Data.Levels[i].Difficulty = EditorGUILayout.IntSlider("Difficulty:", Data.Levels[i].Difficulty, 0, 10);
 
-                        Data.Levels[i].Completed = EditorGUILayout.Toggle("Completed:", Data.Levels[i].Completed);
-                        Data.Levels[i].BestTime = EditorGUILayout.FloatField("Best Time:", Data.Levels[i].BestTime);
-                        Data.Levels[i].BestLength = EditorGUILayout.FloatField("Best Length:", Data.Levels[i].BestLength);
-
-
+                        //Data.Levels[i].Completed = EditorGUILayout.Toggle("Completed:", Data.Levels[i].Completed);
+                        //Data.Levels[i].BestTime = EditorGUILayout.FloatField("Best Time:", Data.Levels[i].BestTime);
+                        //Data.Levels[i].BestLength = EditorGUILayout.FloatField("Best Length:", Data.Levels[i].BestLength);
                     }
 
                     // Screenshot //
-
+                    /*
                     string scene = Data.Levels[i].Scene.Substring(Data.Levels[i].Scene.LastIndexOf('/') + 1);
                     if (scene.Length > 6)
                     {
@@ -220,7 +256,7 @@ public class StringED : EditorWindow
                                 AssetDatabase.Refresh();
                             }
                         }
-                    }
+                    }*/
                 }
 
             }
@@ -302,8 +338,17 @@ public class StringED : EditorWindow
                     for (int c = 0; c < Data.Packs[i].Levels.Count; c++)
                     {
                         GUILayout.BeginHorizontal();
-                        Data.Packs[i].Levels[c] = EditorGUILayout.TextField(Data.Packs[i].Levels[c]);
-
+                        //Data.Packs[i].Levels[c] = EditorGUILayout.TextField(Data.Packs[i].Levels[c]);
+                        
+                        // Get Level Name from GUID //
+                        StringTheoryLevel level = GetLevel(Data.Packs[i].Levels[c]);
+                        if (level != null)
+                        {
+                            EditorGUILayout.LabelField(level.Name);                        
+                        }
+                        else
+                            EditorGUILayout.LabelField(Data.Packs[i].Levels[c]);                       
+                       
                         if (GUILayout.Button("X"))
                         {
                             Data.Packs[i].Levels.RemoveAt(c);
@@ -350,11 +395,11 @@ public class StringED : EditorWindow
                                 for (int x = DragAndDrop.objectReferences.Length - 1; x >= 0; x--)
                                 {
                                     string assetPath = AssetDatabase.GetAssetPath(DragAndDrop.objectReferences[x]);
+                                    string guid = AssetDatabase.AssetPathToGUID(assetPath);
 
                                     if (Path.GetExtension(assetPath) == ".unity")
                                     {
-                                        string sceneName = Path.GetFileNameWithoutExtension(assetPath);
-                                        newPacks.Add(sceneName);
+                                        newPacks.Add(guid);
                                     }
                                 }
                                 newPacks.Sort();
@@ -369,10 +414,10 @@ public class StringED : EditorWindow
                         }
                     }
 
-                    if (GUILayout.Button("Add Level"))
+                    /*if (GUILayout.Button("Add Level"))
                     {
                         Data.Packs[i].Levels.Add("");
-                    }
+                    }*/
                 }
             }
 
@@ -387,6 +432,22 @@ public class StringED : EditorWindow
 
         GUILayout.EndScrollView();
         EditorGUILayout.EndVertical();      
+    }
+
+    //============================================================================================================================================//
+    public StringTheoryLevel GetLevel(string guid)
+    {
+        StringTheoryLevel result = null;
+
+        foreach (StringTheoryLevel level in Data.Levels)
+        {
+            if (level.GUID == guid)
+            {
+                return level;
+            }
+        }
+
+        return result;
     }
 
     //============================================================================================================================================//
@@ -485,6 +546,16 @@ public class StringED : EditorWindow
         }
 
         return null;
+    }
+
+    //=====================================================================================================================================//
+    public void SetAllGUIDs()
+    {
+        foreach (StringTheoryLevel level in Data.Levels)
+        {
+            string guid = AssetDatabase.AssetPathToGUID(level.Scene);
+            level.GUID = guid;
+        }
     }
 
     //=====================================================================================================================================//
