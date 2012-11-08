@@ -170,7 +170,7 @@ public class StringED : EditorWindow
                     }
 
                     // Screenshot //
-
+                    /*
                     string scene = Data.Levels[i].Scene.Substring(Data.Levels[i].Scene.LastIndexOf('/') + 1);
                     if (scene.Length > 6)
                     {
@@ -220,7 +220,7 @@ public class StringED : EditorWindow
                                 AssetDatabase.Refresh();
                             }
                         }
-                    }
+                    }*/
                 }
 
             }

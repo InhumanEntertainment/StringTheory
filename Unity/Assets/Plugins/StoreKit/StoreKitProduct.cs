@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Prime31;
 
 
-#if UNITY_IPHONE
+//#if UNITY_IPHONE
 public class StoreKitProduct
 {
     public string productIdentifier;
@@ -63,4 +63,4 @@ public class StoreKitProduct
 			productIdentifier, title, description, price, currencySymbol, formattedPrice, currencyCode );
 	}
 }
-#endif
+//#endif
