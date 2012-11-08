@@ -26,6 +26,7 @@ public class StringED : EditorWindow
     //============================================================================================================================================//
     void Load()
     {
+        Debug.Log(DataPath);
         Data = StringTheoryData.Load(DataPath);
     }
 
