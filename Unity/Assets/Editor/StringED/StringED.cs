@@ -91,11 +91,11 @@ public class StringED : EditorWindow
         {
             ResetScores();
         }
-        if (GUILayout.Button("Set All GUIDs"))
+        if (GUILayout.Button("Set GUIDs from Scenes"))
         {
             SetAllGUIDs();
         }
-        if (GUILayout.Button("Check Current Level"))
+        if (GUILayout.Button("Set Root from Filename"))
         {
             // Get Root Object //
             GameObject rootObject = (GameObject)UnityEngine.Object.FindObjectOfType(typeof(GameObject));
@@ -110,7 +110,7 @@ public class StringED : EditorWindow
 
             // Check if Nodes Exist //
         }
-        if (GUILayout.Button("Rename All Levels"))
+        if (GUILayout.Button("Set Filenames to Names"))
         {
             foreach (StringTheoryLevel level in Data.Levels)
             {
@@ -125,6 +125,26 @@ public class StringED : EditorWindow
                 string assetPathAfter = AssetDatabase.GUIDToAssetPath(level.GUID);
                 level.Scene = assetPathAfter;
             }     
+        }
+        if (GUILayout.Button("Set Scenes from Filenames"))
+        {
+            List<string> buildLevels = GetBuildLevels();
+            List<string> buildScenes = new List<string>();
+
+            foreach (string  scene in buildLevels)
+	        {
+                string levelName = Path.GetFileNameWithoutExtension(scene);
+                buildScenes.Add(levelName);
+	        }
+
+            foreach (StringTheoryLevel level in Data.Levels)
+            {
+                if (buildScenes.Contains(level.Name))
+                {
+                    int index = buildScenes.IndexOf(level.Name);
+                    level.Scene = buildLevels[index];
+                }
+            }
         }
         
         SearchText = GUILayout.TextArea(SearchText);
@@ -146,9 +166,10 @@ public class StringED : EditorWindow
                     GUI.backgroundColor = (Data.Levels[i].Index > -1) ? Color.white : Color.red;
 
                     GUILayout.BeginHorizontal();
-                    Foldouts[i] = EditorGUILayout.Foldout(Foldouts[i], (Data.Levels[i].Index > -1 ? Data.Levels[i].Index.ToString("0000") : "____") + ": " + Data.Levels[i].Name);
+                    Foldouts[i] = EditorGUILayout.Foldout(Foldouts[i], (Data.Levels[i].Index > -1 ? Data.Levels[i].Index.ToString("000") : "____") + ": " + Data.Levels[i].Name);
 
                     GUILayout.FlexibleSpace();
+                    GUILayout.Label(Data.Levels[i].Difficulty.ToString());
 
                     if (GUILayout.Button("Open"))
                     {
@@ -195,7 +216,7 @@ public class StringED : EditorWindow
                     {
                         Data.Levels[i].Name = EditorGUILayout.TextField("Name:", Data.Levels[i].Name);
                         Data.Levels[i].Scene = EditorGUILayout.TextField("Scene:", Data.Levels[i].Scene);
-                        //Data.Levels[i].GUID = EditorGUILayout.TextField("GUID:", Data.Levels[i].GUID);
+                        Data.Levels[i].GUID = EditorGUILayout.TextField("GUID:", Data.Levels[i].GUID);
                         
                         //Data.Levels[i].Index = EditorGUILayout.IntField("Index:", Data.Levels[i].Index);
                         Data.Levels[i].Difficulty = EditorGUILayout.IntSlider("Difficulty:", Data.Levels[i].Difficulty, 0, 10);
@@ -291,7 +312,7 @@ public class StringED : EditorWindow
             for (int i = 0; i < Data.Packs.Count; i++)
             {
                 GUILayout.BeginHorizontal();
-                PackFoldouts[i] = EditorGUILayout.Foldout(PackFoldouts[i], Data.Packs[i].Name);
+                PackFoldouts[i] = EditorGUILayout.Foldout(PackFoldouts[i], Data.Packs[i].Name + ": " + Data.Packs[i].Levels.Count);
 
                 GUILayout.FlexibleSpace();
 
@@ -344,11 +365,18 @@ public class StringED : EditorWindow
                         StringTheoryLevel level = GetLevel(Data.Packs[i].Levels[c]);
                         if (level != null)
                         {
-                            EditorGUILayout.LabelField(level.Name);                        
+                            EditorGUILayout.LabelField(level.Name + ": " + level.Difficulty);
+
+                            if (GUILayout.Button("Open"))
+                            {
+                                EditorApplication.OpenScene(level.Scene);
+                            } 
                         }
                         else
-                            EditorGUILayout.LabelField(Data.Packs[i].Levels[c]);                       
-                       
+                            EditorGUILayout.LabelField(Data.Packs[i].Levels[c]);
+
+
+                        
                         if (GUILayout.Button("X"))
                         {
                             Data.Packs[i].Levels.RemoveAt(c);
@@ -371,7 +399,7 @@ public class StringED : EditorWindow
                         {
                             if (c < Data.Packs[i].Levels.Count - 1)
                             {
-                                string temp = Data.Packs[i].Levels[i];
+                                string temp = Data.Packs[i].Levels[c];
                                 Data.Packs[i].Levels[c] = Data.Packs[i].Levels[c + 1];
                                 Data.Packs[i].Levels[c + 1] = temp;
                             }

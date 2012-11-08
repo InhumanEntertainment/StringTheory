@@ -48,17 +48,26 @@ public class FXStars : MonoBehaviour
     }
 
     //============================================================================================================================================//
+
+    public float MinTime = 100;
+    public float MaxTime = 0;
     void FixedUpdate()
     {
         if ((Game.Instance == null || !Game.Instance.Paused) && FXIndex == 0)
         {
             BlackHoleSpring.Update();
         }
-    }
 
-    //============================================================================================================================================//
-    void Update()
-    {
+        //print("Time: " + Time.fixedDeltaTime);
+        MinTime = Mathf.Min(MinTime, Time.fixedDeltaTime);
+        MaxTime = Mathf.Max(MaxTime, Time.fixedDeltaTime);
+
+        float x = 3f;
+        float y = 10f * Time.fixedDeltaTime; 
+
+
+        Debug.DrawLine(new Vector3(-x, y, 0), new Vector3(x, y, 0), Color.yellow);
+
         if (Game.Instance == null || !Game.Instance.Paused)
         {
             // Fun Black Hole FX //
@@ -106,7 +115,7 @@ public class FXStars : MonoBehaviour
                     if (FX[FXIndex].VortexForce)
                     {
                         float distance = p.position.magnitude;
-                        float strength = Mathf.Pow(1f - (distance / FX[FXIndex].VortexRadius), FX[FXIndex].VortexExponent) * FX[FXIndex].VortexStength * Time.deltaTime;
+                        float strength = Mathf.Pow(1f - (distance / FX[FXIndex].VortexRadius), FX[FXIndex].VortexExponent) * FX[FXIndex].VortexStength * Time.fixedDeltaTime;
 
                         Vector3 newPos = new Vector3();
                         newPos.x = Mathf.Cos(strength) * p.position.x + Mathf.Sin(strength) * p.position.y;
@@ -124,11 +133,10 @@ public class FXStars : MonoBehaviour
                         dir.z = 0;
 
                         float distance = Vector3.Distance(p.position, radiusPoint);
-
                         float strength = Mathf.Pow(1 - (distance / FX[FXIndex].RadialOuterRadius), 2);
-
+                        
                         //p.velocity += dir * strength * FX[FXIndex].RadialStrength;
-                        p.position += dir * strength * FX[FXIndex].RadialStrength * Time.deltaTime;
+                        p.position += dir * strength * FX[FXIndex].RadialStrength * Time.fixedDeltaTime;
                     }
 
                     // Jitter //
@@ -137,11 +145,11 @@ public class FXStars : MonoBehaviour
                         float amount = FX[FXIndex].JitterStrength;
                         Vector3 rnd = new Vector3(amount * Random.value, amount * Random.value, 0) - new Vector3(amount * 0.5f, amount * 0.5f, 0);
 
-                        p.velocity = p.velocity * 0.8f + rnd * Time.deltaTime;
+                        p.velocity = p.velocity * 0.8f + rnd * Time.fixedDeltaTime;
                     }
                     
-                    p.position += (p.velocity * Time.deltaTime);
-                    p.velocity *= 1f - (FX[FXIndex].Drag * Time.deltaTime);
+                    p.position += (p.velocity * Time.fixedDeltaTime);
+                    p.velocity *= 1f - (FX[FXIndex].Drag * Time.fixedDeltaTime);
 
                     
                     // Crazy Star Errors //
