@@ -14,10 +14,43 @@ public class StringTheoryLevel
     public string Name = "";
     public string Scene = "";
     public int Index;
+    public int Difficulty = 0;
+    public string GUID;
 
     public bool Completed;
     public float BestTime;
     public float BestLength;
+}
+
+//=====================================================================================================================================//
+//=====================================================================================================================================//
+//=====================================================================================================================================//
+[System.Serializable]
+public class StringTheoryStats
+{
+    public float StartTime;
+
+    public float TotalPlayTime;
+    public float SessionTime;
+    public float AverageSessionTime; 
+    public int PlayCount = 0;
+
+    //=====================================================================================================================================//
+    void Awake()
+    {
+        StartTime = Time.time;
+
+    }
+
+    //=====================================================================================================================================//
+    void Update()
+    {
+        SessionTime = Time.time - StartTime;
+        AverageSessionTime = (AverageSessionTime * PlayCount + SessionTime) / PlayCount + 1;
+        PlayCount++;
+
+
+    }
 }
 
 //=====================================================================================================================================//

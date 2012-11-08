@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
-using UnityEngine.SocialPlatforms.GameCenter;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -77,10 +75,7 @@ public partial class Game : MonoBehaviour
 
             // Mute Music if Ipod is playing already //
             if (InhumanIOS.IsMusicPlaying())
-                Audio.MusicMute = true;
-			
-			// GameCenter //
-			Social.localUser.Authenticate(AuthenticateCallback);
+                Audio.MusicMute = true;					
 
             // Disable Objects //
             for (int i = 0; i < DisabledObjects.Length; i++)
@@ -104,38 +99,6 @@ public partial class Game : MonoBehaviour
 			// Reset Game //
 			Reset ();
 		}		
-	}
-    
-	//============================================================================================================================================//
-    void AuthenticateCallback(bool success)
-    {
-		//InhumanIOS.Popup ("Authentication", success.ToString (), "Ok");
-		if (success) 
-		{
-			Debug.Log ("Authentication Succesful");
-			
-			Social.LoadAchievements (AchievementsCallback);
-			
-		}
-		else 
-		{
-			Debug.Log ("Authentication Failed");
-		}
-	}
-	
-	//============================================================================================================================================//
-    void AchievementsCallback(IAchievement[] achievements)
-    {
-		//InhumanIOS.Popup ("Achievements", achievements.Length.ToString (), "Ok");		
-		
-		if (achievements.Length == 0) 
-		{
-			Debug.Log ("No Achievements Found");
-		}
-		else 
-		{
-			Debug.Log (achievements.Length + " Achievements Found");
-		}
 	}
 
     //============================================================================================================================================//
@@ -423,14 +386,14 @@ public partial class Game : MonoBehaviour
     }
 
     //============================================================================================================================================//
-    public StringTheoryLevel FindLevel(string name)
+    public static StringTheoryLevel FindLevel(string guid)
     {
-        for (int i = 0; i < Data.Levels.Count; i++)
+        foreach (StringTheoryLevel level in Game.Instance.Data.Levels)
         {
-            string levelName = Path.GetFileNameWithoutExtension(Data.Levels[i].Scene);
-
-            if (levelName == name)
-                return Data.Levels[i];
+            if (level.GUID == guid)
+            {
+                return level;
+            }
         }
 
         return null;
@@ -655,6 +618,12 @@ public partial class Game : MonoBehaviour
         {
             Debug.Log("Level '" + level + "' Not Found");
         }
+    }
+    public void LoadLevel(StringTheoryLevel level)
+    {
+        // Get Scene name //
+        string path = Path.GetFileNameWithoutExtension(level.Scene);
+        LoadLevel(path);
     }
 
     //============================================================================================================================================//

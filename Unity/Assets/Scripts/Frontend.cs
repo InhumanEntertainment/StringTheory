@@ -148,24 +148,8 @@ public class Frontend : MonoBehaviour
         {
             Audio.MusicMute = !Audio.MusicMute;
         } 
-		else if (Command == "Achievements")
-        {
-			IAchievement a1 = Social.CreateAchievement ();
-			a1.id = "firstplay";
-			a1.percentCompleted = 100;
-			a1.ReportProgress(ReportCallback);
-			
-			//Social.ReportScore (5345.97, "");
-            Social.ShowAchievementsUI();
-        }
 	}
 	
-	//=======================================================================================================================================================================//
-    void ReportCallback(bool success)
-	{
-		//InhumanIOS.Popup ("Report", success.ToString (), "Ok");	
-	}
-
     //=======================================================================================================================================================================//
     public void ResetPauseSlider()
     {
