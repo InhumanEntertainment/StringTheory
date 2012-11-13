@@ -59,7 +59,7 @@ public class ColorBar : MonoBehaviour
             }
 
             // Set Bar Length Based on Best //
-            float bestLength = Game.Instance.Data.Levels[Game.Instance.CurrentLevel].BestLength;
+            float bestLength = Game.Instance.CurrentLevel.BestLength;
             if (bestLength > 0 && bestLength * 1.1f > BarLength)
             {
                 BarLength = bestLength * 1.1f;

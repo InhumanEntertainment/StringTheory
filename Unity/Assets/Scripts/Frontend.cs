@@ -83,28 +83,28 @@ public class Frontend : MonoBehaviour
         else if (Command == "Next")
         {
             Game.NextLevel();
-            ResetPauseSlider();
+            Game.ResetPauseSlider();
             Game.FX.SetEffect("Game");
         }
         else if (Command == "Prev")
         {
             Game.PrevLevel();
-            ResetPauseSlider();
+            Game.ResetPauseSlider();
             Game.FX.SetEffect("Game");
         }
         else if (Command == "Retry")
         {
             Game.Retry();
-            ResetPauseSlider();
+            Game.ResetPauseSlider();
             Game.FX.SetEffect("Game");
         }
         else if (Command == "Resume")
         {
-            ResetPauseSlider();
+            Game.ResetPauseSlider();
         }
         else if (Command == "Game_Close")
         {
-            ResetPauseSlider();
+            Game.ResetPauseSlider();
             Game.Instance.UpdateButtons();
             Game.SetPack(Game.Instance.CurrentPack.Name);          
             Game.DestroyLevel(Game.CurrentLevel);
@@ -149,15 +149,6 @@ public class Frontend : MonoBehaviour
             Audio.MusicMute = !Audio.MusicMute;
         } 
 	}
-	
-    //=======================================================================================================================================================================//
-    public void ResetPauseSlider()
-    {
-        var obj = GameObject.Find("PauseSlider");
-        var slider = obj.GetComponent<GameSlider>();
-        slider.Target = slider.StartPosition;
-        slider.MoveToTarget();
-    }
 
     //=======================================================================================================================================================================//
     public void ResetAboutSlider()

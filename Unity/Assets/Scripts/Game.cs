@@ -48,11 +48,8 @@ public partial class Game : MonoBehaviour
 
     // Levels //
     AsyncOperation Async;
-    public int CurrentLevel;
-    public int LastLevel;
-    public List<string> LevelList;
-    public List<int> LevelIndexList;
-    public List<string> LevelIgnoreList;
+    public StringTheoryLevel CurrentLevel;
+    public StringTheoryLevel LastLevel;
 
     public bool LevelIsTransitioning = false;
     public bool LevelHasCompleted = false;
@@ -148,7 +145,7 @@ public partial class Game : MonoBehaviour
             if (Async.isDone)
             {
                 // Delete Old Level Objects //
-                if (LastLevel != -1 && CurrentLevel != LastLevel)
+                if (LastLevel != null && CurrentLevel != LastLevel)
                 {
                     DestroyLevel(LastLevel);
                 }
@@ -156,7 +153,7 @@ public partial class Game : MonoBehaviour
                 ReconnectBases();
 
                 // Play Level Open //
-                GameObject rootNew = GameObject.Find(LevelList[CurrentLevel]);
+                GameObject rootNew = GameObject.Find(CurrentLevel.Name);
                 Animation animNew = rootNew.transform.FindChild("Nodes").animation;
                 animNew.PlayQueued("Level_Open", QueueMode.PlayNow);
 
@@ -164,7 +161,7 @@ public partial class Game : MonoBehaviour
                 bar.ResetColorBar();
 
                 // Load in Level Name and Best Scores //
-                LevelNameLabel.text = Data.Levels[CurrentLevel].Name;
+                LevelNameLabel.text = CurrentLevel.Name;
 
                 Async = null;
                 LevelIsTransitioning = false;
@@ -172,7 +169,7 @@ public partial class Game : MonoBehaviour
         }
         else
         {
-            if (!Paused && !LevelHasCompleted && CurrentLevel > -1)
+            if (!Paused && !LevelHasCompleted && CurrentLevel != null)
             {
                 if (CurrentScreen.Name == "Game")
                 {
@@ -260,20 +257,49 @@ public partial class Game : MonoBehaviour
     public void PrevLevel()
     {
         CleanupScene();
-        if (CurrentLevel > 0)
+        int index = CurrentPack.Levels.IndexOf(CurrentLevel.GUID);
+
+        if (index > 0)
         {
-            LoadLevel(CurrentLevel - 1);
+            LoadPackLevel(index - 1);
+        }
+        else
+        {
+            ResetPauseSlider();
+            UpdateButtons();
+            DestroyLevel(CurrentLevel);
+            SetScreen(LastScreen.Name);          
         }
     }
+
+    
 
     //============================================================================================================================================//
     public void NextLevel()
     {
         CleanupScene();
-        if (CurrentLevel + 1 < LevelList.Count)
+        int index = CurrentPack.Levels.IndexOf(CurrentLevel.GUID);
+
+        if (index + 1 < CurrentPack.Levels.Count)
         {
-            LoadLevel(CurrentLevel + 1);
+            LoadPackLevel(index + 1);
         }
+        else
+        {
+            ResetPauseSlider();
+            UpdateButtons();
+            DestroyLevel(CurrentLevel);
+            SetScreen(LastScreen.Name);  
+        }
+    }
+
+    //============================================================================================================================================//
+    public void ResetPauseSlider()
+    {
+        var obj = GameObject.Find("PauseSlider");
+        GameSlider slider = obj.GetComponent<GameSlider>();
+        slider.Target = slider.StartPosition;
+        slider.MoveToTarget();
     }
 
     //============================================================================================================================================//
@@ -283,9 +309,9 @@ public partial class Game : MonoBehaviour
     {
         Object obj = (Object)Instantiate(original, position, rotation);
 		
-		if (CurrentLevel >= 0) 
+		if (CurrentLevel != null) 
 		{
-	        GameObject parent = GameObject.Find(LevelList[CurrentLevel]);
+	        GameObject parent = GameObject.Find(CurrentLevel.Name);
 
 	        if (parent != null)
 	        {
@@ -308,11 +334,11 @@ public partial class Game : MonoBehaviour
     }
 
     //============================================================================================================================================//
-    public void DestroyLevel(int levelIndex)
+    public void DestroyLevel(StringTheoryLevel level)
     {
-        if (levelIndex != -1)
+        if (level != null)
         {
-            GameObject root = GameObject.Find(LevelList[levelIndex]);
+            GameObject root = GameObject.Find(level.Name);
             if (root != null)
             {                
                 // Play Transition //
@@ -378,8 +404,8 @@ public partial class Game : MonoBehaviour
 
                 if (screen == "Game")
                 {
-                    LastLevel = -1;
-                    CurrentLevel = -1;
+                    LastLevel = null;
+                    CurrentLevel = null;
                 }
             }
         } 
@@ -482,45 +508,45 @@ public partial class Game : MonoBehaviour
         float finishTime = Time.timeSinceLevelLoad - StartTime;
         float finishLength = ColorBar.TotalLength;
 
-        Data.Levels[CurrentLevel].Completed = true;
+        CurrentLevel.Completed = true;
 
         // Best Time //
         CompleteTimeLabel.text = "Time: " + finishTime.ToString("N2") + "sec";
-        if (Data.Levels[CurrentLevel].BestTime == 0)
+        if (CurrentLevel.BestTime == 0)
         {
             CompleteBestTimeLabel.text = "Best: " + finishTime.ToString("N2") + "sec";        
             CompleteHighTimeLabel.text = "New Best Time!";
-            Data.Levels[CurrentLevel].BestTime = finishTime;
+            CurrentLevel.BestTime = finishTime;
         }
-        else if (finishTime < Data.Levels[CurrentLevel].BestTime)
+        else if (finishTime < CurrentLevel.BestTime)
         {
-            CompleteBestTimeLabel.text = "Previous Best: " + Data.Levels[CurrentLevel].BestTime.ToString("N2") + "sec";
+            CompleteBestTimeLabel.text = "Previous Best: " + CurrentLevel.BestTime.ToString("N2") + "sec";
             CompleteHighTimeLabel.text = "New Best Time!";
-            Data.Levels[CurrentLevel].BestTime = finishTime;
+            CurrentLevel.BestTime = finishTime;
         }
         else
         {
-            CompleteBestTimeLabel.text = "Best: " + Data.Levels[CurrentLevel].BestTime.ToString("N2") + "sec";        
+            CompleteBestTimeLabel.text = "Best: " + CurrentLevel.BestTime.ToString("N2") + "sec";        
             CompleteHighTimeLabel.text = "";          
         }
 
         // Best Length //
         CompleteLengthLabel.text = "Length: " + finishLength.ToString("N2") + "m";
-        if (Data.Levels[CurrentLevel].BestLength == 0)
+        if (CurrentLevel.BestLength == 0)
         {
             CompleteBestLengthLabel.text = "Best: " + finishLength.ToString("N2") + "m";
             CompleteHighLengthLabel.text = "New Best Length!";
-            Data.Levels[CurrentLevel].BestLength = finishLength;
+            CurrentLevel.BestLength = finishLength;
         }
-        else if (finishLength < Data.Levels[CurrentLevel].BestLength)
+        else if (finishLength < CurrentLevel.BestLength)
         {
-            CompleteBestLengthLabel.text = "Previous Best: " + Data.Levels[CurrentLevel].BestLength.ToString("N2") + "m";
+            CompleteBestLengthLabel.text = "Previous Best: " + CurrentLevel.BestLength.ToString("N2") + "m";
             CompleteHighLengthLabel.text = "New Best Length!";
-            Data.Levels[CurrentLevel].BestLength = finishLength;
+            CurrentLevel.BestLength = finishLength;
         }
         else
         {
-            CompleteBestLengthLabel.text = "Best: " + Data.Levels[CurrentLevel].BestLength.ToString("N2") + "m";
+            CompleteBestLengthLabel.text = "Best: " + CurrentLevel.BestLength.ToString("N2") + "m";
             CompleteHighLengthLabel.text = "";
         }
         
@@ -594,36 +620,19 @@ public partial class Game : MonoBehaviour
     }*/
 
     //=====================================================================================================================================//
-    public void LoadLevel(int index)
+    public void LoadPackLevel(int index)
     {      
         if (!LevelIsTransitioning)
         {
             StartTime = Time.time;
+
             LastLevel = CurrentLevel;
-            CurrentLevel = index;
-            LevelIsTransitioning = true;   
-        
-            Async = Application.LoadLevelAdditiveAsync(LevelIndexList[index]);
+            string levelGUID = CurrentPack.Levels[index];
+            CurrentLevel = FindLevel(levelGUID);
+
+            LevelIsTransitioning = true;          
+            Async = Application.LoadLevelAdditiveAsync(CurrentLevel.Index);
         }
-    }
-    public void LoadLevel(string level)
-    {
-        // Find index //
-        if (LevelList.Contains(level))
-        {
-            int index = LevelList.IndexOf(level);
-            LoadLevel(index);
-        }
-        else
-        {
-            Debug.Log("Level '" + level + "' Not Found");
-        }
-    }
-    public void LoadLevel(StringTheoryLevel level)
-    {
-        // Get Scene name //
-        string path = Path.GetFileNameWithoutExtension(level.Scene);
-        LoadLevel(path);
     }
 
     //============================================================================================================================================//
@@ -649,48 +658,6 @@ public partial class Game : MonoBehaviour
 // Editor Tools //
 //============================================================================================================================================//
 #region Editor
-
-    #if UNITY_EDITOR
-    //=====================================================================================================================================//
-    static List<string> ReadNames()
-    {
-        List<string> temp = new List<string>();
-        foreach (UnityEditor.EditorBuildSettingsScene S in UnityEditor.EditorBuildSettings.scenes)
-        {
-            if (S.enabled)
-            {
-                string name = S.path.Substring(S.path.LastIndexOf('/') + 1);
-                name = name.Substring(0, name.Length - 6);
-                temp.Add(name);
-            }
-        }
-        return temp;
-    }
-
-    //=====================================================================================================================================//
-    [UnityEditor.MenuItem("CONTEXT/Game/Update Level List")]
-    static void UpdateLevelList(UnityEditor.MenuCommand command)
-    {
-        Game context = (Game)command.context;
-        List<string> levels = ReadNames();
-        List<string> gameLevels = new List<string>();
-        List<int> gameIndexes = new List<int>();
-
-        for (int i = 0; i < levels.Count; i++)
-        {
-            if (!context.LevelIgnoreList.Contains(levels[i]))
-            {
-                gameLevels.Add(levels[i]);
-                gameIndexes.Add(i);
-            }
-        }
-
-        context.LevelList = gameLevels;
-        context.LevelIndexList = gameIndexes;
-    }
-    #endif
-
-    //=====================================================================================================================================//
     static public bool DebugMode = true;   
     static public void Log(object obj)
     {

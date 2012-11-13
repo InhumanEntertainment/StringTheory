@@ -23,7 +23,7 @@ public class LevelButton : MonoBehaviour
         if (pressed && Index < Game.Instance.CurrentPack.Levels.Count)
         {
             Game.Instance.SetScreen("Game");
-            Game.Instance.LoadLevel(Level);
+            Game.Instance.LoadPackLevel(Index);
         }       
     }
 
