@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <StringTheory xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Settings>
-    <MusicVolume>0.348623753</MusicVolume>
+    <MusicVolume>0.479785472</MusicVolume>
     <MusicMute>false</MusicMute>
     <SoundVolume>0.8752599</SoundVolume>
     <SoundMute>false</SoundMute>
-    <CurrentTrack>2</CurrentTrack>
+    <CurrentTrack>0</CurrentTrack>
   </Settings>
   <Levels>
     <Level>
@@ -14,9 +14,9 @@
       <Index>1</Index>
       <Difficulty>1</Difficulty>
       <GUID>a84ba981f8638fc438ae5a808e1f9e49</GUID>
-      <Completed>true</Completed>
-      <BestTime>2.0106163</BestTime>
-      <BestLength>1.46866333</BestLength>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
+      <BestLength>0</BestLength>
     </Level>
     <Level>
       <Name>noob</Name>
@@ -24,9 +24,9 @@
       <Index>2</Index>
       <Difficulty>1</Difficulty>
       <GUID>6d92f1088e950b6469d6837a416dfe76</GUID>
-      <Completed>true</Completed>
-      <BestTime>3.1388092</BestTime>
-      <BestLength>5.801798</BestLength>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
+      <BestLength>0</BestLength>
     </Level>
     <Level>
       <Name>vector</Name>
@@ -34,9 +34,9 @@
       <Index>3</Index>
       <Difficulty>1</Difficulty>
       <GUID>0edbc8d3287c86745ab8341c01acf6ba</GUID>
-      <Completed>true</Completed>
-      <BestTime>5.305374</BestTime>
-      <BestLength>11.2641964</BestLength>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
+      <BestLength>0</BestLength>
     </Level>
     <Level>
       <Name>centrifuge</Name>
@@ -64,9 +64,9 @@
       <Index>6</Index>
       <Difficulty>3</Difficulty>
       <GUID>59b2403c854a0d346bbe62ae8c80bad8</GUID>
-      <Completed>true</Completed>
-      <BestTime>13.8569641</BestTime>
-      <BestLength>20.22789</BestLength>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
+      <BestLength>0</BestLength>
     </Level>
     <Level>
       <Name>ziggy</Name>
@@ -74,9 +74,9 @@
       <Index>7</Index>
       <Difficulty>2</Difficulty>
       <GUID>78c4c0f64a19883448ef5887416f3192</GUID>
-      <Completed>true</Completed>
-      <BestTime>12.246666</BestTime>
-      <BestLength>27.8044739</BestLength>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
+      <BestLength>0</BestLength>
     </Level>
     <Level>
       <Name>lovetron</Name>
@@ -144,9 +144,9 @@
       <Index>14</Index>
       <Difficulty>3</Difficulty>
       <GUID>978a44fe29e21a14dbdd20862e0e60d0</GUID>
-      <Completed>true</Completed>
-      <BestTime>17.8310852</BestTime>
-      <BestLength>14.2457991</BestLength>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
+      <BestLength>0</BestLength>
     </Level>
     <Level>
       <Name>elsewhere</Name>
@@ -174,9 +174,9 @@
       <Index>17</Index>
       <Difficulty>5</Difficulty>
       <GUID>60409ea2e43c935428f5157237eeed98</GUID>
-      <Completed>true</Completed>
-      <BestTime>23.6761627</BestTime>
-      <BestLength>9.032515</BestLength>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
+      <BestLength>0</BestLength>
     </Level>
     <Level>
       <Name>omg</Name>
@@ -214,9 +214,9 @@
       <Index>21</Index>
       <Difficulty>2</Difficulty>
       <GUID>e18ff3fee4667234aa30d096dbdf08a9</GUID>
-      <Completed>true</Completed>
-      <BestTime>8.860779</BestTime>
-      <BestLength>12.78012</BestLength>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
+      <BestLength>0</BestLength>
     </Level>
     <Level>
       <Name>magnitude</Name>
@@ -224,9 +224,9 @@
       <Index>22</Index>
       <Difficulty>3</Difficulty>
       <GUID>6263855ea0ea2724faf6e29dd3538943</GUID>
-      <Completed>true</Completed>
-      <BestTime>11.9715958</BestTime>
-      <BestLength>11.3685865</BestLength>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
+      <BestLength>0</BestLength>
     </Level>
     <Level>
       <Name>curvature</Name>
@@ -284,9 +284,9 @@
       <Index>28</Index>
       <Difficulty>5</Difficulty>
       <GUID>2063561f9a496894aa17bf81b188c686</GUID>
-      <Completed>true</Completed>
-      <BestTime>31.4388885</BestTime>
-      <BestLength>22.8485184</BestLength>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
+      <BestLength>0</BestLength>
     </Level>
     <Level>
       <Name>offset</Name>
@@ -304,9 +304,9 @@
       <Index>30</Index>
       <Difficulty>3</Difficulty>
       <GUID>13fd9330f8cfd2841a5fbe56b905e2e1</GUID>
-      <Completed>true</Completed>
-      <BestTime>20.0079041</BestTime>
-      <BestLength>21.0074959</BestLength>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
+      <BestLength>0</BestLength>
     </Level>
     <Level>
       <Name>inline</Name>
@@ -344,9 +344,9 @@
       <Index>34</Index>
       <Difficulty>1</Difficulty>
       <GUID>1a6f056ef36e3624c9d2235d1c679c5c</GUID>
-      <Completed>true</Completed>
-      <BestTime>9.598476</BestTime>
-      <BestLength>14.3366747</BestLength>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
+      <BestLength>0</BestLength>
     </Level>
     <Level>
       <Name>twirly</Name>
@@ -574,9 +574,9 @@
       <Index>57</Index>
       <Difficulty>4</Difficulty>
       <GUID>8d932abce88a3a2448f1ce69c350b621</GUID>
-      <Completed>true</Completed>
-      <BestTime>18.894104</BestTime>
-      <BestLength>18.6959152</BestLength>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
+      <BestLength>0</BestLength>
     </Level>
     <Level>
       <Name>Level056</Name>
@@ -644,9 +644,9 @@
       <Index>64</Index>
       <Difficulty>5</Difficulty>
       <GUID>0bf42bba3254f9d4e88451ec24ac14bc</GUID>
-      <Completed>true</Completed>
-      <BestTime>77.156</BestTime>
-      <BestLength>27.2339649</BestLength>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
+      <BestLength>0</BestLength>
     </Level>
     <Level>
       <Name>Level063</Name>
