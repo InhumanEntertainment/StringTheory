@@ -11,8 +11,8 @@ public class ColorString : MonoBehaviour
 	public float CurveLength = 0f;	
 	
 	//logic//
-	public bool IsCurveBeingDrawn = false;	
-	public bool HasCurveReachedTarget = false;
+	public bool Drawing = false;	
+	public bool ReachedTarget = false;
 	
 	public ColorBase BaseStart;
 	public List<ColorBase> BasesExpected = new List<ColorBase>();
@@ -50,8 +50,6 @@ public class ColorString : MonoBehaviour
     public float WidthMax = 0.1f;
     public float WidthChange = 0.1f;
 
-    public int ColorIndex;
-    public Material[] ColorMaterials;
     public Game Game;
 
     // Effects //
@@ -60,9 +58,6 @@ public class ColorString : MonoBehaviour
     public ParticleSystem FXCut;
     public ParticleSystem FXDrawObject;
 
-    public Color[] fxColors = new Color[] { new Color(0, 1, 0), new Color(1, 1f, 0f), new Color(0.2f, 0, 1f), new Color(0f, 1f, 1), new Color(0.7f, 1, 0), new Color(0.5f, 0, 1f) };
-
-    
     // Sound Effects //
     public AudioClip DrawStartSound;
     public AudioClip DrawSound;
@@ -99,31 +94,35 @@ public class ColorString : MonoBehaviour
 	{
 		return CurveLength / 100;	
 	}
-	
-	
+		
     //============================================================================================================================================//
 	void Update () 
 	{
+        
         if (!Game.Paused && !Game.LevelHasCompleted)
         {
-            bool hasTouchStarted = (Input.GetMouseButtonDown(0));
-            bool isTouchUpdated = Input.GetMouseButton(0);
-            bool hasTouchStopped = (Input.GetMouseButtonUp(0));
+            bool TouchDown = (Input.GetMouseButtonDown(0));
+            bool TouchUpdate = Input.GetMouseButton(0);
+            bool TouchUp = (Input.GetMouseButtonUp(0));
             
             if (Input.touches.Length <= 1)
             {
                 // Mouse Up //
-                if (hasTouchStopped && IsCurveBeingDrawn)
+                if (TouchUp && Drawing)
                 {
-                    audio.loop = false;     
+                    audio.loop = false;                    
+                }
+                if (TouchUp)
+                {
+                    ColorBase.DrawCancelled = false;
                 }
 
                 // Mouse Down //
-                if (hasTouchStarted)
+                if (TouchDown)
                 {
-                    if (!IsCurveBeingDrawn)
+                    if (!Drawing)
                     {
-                        CutAndResumeDrawingIfNecessary();
+                        ResumeDrawing();
                         /*
                         if (HasCurveBeenHitAtPosition(Input.mousePosition))
                         {
@@ -138,7 +137,7 @@ public class ColorString : MonoBehaviour
                         //Debug.LogError("Start a touch while being drawn. IsCurvedBeingDrawn is probably not being handle correctly");	
                     }
                 }
-                else if (isTouchUpdated)
+                else if (TouchUpdate && !ColorBase.DrawCancelled)
                 {
                     if (Tail.Count == 0)
                     {
@@ -150,11 +149,11 @@ public class ColorString : MonoBehaviour
                         //audio.Play();
                     }
 
-                    if (IsCurveBeingDrawn && !HasCurveReachedTarget)
+                    if (Drawing && !ReachedTarget)
                     {
                         if (HasFoundAnotherCurveDrawing())
                         {
-                            IsCurveBeingDrawn = false;
+                            Drawing = false;
                         }
                         else
                         {                           						
@@ -201,7 +200,7 @@ public class ColorString : MonoBehaviour
 						        if (Tail.Count > 2)
                                 {
                                     StopDrawingIfLastScreenPointEncouterBaseOrSelf(Input.mousePosition);
-							        if (HasCurveReachedTarget)
+							        if (ReachedTarget)
 							        {
 								        break;
 							        }
@@ -212,7 +211,7 @@ public class ColorString : MonoBehaviour
                     }
                     else
                     {
-                        if (!IsCurveBeingDrawn)
+                        if (!Drawing)
                         {
                             //CutAndResumeDrawingIfNecessary();		
                             CutWithoutResumeDrawingIfNecessary();
@@ -220,22 +219,20 @@ public class ColorString : MonoBehaviour
                         }
                     }
 
-
-
-                    //displaying of tracker
-                    if (!HasCurveReachedTarget && IsCurveBeingDrawn)
+                    // displaying of tracker
+                    if (!ReachedTarget && Drawing)
                     {
                         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                        UpdateTouchTrackerWithPosition(new Vector3(mousePosition.x, mousePosition.y, 0));
+                        UpdateCurrentTracker(new Vector3(mousePosition.x, mousePosition.y, 0));
                     }
 
                 }
                 else
                 {
                     //touch has been cancelled//
-                    if (IsCurveBeingDrawn)
+                    if (Drawing)
                     {
-                        IsCurveBeingDrawn = false;
+                        Drawing = false;
                     }
                     else
                     {
@@ -245,22 +242,22 @@ public class ColorString : MonoBehaviour
                 BuildMesh();
 
 
-                if (!IsCurveBeingDrawn)
+                if (!ReachedTarget)
                 {
-                    ShowArrowTracker();
+                    TouchTracker.gameObject.active = true;
+                    ShowTouchTracker();                    
                 }
                 else
                 {
-                    ShowTouchTracker();
+                    TouchTracker.gameObject.active = false;
                 }
 
             }//end if touches count
         }
 	}
-					
-	
+						
 	//============================================================================================================================================//
-	void CutAndResumeDrawingIfNecessary()
+	void ResumeDrawing()
 	{
 		if (HasCurveBeenHitAtPosition(Input.mousePosition))
 		{
@@ -283,29 +280,30 @@ public class ColorString : MonoBehaviour
 			}
 		}	
 	}
-	
-	
+		
 	//============================================================================================================================================//
 	public void InitializeTouchTrackerWithPosition(Vector3 touchPosition) 
 	{
 		ShowArrowTracker();
-		UpdateTouchTrackerWithPosition(new Vector3(touchPosition.x,touchPosition.y,0));
+		UpdateCurrentTracker(new Vector3(touchPosition.x,touchPosition.y,0));
 	}
 	
 	//============================================================================================================================================//
-	public void UpdateTouchTrackerWithPosition(Vector3 touchPosition)
+	public void UpdateCurrentTracker(Vector3 touchPosition)
 	{
-		CurrentTracker.transform.position = touchPosition;
+		//CurrentTracker.transform.position = touchPosition;
+        ArrowTracker.transform.position = touchPosition;
+        TouchTracker.transform.position = touchPosition;
 	}
 	
 	//============================================================================================================================================//
 	public void ShowTouchTracker() 
 	{
-		if (!HasCurveReachedTarget) 
+		if (!ReachedTarget) 
         {		
-			Vector3 currentTrackerPosition = new Vector3(CurrentTracker.transform.position.x,CurrentTracker.transform.position.y,-1);
+			Vector3 currentTrackerPosition = new Vector3(CurrentTracker.transform.position.x,CurrentTracker.transform.position.y, -1);
 			CurrentTracker = TouchTracker;
-			ArrowTracker.transform.position = new Vector3 (ArrowTracker.transform.position.x,ArrowTracker.transform.position.y,-200);
+			ArrowTracker.transform.position = new Vector3 (ArrowTracker.transform.position.x,ArrowTracker.transform.position.y, -1);
 			CurrentTracker.transform.position = currentTrackerPosition;
 		}
 	}
@@ -314,9 +312,9 @@ public class ColorString : MonoBehaviour
 	public void ShowArrowTracker() 
 	{
 		CurrentTracker = ArrowTracker;
-		TouchTracker.transform.position = new Vector3 (ArrowTracker.transform.position.x,ArrowTracker.transform.position.y,-200);
+		TouchTracker.transform.position = new Vector3 (ArrowTracker.transform.position.x,ArrowTracker.transform.position.y, -1);
 		
-		Vector3 arrowPosition = new Vector3(0,0,-200);
+		/*Vector3 arrowPosition = new Vector3(0, 0, -1);
 		if (Tail.Count > 3) 
 		{
 			Vector3 lastPosition = Tail[Tail.Count-3];
@@ -330,7 +328,7 @@ public class ColorString : MonoBehaviour
 			CurrentTracker.transform.rotation = Quaternion.AngleAxis(angle,CurrentTracker.transform.position);
 			
 		}
-		CurrentTracker.transform.position = arrowPosition;
+		CurrentTracker.transform.position = arrowPosition;*/
 	}	
 	
 	//============================================================================================================================================//
@@ -454,7 +452,7 @@ public class ColorString : MonoBehaviour
         mousePosition.z = 0;
                         
 		//put here reactions to this event//
-		HasCurveReachedTarget = true;
+		ReachedTarget = true;
 		
         // Create Last Point At Hard Coded Radius inside the base to prevent big jump at the end //
         float minDistance = 0.5f;
@@ -495,10 +493,22 @@ public class ColorString : MonoBehaviour
 	void curveDidConnectWithWrongBase(ColorBase colorBase) 
 	{
 		//Debug.Log("Did connect with wrong base");
-		Tail = new List<Vector3>();
 		
-		if (colorBase != BaseStart) {
-			KillCurve();
+		if (colorBase != BaseStart)
+        {
+            Drawing = false;
+            ColorBase.DrawCancelled = true;
+            ReachedTarget = false;
+
+            if (Tail.Count > 5)
+            {
+                RemoveAllItemsFromTailAfterPoint(Tail[Tail.Count - 5]);
+            }
+            else
+            {
+                Tail = new List<Vector3>();		
+                KillCurve();
+            }
 		}
 	}
 	
@@ -564,21 +574,18 @@ public class ColorString : MonoBehaviour
 	void CurveDidEncounterSelfAtPosition(Vector3 intersectionPoint)
 	{
 		RemoveAllItemsFromTailAfterPoint(intersectionPoint);
-		//KillCurve();
-	}
-	
+	}	
 	
 	//============================================================================================================================================//
 	void KillCurve() 
 	{
-
+        Debug.Log("Kill Curve");
 
         CurveColliderDetector.Instance.RemoveCurveFromMonitoring(this);
         Destroy(FXDrawObject);
 		Destroy(gameObject);
 	}
-	
-	
+		
 	//============================================================================================================================================//
 	bool isLastPointCollidingWithBase(ColorBase colorBase)
 	{
@@ -589,15 +596,13 @@ public class ColorString : MonoBehaviour
 		}
 		return res;
 	}
-	
-	
+		
 	//============================================================================================================================================//
 	public void InitializeCurveToResumeDrawingAtPosition(Vector3 position)
 	{     
-		IsCurveBeingDrawn = true;
-		HasCurveReachedTarget = false;
-	}
-	
+		Drawing = true;
+		ReachedTarget = false;
+	}	
 	
 	//============================================================================================================================================//
 	void CutCurveIfLastPointDoesNotMatchPosition(Vector3 position)
@@ -652,9 +657,9 @@ public class ColorString : MonoBehaviour
         TailWidth.RemoveRange(indexPosition, Tail.Count - indexPosition);
 		UpdateCurveLength();
 
-        HasCurveReachedTarget = false;
+        ReachedTarget = false;
 		
-		UpdateTouchTrackerWithPosition(position);
+		UpdateCurrentTracker(position);
 	}	
 	
 	//============================================================================================================================================//
@@ -664,8 +669,7 @@ public class ColorString : MonoBehaviour
 		Vector3 curvePointTouched = GetPointTouchedOnCurvedIfExistAtPosition(worldTouchPosition);
 		bool hasTouchedCurve = (curvePointTouched.z == 0);
 		return hasTouchedCurve;
-	}
-	
+	}	
 	
 	//============================================================================================================================================//
 	Vector3 GetPointTouchedOnCurvedIfExistAtPosition(Vector3 touchPosition) 
@@ -737,7 +741,7 @@ public class ColorString : MonoBehaviour
 		Tail.Add(smoothedVector);*/
 		
 		//Tail.Add(new Vector3(worldTouchPosition.x,worldTouchPosition.y,0));
-		Tail.Add (new Vector3(touchPosition.x,touchPosition.y,0));
+		Tail.Add (new Vector3(touchPosition.x, touchPosition.y, 0));
 		UpdateCurveLength();
 
         // Varying Line Width //

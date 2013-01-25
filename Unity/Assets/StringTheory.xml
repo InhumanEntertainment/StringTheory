@@ -729,10 +729,30 @@
       <BestLength>0</BestLength>
     </Level>
     <Level>
+      <Name>Level071</Name>
+      <Scene>Assets/Scenes/Rocket/Level071.unity</Scene>
+      <Index>73</Index>
+      <Difficulty>0</Difficulty>
+      <GUID>8a69ff19ffb018f49985606e01ba1dda</GUID>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
+      <BestLength>0</BestLength>
+    </Level>
+    <Level>
+      <Name>rallycat</Name>
+      <Scene>Assets/Scenes/Rocket/rallycat.unity</Scene>
+      <Index>74</Index>
+      <Difficulty>1</Difficulty>
+      <GUID>daa0e3091aa49194aa6fb9a74d71c0ed</GUID>
+      <Completed>false</Completed>
+      <BestTime>0</BestTime>
+      <BestLength>0</BestLength>
+    </Level>
+    <Level>
       <Name>vortex</Name>
       <Scene>Assets/Scenes/Vortex/vortex.unity</Scene>
-      <Index>73</Index>
-      <Difficulty>4</Difficulty>
+      <Index>75</Index>
+      <Difficulty>0</Difficulty>
       <GUID>2874c8f121d24094490e242c8671aafd</GUID>
       <Completed>false</Completed>
       <BestTime>0</BestTime>

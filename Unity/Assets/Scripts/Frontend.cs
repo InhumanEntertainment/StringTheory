@@ -106,9 +106,10 @@ public class Frontend : MonoBehaviour
         {
             Game.ResetPauseSlider();
             Game.Instance.UpdateButtons();
-            Game.SetPack(Game.Instance.CurrentPack.Name);          
             Game.DestroyLevel(Game.CurrentLevel);
-            Game.SetScreen(Game.LastScreen.Name);          
+            Game.SetPack(Game.Instance.CurrentPack.Name); 
+            Game.SetScreen(Game.Instance.CurrentPack.Name);
+            Game.SetPack(Game.Instance.CurrentPack.Name);                      
         }
 
         // Menus //============================================================================//

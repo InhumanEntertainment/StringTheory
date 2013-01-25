@@ -256,40 +256,58 @@ public partial class Game : MonoBehaviour
     //============================================================================================================================================//
     public void PrevLevel()
     {
-        CleanupScene();
+        int packIndex = Data.Packs.IndexOf(CurrentPack);
         int index = CurrentPack.Levels.IndexOf(CurrentLevel.GUID);
 
         if (index > 0)
         {
+            CleanupScene();
             LoadPackLevel(index - 1);
         }
         else
         {
-            ResetPauseSlider();
-            UpdateButtons();
-            DestroyLevel(CurrentLevel);
-            SetScreen(LastScreen.Name);          
+            if (packIndex - 1 >= 0)
+            {
+                CleanupScene();
+                SetPack(Data.Packs[packIndex - 1].Name);
+                LoadPackLevel(Data.Packs[packIndex - 1].Levels.Count - 1);               
+            }
+            else
+            {
+                //ResetPauseSlider();
+                //UpdateButtons();
+                //DestroyLevel(CurrentLevel);
+                //SetScreen(LastScreen.Name);  
+            }        
         }
     }
 
-    
-
     //============================================================================================================================================//
     public void NextLevel()
-    {
-        CleanupScene();
-        int index = CurrentPack.Levels.IndexOf(CurrentLevel.GUID);
+    {              
+        int packIndex = Data.Packs.IndexOf(CurrentPack);
+        int levelIndex = CurrentPack.Levels.IndexOf(CurrentLevel.GUID);
 
-        if (index + 1 < CurrentPack.Levels.Count)
+        if (levelIndex + 1 < CurrentPack.Levels.Count)
         {
-            LoadPackLevel(index + 1);
+            CleanupScene();
+            LoadPackLevel(levelIndex + 1);
         }
-        else
+        else // Next Pack //
         {
-            ResetPauseSlider();
-            UpdateButtons();
-            DestroyLevel(CurrentLevel);
-            SetScreen(LastScreen.Name);  
+            if (packIndex + 1 < Data.Packs.Count)
+            {
+                CleanupScene();
+                SetPack(Data.Packs[packIndex + 1].Name);
+                LoadPackLevel(0);               
+            }
+            else
+            {
+                //ResetPauseSlider();
+                //UpdateButtons();
+                //DestroyLevel(CurrentLevel);
+                //SetScreen(LastScreen.Name);  
+            }        
         }
     }
 
@@ -572,7 +590,7 @@ public partial class Game : MonoBehaviour
 			ColorString curve = bases[i].Curve;
 			if (curve) 
 			{
-				if ( curve.HasCurveReachedTarget ) 
+				if ( curve.ReachedTarget ) 
 				{
 					shouldCountTheBase = false;
 				}
@@ -582,7 +600,7 @@ public partial class Game : MonoBehaviour
 				ColorString expectedCurve = bases[i].ExpectedCurve;
 				if (expectedCurve) 
                 {
-                    if (expectedCurve.HasCurveReachedTarget) 
+                    if (expectedCurve.ReachedTarget) 
 					{
 						shouldCountTheBase = false;
 					}	

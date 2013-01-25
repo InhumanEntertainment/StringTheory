@@ -33,7 +33,7 @@ public class CurveColliderDetector : MonoBehaviour
 
         foreach (ColorString curve in Curves)
 		{
-            if (curve.IsCurveBeingDrawn) 
+            if (curve.Drawing) 
             {
 				res ++;
 			}

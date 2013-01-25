@@ -13,6 +13,8 @@ public class ColorBase : MonoBehaviour
 
     public GameColor Color;
     public ColorString StringPrefab;
+
+    public static bool DrawCancelled = false;
 	
 	//============================================================================================================================================//
     void Awake()
@@ -27,10 +29,10 @@ public class ColorBase : MonoBehaviour
         {
             if (Input.touches.Length <= 1)
             {
-                bool hasTouchStarted = (Input.GetMouseButtonDown(0));
-                bool isTouchUpdated = Input.GetMouseButton(0);
+                bool TouchDown = (Input.GetMouseButtonDown(0));
+                bool TouchUpdate = Input.GetMouseButton(0);
 
-                if (hasTouchStarted)
+                if (TouchDown)
                 {
                     if (HasTouchedMe(Input.mousePosition))
                     {
@@ -50,7 +52,7 @@ public class ColorBase : MonoBehaviour
                         InformPeersToExpectCurve(Curve);
                     }
                 }
-                else if (isTouchUpdated)
+                else if (TouchUpdate && !DrawCancelled)
                 {
                     if (!Curve)
                     {
@@ -63,11 +65,11 @@ public class ColorBase : MonoBehaviour
                             }
                             else
                             {
-                                if (!ExpectedCurve.IsCurveBeingDrawn)
+                                if (!ExpectedCurve.Drawing)
                                 {
-                                    KillCurve(ExpectedCurve);
-                                    InstantiateBaseAwareCurve(Input.mousePosition);
-                                    InformPeersToExpectCurve(Curve);
+                                    //KillCurve(ExpectedCurve);
+                                    //InstantiateBaseAwareCurve(Input.mousePosition);
+                                    //InformPeersToExpectCurve(Curve);
                                 }
                                 else
                                 {

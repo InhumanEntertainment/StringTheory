@@ -9,8 +9,10 @@ public class LevelButton : MonoBehaviour
     StringTheoryLevel Level;
 
     public Color LabelColor = Color.white;
-    public Color CompletedColor = Color.red;
-
+    public Color LabelCompletedColor = Color.red;
+    public Color ButtonColor = Color.white;
+    public Color ButtonCompletedColor = Color.red;
+    
     //============================================================================================================================================//
     void Awake()
     {
@@ -30,19 +32,24 @@ public class LevelButton : MonoBehaviour
     //============================================================================================================================================//
     public void UpdateButton()
     {
-        Color color = Color.white;
+        Color labelColor = LabelColor;
+        Color buttonColor = ButtonColor;
+        
         if (Index < Game.Instance.CurrentPack.Levels.Count)
         {
             Level = Game.FindLevel(Game.Instance.CurrentPack.Levels[Index]);
 
             if (Level.Completed)
-                color = CompletedColor;
+            {
+                labelColor = LabelCompletedColor;
+                buttonColor = ButtonCompletedColor;
+            }
 
             if (Label != null)
                 Label.text = Level.Name;
         }
 
-        Background.color = color;
-        Label.color = color * LabelColor;
+        Background.color = buttonColor;
+        Label.color = labelColor;
     }
 }
