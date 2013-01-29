@@ -53,9 +53,6 @@ public partial class Game : MonoBehaviour
 
     public bool LevelIsTransitioning = false;
     public bool LevelHasCompleted = false;
-    
-    // Colors //
-    public GameColor[] Colors;
 
     //============================================================================================================================================//
 	void Awake() 

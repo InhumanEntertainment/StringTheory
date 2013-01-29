@@ -59,7 +59,12 @@ public class Frontend : MonoBehaviour
             Game.SetScreen("Chaos");
             Game.SetPack("Chaos");
         }
-        else if (Command == "Pack_Close" || Command == "Starter_Close" || Command == "Vortex_Close" || Command == "Chaos_Close")
+        else if (Command == "Atomic_Open")
+        {
+            Game.SetScreen("Atomic");
+            Game.SetPack("Atomic");
+        }
+        else if (Command == "Pack_Close" || Command == "Starter_Close" || Command == "Vortex_Close" || Command == "Chaos_Close" || Command == "Atomic_Close")
         {
             Game.SetScreen("Packs");
         }

@@ -87,7 +87,7 @@ public class ColorBar : MonoBehaviour
                 float labelX = Length / BarLength * ScreenWidth;
                 labelX = Mathf.Clamp(labelX, 90f, ScreenWidth - 90f);
 
-                CurrentDistanceLabel.transform.localPosition = new Vector3(labelX, -8, 0);
+                CurrentDistanceLabel.transform.localPosition = new Vector3(labelX, -40, 0);
                 CurrentDistanceLabel.text = TotalLength.ToString("N1") + "m";
                 CurrentDistanceLabel.color = Strings[0].Color.ProgressColor;
             }
@@ -103,7 +103,7 @@ public class ColorBar : MonoBehaviour
                 float bestX = bestLength / BarLength * ScreenWidth - 8;
                 BestMarker.transform.localPosition = new Vector3(bestX, 0, 0);
                 bestX = Mathf.Clamp(bestX, 90f, ScreenWidth - 90f);
-                BestDistanceLabel.transform.localPosition = new Vector3(bestX, -8, 0);
+                BestDistanceLabel.transform.localPosition = new Vector3(bestX, -40, 0);
             }
             else
             {

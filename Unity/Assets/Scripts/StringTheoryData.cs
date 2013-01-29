@@ -48,8 +48,6 @@ public class StringTheoryStats
         SessionTime = Time.time - StartTime;
         AverageSessionTime = (AverageSessionTime * PlayCount + SessionTime) / PlayCount + 1;
         PlayCount++;
-
-
     }
 }
 
