@@ -143,7 +143,7 @@ public class ColorString : MonoBehaviour
                     {
                         InitializeCurveToResumeDrawingAtPosition(Input.mousePosition);
 
-                        Audio.Play(DrawStartSound);
+                        //Audio.Play(DrawStartSound);
 
                         //audio.loop = true;
                         //audio.Play();

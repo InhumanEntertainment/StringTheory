@@ -15,7 +15,13 @@ public class ColorBase : MonoBehaviour
     public ColorString StringPrefab;
 
     public static bool DrawCancelled = false;
-	
+
+    public float TouchRadius = 1;
+    public bool TouchStarted = false;
+
+    // Sound Effects //
+    public AudioClip TouchSound;  
+
 	//============================================================================================================================================//
     void Awake()
     {
@@ -31,7 +37,8 @@ public class ColorBase : MonoBehaviour
             {
                 bool TouchDown = (Input.GetMouseButtonDown(0));
                 bool TouchUpdate = Input.GetMouseButton(0);
-
+                bool TouchUp = (Input.GetMouseButtonUp(0));
+                
                 if (TouchDown)
                 {
                     if (HasTouchedMe(Input.mousePosition))
@@ -48,9 +55,14 @@ public class ColorBase : MonoBehaviour
                             KillCurve(ExpectedCurve);
                         }
 
-                        InstantiateBaseAwareCurve(Input.mousePosition);
-                        InformPeersToExpectCurve(Curve);
+                        TouchStarted = true;
+                        Audio.Play(TouchSound);
                     }
+                    
+                }
+                else if (TouchUp)
+                {          
+                    TouchStarted = false;
                 }
                 else if (TouchUpdate && !DrawCancelled)
                 {
@@ -60,8 +72,8 @@ public class ColorBase : MonoBehaviour
                         {
                             if (!ExpectedCurve)
                             {
-                                InstantiateBaseAwareCurve(Input.mousePosition);
-                                InformPeersToExpectCurve(Curve);
+                                //InstantiateBaseAwareCurve(Input.mousePosition);
+                                //InformPeersToExpectCurve(Curve);
                             }
                             else
                             {
@@ -77,14 +89,17 @@ public class ColorBase : MonoBehaviour
                                 }
                             }
                         }
+                        else if(TouchStarted)
+                        {
+                            InstantiateBaseAwareCurve(Input.mousePosition);
+                            InformPeersToExpectCurve(Curve);
+                        }
                     }
                     else
                     {
                         if (HasTouchedMe(Input.mousePosition))
                         {
-                            /*KillCurve(Curve);
-                            InstantiateBaseAwareCurve(Input.mousePosition);
-                            InformPeersToExpectCurve(Curve);*/
+                            KillCurve(Curve);
                         }
                     }
 
@@ -148,7 +163,17 @@ public class ColorBase : MonoBehaviour
         //ColorBar.Instance.ResetColorBar();
 
 		//Debug.Log ("Attention curve with " + Curve.BasesExpected.Count + " bases to detect");
-		//Debug.Log ("Attention curve with " + Curve.BasesToAvoid.Count + " bases to avoid");       
+		//Debug.Log ("Attention curve with " + Curve.BasesToAvoid.Count + " bases to avoid"); 
+      
+        // Set Start Position //
+        Vector3 TouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 direction = TouchPosition - transform.position;
+        direction.z = 0;
+        direction.Normalize();
+        direction *= TouchRadius;
+        Curve.AddScreenPointToTail(transform.position + direction);
+
+        Debug.Log("Direction = " + direction);
 	}
 	
 	//============================================================================================================================================//
